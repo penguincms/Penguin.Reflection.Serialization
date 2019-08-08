@@ -1,0 +1,266 @@
+﻿<#@ template language="C#" debug="false" hostspecific="true" #>
+<#@ assembly name="System" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Data.Entity" #>
+<#@ assembly name="EnvDTE" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Reflection" #>
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+using System;
+using Penguin.Reflection.Extensions;
+
+<#
+
+    EnvDTE.DTE visualStudio = (this.Host as IServiceProvider).GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
+
+    EnvDTE.Solution thisSolution = visualStudio.Solution;
+    EnvDTE.Projects projects = thisSolution.Projects;
+    EnvDTE.Project  ServerProject = null;
+
+    foreach(EnvDTE.Project project in projects) {
+        if(project.Name == "Penguin.Reflection.Serialization") {
+            ServerProject = project;
+        }
+    }
+
+    List<CodeInterface> elements = GetInterfacesRecursive(ServerProject.CodeModel.CodeElements, "Penguin");
+    List<CodeInterface> MetaObjects = new List<CodeInterface>();
+    
+    foreach(CodeInterface thisClass in elements) {
+
+        if(ImplementsInterface(thisClass,"IMetaSerializable")) {
+              MetaObjects.Add(thisClass);
+        }
+             
+    }
+
+    MetaObjects = MetaObjects.OrderByDescending(c => GetBaseTypes(c).Count).ToList();
+
+#>
+
+namespace Penguin.Reflection.Serialization.Templating
+{
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+public static partial class MetaSerializer {
+
+		private static string _assemblyName {get;set;}
+
+		public static string AssemblyName {
+			get {
+				if (string.IsNullOrWhiteSpace(_assemblyName)) {
+					_assemblyName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+				}
+
+				return _assemblyName;
+			}
+		}
+
+        public static string Serialize(this IList<Enum> toSerialize) {
+
+            List<string> Properties = new  List<string>();
+
+            foreach(Enum thisChild in toSerialize) {
+                Properties.Add(System.Convert.ChangeType(toSerialize, Enum.GetUnderlyingType(toSerialize.GetType())).ToString());
+            }
+
+            return "[" + string.Join(",", Properties) + "]";
+
+        }
+
+        public static string SerializeDictionary(this IDictionary toSerialize) {
+
+            List<string> Properties = new  List<string>();
+
+
+            foreach(DictionaryEntry thisChild in toSerialize) {
+
+            if(thisChild.Value.GetType() == typeof(String)) { 
+                    Properties.Add("\"" + thisChild.Key.ToString() +"\":\"" + thisChild.Value.ToJSONValue() + "\"");
+                    continue;
+            }
+
+                
+<#    
+    foreach(CodeInterface thisInterface in MetaObjects) { #>
+
+                if(typeof(<#=thisInterface.FullName#>).IsAssignableFrom(thisChild.Value.GetType())) { 
+                    Properties.Add("\"" + thisChild.Key.ToString() +"\":" + Serialize(thisChild.Value as <#=thisInterface.FullName#>));
+                    continue;
+                }
+
+<#    }
+    #>  
+                throw new Exception("Template does not support Dictionary Value type");
+            }
+
+            return "{" + string.Join(",", Properties) + "}";
+
+        }
+
+        public static string SerializeList(this IList toSerialize) {
+
+            List<string> Properties = new  List<string>();
+
+            foreach(object thisChild in toSerialize) {
+                if(thisChild is null) { continue; }
+<#    
+    foreach(CodeInterface thisInterface in MetaObjects) { #>
+
+                if(typeof(<#=thisInterface.FullName#>).IsAssignableFrom(thisChild.GetType())) { 
+                    Properties.Add(Serialize(thisChild as <#=thisInterface.FullName#>));
+                    continue;
+                }
+
+<#    }
+    #>        
+}
+
+            return "[" + string.Join(",", Properties) + "]";
+
+        }
+
+    <#    foreach(CodeInterface thisClass in MetaObjects) {#>      
+
+        public static string Serialize(this IList<<#=            thisClass.FullName#>> toSerialize) {
+
+            List<string> Properties = new  List<string>();
+
+
+            foreach(<#=            thisClass.FullName#> thisChild in toSerialize) {
+                Properties.Add(Serialize(thisChild));
+            }
+
+            return "[" + string.Join(",", Properties) + "]";
+
+        }
+
+        public static string Serialize(this <#=            thisClass.FullName#> toSerialize) {
+            List<string> Properties = new  List<string>();
+
+            Properties.Add($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
+
+<#        
+        List<CodeInterface> toCheck = GetBaseTypes(thisClass);
+
+        foreach (CodeInterface checkMe in toCheck){
+
+            foreach(CodeElement thisMember in checkMe.Members) {
+                if(thisMember.Kind != EnvDTE.vsCMElement.vsCMElementProperty) { continue; }
+                CodeProperty thisProperty = (thisMember as CodeProperty);
+                if(thisProperty.Name == "this") { continue; }
+                string thisTypeName= thisProperty.Type.CodeType.Name;
+                bool IsEnum = thisProperty.Type.CodeType.IsDerivedFrom["System.Enum"];
+                
+                string DictType = string.Empty;  
+
+                if(thisTypeName == "IDictionary") {
+                    DictType =  thisProperty.Type.CodeType.FullName; 
+                    DictType = DictType.Substring(DictType.IndexOf("<") + 1);
+                    DictType = DictType.Substring(0, DictType.IndexOf(","));
+                } 
+
+                string PropRef = "toSerialize." + thisProperty.Name;
+
+                
+                if (thisTypeName == "String") {
+                #>              if (<#=PropRef#> != null) { Properties.Add("\"<#=                        thisProperty.Name#>\":\"" + <#=PropRef#>.ToJSONValue() + "\""); }
+<#                } else if (thisTypeName == "Boolean") {
+                #>             if (<#=PropRef#>) { Properties.Add("\"<#=                        thisProperty.Name#>\":true"); }
+<#                } else if (thisTypeName == "Int32") {
+                #>            if (<#=PropRef#> != 0) { Properties.Add("\"<#=                        thisProperty.Name#>\":" + <#=PropRef#>.ToString()); }
+<#                } else if (thisTypeName == "Int32?") {
+                #>            if (<#=PropRef#>.HasValue) { Properties.Add("\"<#=                        thisProperty.Name#>\":" + <#=PropRef#>.Value.ToString()); }
+<#                } else if (IsEnum) {
+                #>            if ((int)<#=PropRef#> != 0) { Properties.Add("\"<#=                        thisProperty.Name#>\":" + System.Convert.ChangeType(<#=PropRef#>, Enum.GetUnderlyingType(<#=PropRef#>.GetType())).ToString()); }
+<#                } else if (MetaObjects.Any(M => M.Name == thisTypeName)) {
+                #>             if (<#=PropRef#> != null) { Properties.Add("\"<#=                        thisProperty.Name#>\":" + Serialize(<#=PropRef#>)); }
+<#                } else if (thisTypeName == "IList") {
+                #>             if (<#=PropRef#> != null && <#=PropRef#>.Any()) { Properties.Add("\"<#=                        thisProperty.Name#>\":" + SerializeList(<#=PropRef#> as IList)); }
+<#                } else if (thisTypeName == "IEnumerable") {
+                #>             if (<#=PropRef#> != null && <#=PropRef#>.Any()) { Properties.Add("\"<#=                        thisProperty.Name#>\":" + SerializeList(<#=PropRef#>.ToList())); }
+<#                } else if (thisTypeName == "IDictionary") {
+                #>             if (<#=PropRef#> != null && <#=PropRef#>.Keys.Count > 0) { Properties.Add("\"<#=                        thisProperty.Name#>\":" + SerializeDictionary(<#=PropRef#> as IDictionary)); }
+<#                } else {#>
+            <#=                        thisProperty.Name #>:<#=                        thisProperty.Type.CodeType.Name #>
+
+<#                    
+                }   
+                } 
+        }#>
+            return "{" + string.Join(",", Properties) + "}";
+        }
+    <#    }#>
+} 
+
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+}
+<#+ 
+
+    public List<EnvDTE.CodeInterface> GetInterfacesRecursive(EnvDTE.CodeElement root, string Namespace) {
+
+        List<EnvDTE.CodeInterface> toReturn = new List<EnvDTE.CodeInterface>();
+
+        if(root.Kind == EnvDTE.vsCMElement.vsCMElementNamespace) {
+            EnvDTE.CodeNamespace n = root as EnvDTE.CodeNamespace;
+
+            if(n.FullName.StartsWith(Namespace + ".") || n.FullName == Namespace) {
+                toReturn.AddRange(GetInterfacesRecursive(n.Members, Namespace));
+            } 
+
+        } else if(root.Kind == EnvDTE.vsCMElement.vsCMElementInterface) {
+            EnvDTE.CodeInterface c = root as EnvDTE.CodeInterface;
+
+            if(c.Namespace.FullName.StartsWith(Namespace + ".") || c.Namespace.FullName == Namespace) {
+                toReturn.Add(c);            
+            } 
+
+        }
+
+        return toReturn;
+
+    }
+
+    public List<EnvDTE.CodeInterface> GetBaseTypes(EnvDTE.CodeInterface ci) {
+        List<CodeInterface> baseTypes = new List<CodeInterface>();
+
+        baseTypes.Add(ci);
+
+        foreach(CodeInterface thisBase in ci.Bases) {
+            baseTypes.AddRange(GetBaseTypes(thisBase));
+        }
+
+        return baseTypes;
+    }
+    public bool ImplementsInterface(CodeInterface thisClass, string InterfaceName) {
+        if(thisClass.Name == InterfaceName) {
+            return true;
+        }
+
+        foreach(CodeInterface thisBase in thisClass.Bases) {
+            if(ImplementsInterface(thisBase, InterfaceName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<EnvDTE.CodeInterface> GetInterfacesRecursive(EnvDTE.CodeElements root, string Namespace) {
+
+        List<EnvDTE.CodeInterface> toReturn = new List<EnvDTE.CodeInterface>();
+
+        foreach(EnvDTE.CodeElement element in root){
+
+            toReturn.AddRange(GetInterfacesRecursive(element, Namespace));
+        }
+
+        return toReturn;
+
+    }
+
+#>

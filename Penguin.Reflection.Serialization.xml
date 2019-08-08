@@ -1,0 +1,833 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Penguin.Reflection.Serialization</name>
+    </assembly>
+    <members>
+        <member name="T:Penguin.Reflection.Serialization.Constructors.AttributeIncludeSettings">
+            <summary>
+            Defines the style of include to use when serializing attributes
+            </summary>
+        </member>
+        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeIncludeSettings.All">
+            <summary>
+            All attributes are serialized
+            </summary>
+        </member>
+        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeIncludeSettings.BlackList">
+            <summary>
+            Attributes are serialized as long as they dont exist in the constructor blacklist
+            </summary>
+        </member>
+        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeIncludeSettings.WhiteList">
+            <summary>
+            Attributes are only serialized if the type exists in the whitelist
+            </summary>
+        </member>
+        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeIncludeSettings.None">
+            <summary>
+            All attributes are skipped during serialization
+            </summary>
+        </member>
+        <member name="T:Penguin.Reflection.Serialization.Constructors.AttributeMatchSettings">
+            <summary>
+            Specifies how attributes should be matched to the whitelist/blacklist for inclusion
+            </summary>
+        </member>
+        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeMatchSettings.Equality">
+            <summary>
+            Uses == on the type
+            </summary>
+        </member>
+        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeMatchSettings.Name">
+            <summary>
+            Matches based on type name only
+            </summary>
+        </member>
+        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeMatchSettings.AssemblyQualifiedName">
+            <summary>
+            Matches based on AssemblyQualifiedName
+            </summary>
+        </member>
+        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeMatchSettings.FullName">
+            <summary>
+            Matches based on full name
+            </summary>
+        </member>
+        <member name="T:Penguin.Reflection.Serialization.Constructors.MetaConstructor">
+            <summary>
+            Class to manage settings and resources used during recursive serialization of objects
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.Exceptions">
+            <summary>
+            Any exceptions that occured during serialization are listed here along with the Id(i) of the object that threw the error
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.Meta">
+            <summary>
+            Contains a list of references used for rehydrating the object tree. This exists to keep the serialized (json) size as small as possible by avoiding the
+            need for reference handling as well as avoiding struct duplication
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.Settings">
+            <summary>
+            Contains the settings to be used when constructing the serialized object tree
+            This is a reference so that the settings can be copied as the MetaConstructor clones itself down the tree
+            </summary>
+        </member>
+        <member name="T:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings">
+            <summary>
+            Reference class used to hold settings used during object serialization
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.AttributeBlacklist">
+            <summary>
+            When using AttributeIncludeSettings.Blacklist, this list should contain a list of attribute types to skip serializing
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.AttributeIncludeSettings">
+            <summary>
+            The style of setting used to determine whether or not attributes are serialized
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.AttributeMatchSettings">
+            <summary>
+            Specifies the type of match to use when determining whether or not to serialize assemblies
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.AttributeWhitelist">
+            <summary>
+            When using AttributeIncludeSettings.Whitelist, this list should contain a list of attribute types to serialize
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.IgnoreHiddenForeignTypes">
+            <summary>
+            Ignores properties that match (!thisProperty.ReflectedType.IsVisible &amp;&amp; thisProperty.ReflectedType.Assembly != this.Cache.CallingAssembly). Default True
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.IgnoreInheritedProperties">
+            <summary>
+            Do not traverse below the top level object when serializing properties. This setting is applied recursively and should only be used when serializing
+            DTOs
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.IgnoreNullDeclaringType">
+            <summary>
+            Should ignore dynamic properties. Default True
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.IgnoreTypes">
+            <summary>
+            Types to ignore while serializing. Helpful for ignoring errors. By default ignores Type and MemberInfo since in most cases those are handled seperately
+            </summary>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.#ctor">
+            <summary>
+            Creates a new instance of the constructor settings
+            </summary>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.AddTypeGetterOverride(System.Func{System.Type,System.Type})">
+            <summary>
+            Function that all type resolutions pass through that can affect the return type
+            Usefull for unshelling proxy types. If multiple, they are chained, so be careful
+            </summary>
+            <param name="func">The function that the type passes through</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.OverridePropertyGetter(System.Reflection.PropertyInfo,System.Func{System.Object,System.Object})">
+            <summary>
+            Overrides the method used to resolve an object property, for returning a custom type (or null to skip)
+            </summary>
+            <param name="pi">The PropertyInfo of the property to be overridden</param>
+            <param name="func">The function to call instead of PropertyInfo.GetValue. Object in is the Parent of the property, object out is the Property Value</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructor.#ctor">
+            <summary>
+            Creates the default instance of the MetaConstructor
+            </summary>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructor.#ctor(System.Object)">
+            <summary>
+            Creates a MetaConstructor instance for a single object
+            </summary>
+            <param name="o">The object to serialize</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructor.#ctor(System.String,System.Object)">
+            <summary>
+            Creates a MetaConstructor for an object with a declared property name, to be used in MetaSerializing a single property of an existing object
+            </summary>
+            <param name="PropertyName">The name of the property to give</param>
+            <param name="o">The object to serialize</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ClaimOwnership(System.Object)">
+            <summary>
+            Sets the input object as the top level owner of the metadata tree
+            </summary>
+            <param name="o">The object to set</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructor.Clone(System.Object)">
+            <summary>
+            Clones an instance of this constructor
+            </summary>
+            <param name="o">The object to use as the basis for serialization</param>
+            <returns>A new instance of a MetaConstructor</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructor.Clone(System.Reflection.PropertyInfo)">
+            <summary>
+            Clones an instance of this constructor
+            </summary>
+            <param name="p">The property info to use as the basis for serialization</param>
+            <returns>A new instance of a MetaConstructor</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructor.Clone(System.Type)">
+            <summary>
+            Clones an instance of this constructor
+            </summary>
+            <param name="t">The Type to use as the basis for serialization</param>
+            <returns>A new instance of a MetaConstructor</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructor.Clone(Penguin.Reflection.Serialization.Abstractions.Constructors.ObjectConstructor)">
+            <summary>
+            Clones an instance of this constructor
+            </summary>
+            <param name="oc">The ObjectConstructor to use when populating the internal values</param>
+            <returns>A new instance of a MetaConstructor</returns>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.Type">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Extensions.IMetaTypeInfoExtensions.Is(Penguin.Reflection.Serialization.Abstractions.Interfaces.ITypeInfo,System.String)">
+            <summary>
+            Tests for type equality between an object implementing ITypeInfo and a Type, by full name
+            </summary>
+            <param name="o">The object to test</param>
+            <param name="FullName">The full name of the type</param>
+            <returns>Whether or not the types are equal</returns>
+        </member>
+        <member name="T:Penguin.Reflection.Serialization.GZip">
+            <summary>
+            Methods for constructing and serializing objects in a Zipped format
+            </summary>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.GZip.MetaZip(System.Object,Penguin.Reflection.Serialization.Constructors.MetaConstructor)">
+            <summary>
+            Creates a serialized and gzipped version of a MetaObject
+            </summary>
+            <param name="o">The object to serialize and zip</param>
+            <param name="c">The optional constructor to use</param>
+            <returns>A byte[] containing the gzipped string from the serialized object</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.GZip.Unzip(System.Byte[])">
+            <summary>
+            Unzips a gziped byte[] to its original string
+            </summary>
+            <param name="bytes">The byte[] to unzip</param>
+            <returns>The original string</returns>
+        </member>
+        <member name="T:Penguin.Reflection.Serialization.Objects.EnumValue">
+            <summary>
+            Object used for serializing/holding an enum value representation
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.EnumValue.Label">
+            <summary>
+            The name of the option
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.EnumValue.Value">
+            <summary>
+            The Value of the option
+            </summary>
+        </member>
+        <member name="T:Penguin.Reflection.Serialization.Objects.MetaAttribute">
+            <summary>
+            Meta representation of an attribute, including the retrieved instance with properties
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaAttribute.Instance">
+            <summary>
+            An instance representing the retrieved attribute
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaAttribute.IsInherited">
+            <summary>
+            True if the attribute is declared on a parent type
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaAttribute.Type">
+            <summary>
+            The Type of the attribute
+            </summary>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaAttribute.#ctor">
+            <summary>
+            For serialization ONLY. Do not use
+            </summary>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaAttribute.#ctor(System.Int32)">
+            <summary>
+            Create an instance of the MetaAttribute referencing a specific index in the MetaConstructor
+            </summary>
+            <param name="id">The ID of the index of the Meta in the MetaConstructor</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaAttribute.#ctor(Penguin.Reflection.Serialization.Constructors.MetaConstructor)">
+            <summary>
+            Create an instance using information found in the MetaConstructor
+            </summary>
+            <param name="c">The MetaConstructor to  use</param>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaAttribute.Item(System.String)">
+            <summary>
+            Retrieve a property from the MetaObject instance of this attribute based  on property name
+            </summary>
+            <param name="PropertyName">The name of the property to search for</param>
+            <returns>The property, if it exists</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaAttribute.Hydrate(System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta})">
+            <summary>
+            Hydrates this instance of the MetaObject
+            </summary>
+            <param name="meta">The dictionary of MetaData generated during construction</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaAttribute.ToString">
+            <summary>
+            Returns the Type Name
+            </summary>
+            <returns>The Type Name</returns>
+        </member>
+        <member name="T:Penguin.Reflection.Serialization.Objects.AbstractMeta">
+            <summary>
+            Placeholder class used to provide basic functionality for Meta types as well as providing common type for list placement
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.AbstractMeta.i">
+            <summary>
+            An ID associated with an index in the MetaConstructor list
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.AbstractMeta.IsHydrated">
+            <summary>
+            Whether or not this object has been hydrated to resolve child references
+            </summary>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.AbstractMeta.#ctor(System.Int32)">
+            <summary>
+            Creates a new instance of the abstract meta with the specified id.
+            </summary>
+            <param name="id">An ID associated with an index in the MetaConstructor list</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.AbstractMeta.#ctor">
+            <summary>
+            Creates an abstract meta instance with the intent of creating temporary objects for using serialization code without needing a serialized object
+            </summary>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.AbstractMeta.Hydrate(System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta})">
+            <summary>
+            Hydrates all child properties
+            </summary>
+            <param name="meta">The dictionary containing the reference list of objects-Ids for used with hydration</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.AbstractMeta.HydrateChild``1(``0,System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta})">
+            <summary>
+            Recursively hydrates a child property using the provided dictionary
+            </summary>
+            <typeparam name="T">Any type</typeparam>
+            <param name="toHydrate">The property to be hydrated</param>
+            <param name="meta">The dictionary containing the reference list of objects-Ids for used with hydration</param>
+            <returns>A hydrated version of the object</returns>
+        </member>
+        <member name="T:Penguin.Reflection.Serialization.Objects.MetaObject">
+            <summary>
+            The most commonly used class, a fully serialized object for use in MetaSerialization systems
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.BuildExceptions">
+            <summary>
+            Top level exception cache for referencing exception messages. Used because recursive serialization has the potential to generate a LOT
+            of rerundant errors
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.CollectionItems">
+            <summary>
+            If this object is a collection, this list contains the contents
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.Exception">
+            <summary>
+            If this object was not created due to an error, this should contain the ID of the error
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.IsRoot">
+            <summary>
+            True if this was the object used by the original constructor
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.Meta">
+            <summary>
+            MetaData cache for top level object to reference during deserialization. Not useful for anything but deserialization
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.Null">
+            <summary>
+            True if the object was created using a null
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.Properties">
+            <summary>
+            A list of the accessible (child) properties for this object
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.Property">
+            <summary>
+            The parent property referencing this object. Unreliable in local types
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.Template">
+            <summary>
+            If this is a collection, this contains an empty instance of the collection unit type (for creating new children)
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.Type">
+            <summary>
+            The type information for this Meta instance
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.v">
+            <summary>
+            The index of the Value in the Meta dictionary, if the value of this object is cached there
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.Value">
+            <summary>
+            A string representation of the value if value type, or ToString if not
+            </summary>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.#ctor">
+            <summary>
+            This constructor should only be user externally
+            for creating a temporary instance
+            </summary>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.#ctor(System.Int32)">
+            <summary>
+            This constructor should only be user externally
+            for creating a temporary instance
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.#ctor(System.String,System.Collections.Generic.IList{System.Object},Penguin.Reflection.Serialization.Constructors.MetaConstructor)">
+            <summary>
+            This constructor should only be user externally
+            for creating a temporary instance. This builds
+            a generic list with a property name for use in select editors
+            </summary>
+            <param name="PropertyName">The property name of the list</param>
+            <param name="Values">The values contained within the list</param>
+            <param name="c">The constructor to use when generating the list</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.#ctor(System.Object,Penguin.Reflection.Serialization.Constructors.MetaConstructor)">
+            <summary>
+            Creates a MetaObject with a constructor parameter, for serializing lists or using custom settings
+            </summary>
+            <param name="Value"></param>
+            <param name="c"></param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.#ctor(System.Object)">
+            <summary>
+            Creates a single use MetaObject using the default settings
+            </summary>
+            <param name="Value"></param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.#ctor(System.String,System.Object)">
+            <summary>
+            Creates a single use MetaObject with a property name ONLY
+            </summary>
+            <param name="PropertyName"></param>
+            <param name="Value"></param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.#ctor(System.Reflection.PropertyInfo,System.Object)">
+            <summary>
+            Creates a single use MetaObject with root level property information
+            </summary>
+            <param name="Property">The property Info to use during construction</param>
+            <param name="Value">The object to serialize</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.#ctor(Penguin.Reflection.Serialization.Constructors.MetaConstructor)">
+            <summary>
+            Creates a new MetaObject using a constructor that should contain the object information to serialize
+            </summary>
+            <param name="c">The constructor to use</param>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.Item(System.String)">
+            <summary>
+            Returns an instance of a property by property name. Recursive notation supported using "." delimiter
+            </summary>
+            <param name="PropertyName">The property name to search for</param>
+            <returns>The property if exists, or Error if not</returns>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.Item(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaProperty)">
+            <summary>
+            Returns an instance of a property by IMetaProperty
+            </summary>
+            <param name="property">The property to search for</param>
+            <returns>The property if exists, or Error if not</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.FromConstructor(Penguin.Reflection.Serialization.Constructors.MetaConstructor)">
+            <summary>
+            Creates a new serialized object using the provided MetaConstructor
+            </summary>
+            <param name="c">The MetaConstructor to use</param>
+            <returns>A newly serialized and DEHYDRATED object</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.FromConstructor(Penguin.Reflection.Serialization.Constructors.MetaConstructor,System.Object)">
+            <summary>
+            Creates a new serialized object using the provided Constructor, and object
+            </summary>
+            <param name="c">The constructor to use for serialization</param>
+            <param name="o">The object to serialize</param>
+            <returns>A newly serialized and DEHYDRATED object</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.FromConstructor(Penguin.Reflection.Serialization.Constructors.MetaConstructor,Penguin.Reflection.Serialization.Abstractions.Constructors.ObjectConstructor)">
+            <summary>
+            Creates a new serialized object using the provided Constructor, and Object Constructor
+            </summary>
+            <param name="c">The constructor to use for serializing</param>
+            <param name="oc">An ObjectConstructor containing the relevant serialization context information</param>
+            <returns>A newly serialized and DEHYDRATED object</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.AddItem(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject)">
+            <summary>
+            Adds an item to the underlying collection and sets this object as its parent
+            </summary>
+            <param name="instance">The item to add to the collection</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.AddProperty(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject)">
+            <summary>
+            Adds a Property Value to this object
+            </summary>
+            <param name="instance">The Property Object to add</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.GetCoreType">
+            <summary>
+            Gets the CoreType of this instance from the set type
+            </summary>
+            <returns>The CoreType of this instance</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.GetParent">
+            <summary>
+            Returns the Parent of this object (property holder) or null if empty.
+            UNRELIABLE for complex structures if SetParent is not called during recursion
+            since Dehydration can cause objects to dereference parents.
+            </summary>
+            <returns>The parent of the object or null if no parent</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.HasProperty(System.String)">
+            <summary>
+            Checks to see if this objects declared type contains a property
+            </summary>
+            <param name="PropertyName">The property name to check for</param>
+            <returns>Whether or not the objects declared type contains a property</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.Hydrate(System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta})">
+            <summary>
+            Hydrates this object instance. Should be called once the serialized object is ready for use
+            </summary>
+            <param name="meta">An optional MetaData dictionary to use as the cache for hydration. Not needed if this is a top level instance, as it is provided by the internal constructor</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.IsRecursive">
+            <summary>
+            Should check if the reference is recursive but I dont think we can trust this
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.RegisterConstructor(Penguin.Reflection.Serialization.Constructors.MetaConstructor)">
+            <summary>
+            If using an external constructor from another serialization, this method should be called on top level objects to
+            tell it that this constructor is the source for the cache
+            </summary>
+            <param name="c">The constructor to register</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.RemoveItem(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject)">
+            <summary>
+            Removes an item instance from the underlying collection. Does not dereference parent
+            </summary>
+            <param name="instance">The object instance to remove from the collection</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.RemoveProperty(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject)">
+            <summary>
+            Removes a property from this object. Does not dereference parent
+            </summary>
+            <param name="instance">The instance of the property value to remove</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.SetParent(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject)">
+            <summary>
+            Call this while recursing through the object structure to ensure that the parent on each object is set correctly
+            </summary>
+            <param name="parent">The parent of this object</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.ToString">
+            <summary>
+            Returns the Property.Name ?? Type.Name ?? Empty in that order
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.TypeOf">
+            <summary>
+            The Property.Name ?? Type.Name ?? Empty in that order
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Penguin.Reflection.Serialization.Objects.MetaProperty">
+            <summary>
+            A Meta Class representing the property info for this object in the tree. Can be unreliable for complex structures at the moment due to the way objects are cached
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaProperty.Attributes">
+            <summary>
+            A list of attributes declared on this property
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaProperty.DeclaringType">
+            <summary>
+            The DeclaringType of this property
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaProperty.Name">
+            <summary>
+            The name of this property
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaProperty.Type">
+            <summary>
+            The Type of this property
+            </summary>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaProperty.#ctor(System.Int32)">
+            <summary>
+            Creates a specific instance of this object referencing a cached index in a list of metadata, or -1 for temporary
+            </summary>
+            <param name="id">The index of the MetaData in the cache</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaProperty.#ctor">
+            <summary>
+            Creates a new empty instance of this object for temporary use
+            </summary>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaProperty.#ctor(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaProperty)">
+            <summary>
+            Creates an instance of this object from an existing MetaProperty using Name and Type
+            </summary>
+            <param name="p">Thhe existing MetaProperty</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaProperty.Hydrate(System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta})">
+            <summary>
+            Hydrates this property using a list of MetaInformation provided by the constructor
+            </summary>
+            <param name="meta"></param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaProperty.ToString">
+            <summary>
+            Returns the fully qualified name of this property
+            </summary>
+            <returns>The fully qualified name of this property</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaProperty.TypeOf">
+            <summary>
+            Returns the type of the underlying property
+            </summary>
+            <returns>The fully qualified name of this property</returns>
+        </member>
+        <member name="T:Penguin.Reflection.Serialization.Objects.MetaType">
+            <summary>
+            A MetaData based class holding Type information
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.AssemblyQualifiedName">
+            <summary>
+            The assembly qualified name
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.Attributes">
+            <summary>
+            The attributes declared on the underlying type, along with instances
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.BaseType">
+            <summary>
+            The base type for the underlying type
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.CollectionType">
+            <summary>
+            If this type is a collection, this contains the unit type
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.CoreType">
+            <summary>
+            The CoreType for the underlying object
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.Default">
+            <summary>
+            String representation of default value for this type
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.FullName">
+            <summary>
+            The FullName for this type
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.IsArray">
+            <summary>
+            True if type is an array
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.IsEnum">
+            <summary>
+            True if type is an enumeration
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.IsNullable">
+            <summary>
+            True if type is a Nullable?
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.IsNumeric">
+            <summary>
+            True if type contains any numeric type
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.Name">
+            <summary>
+            The Name for the type
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.Namespace">
+            <summary>
+            The Namespace the type is found in
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.Parameters">
+            <summary>
+            Generic parameters used for constructing the type
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.Properties">
+            <summary>
+            A list of all the properties found on the type
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.Values">
+            <summary>
+            If the type is an enum, this contains all of the possible values
+            </summary>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.#ctor(System.Int32)">
+            <summary>
+            Creates a new instance of the type using the specified index ID
+            </summary>
+            <param name="id">The ID of the location in the Metadata cache that the information can be found</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.#ctor">
+            <summary>
+            Creates a new instance of this type for temporary use
+            </summary>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.#ctor(System.Type,System.Collections.Generic.IList{Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject})">
+            <summary>
+            Base type generation or shortcut for temporary instance
+            </summary>
+            <param name="type"></param>
+            <param name="properties">Manually set the properties list if type is defining a temporary instance of and object</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.#ctor(System.String,System.Collections.Generic.IList{Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject})">
+            <summary>
+            Only for use as a placeholder type for manually created rendering models
+            </summary>
+            <param name="s"></param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.FromConstructor(Penguin.Reflection.Serialization.Constructors.MetaConstructor,System.Object)">
+            <summary>
+            Creates a new MetaType from a given object
+            </summary>
+            <param name="c">The constructor to use</param>
+            <param name="o">The object to base the MetaType on</param>
+            <returns>A new instance of MetaType</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.op_Inequality(Penguin.Reflection.Serialization.Objects.MetaType,Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaType)">
+            <summary>
+            Tests for inequality between two MetaTypes using AssemblyQualifiedName
+            </summary>
+            <param name="obj1">This object</param>
+            <param name="obj2">The other MetaType to test</param>
+            <returns></returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.op_Equality(Penguin.Reflection.Serialization.Objects.MetaType,Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaType)">
+            <summary>
+            Tests for equality between two MetaTypes using AssemblyQualifiedName
+            </summary>
+            <param name="obj1">This object</param>
+            <param name="obj2">The other MetaType to test</param>
+            <returns></returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.Equals(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaType)">
+            <summary>
+            Compares two metatypes based on AssemblyQualifiedName
+            </summary>
+            <param name="other">The MetaType to compare against</param>
+            <returns>Whether or not they share an Assembly Qualified Name</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.Equals(System.Object)">
+            <summary>
+            Equality check based on Type. Compares against any IMetaType
+            </summary>
+            <param name="obj">The object to compare against</param>
+            <returns>Whether or not the two objects have the same IMetaType</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.GetHashCode">
+            <summary>
+            The hashcode of the object is just the hashcode of the AssemblyQualifiedName
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.Hydrate(System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta})">
+            <summary>
+            Hydrates this instance using a provided list of Meta information generated by a MetaConstructor
+            </summary>
+            <param name="meta"></param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.ToString">
+            <summary>
+            Returns the Name of the type this MetaObject represents
+            </summary>
+            <returns>The Name of the type this MetaObject represents</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.TypeOf">
+            <summary>
+            Returns this, since its a Type
+            </summary>
+            <returns>this</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.FromConstructor(Penguin.Reflection.Serialization.Constructors.MetaConstructor,System.Type)">
+            <summary>
+            Creates a new MetaType from a given type
+            </summary>
+            <param name="c">The constuctor to use</param>
+            <param name="t">The type to base the MetaType on</param>
+            <returns>A new instance of MetaType</returns>
+        </member>
+        <member name="T:Penguin.Reflection.Serialization.Objects.StringHolder">
+            <summary>
+            Converts a string into a MetaType so that it can be cached by a constructor and rehydrated later.
+            Removes a lot of redundancy on large recursive trees
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.StringHolder.v">
+            <summary>
+            The value of the underlying string
+            </summary>
+        </member>
+    </members>
+</doc>

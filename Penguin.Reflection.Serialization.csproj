@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageLicenseFile>License.txt</PackageLicenseFile>
+    <PackageProjectUrl>http://www.penguinms.com/Nuget</PackageProjectUrl>
+	<PackageIconUrl>http://www.penguinms.com/client/images/pg.png</PackageIconUrl>
+    <Version>2.0.10</Version>
+	<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+	<Description>Obscenely useful object serialization system that includes the ability to serialize Attributes. Created to allow MetaData driven editors to update and persist objects without requiring references to the original assemblies in which they are defined. For times when Json is simply not enough. 99.99% functional.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Penguin.Reflection.Abstractions" Version="2.0.6" />
+    <PackageReference Include="Penguin.Reflection.Extensions" Version="2.0.6" />
+    <PackageReference Include="Penguin.Reflection.Serialization.Abstractions" Version="2.0.8" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningsAsErrors>NU1605, CS1591</WarningsAsErrors>
+    <DocumentationFile>C:\SVN\Framework\Nuget\Penguin.Reflection.Serialization\Penguin.Reflection.Serialization.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	<DebugType>full</DebugType>
+    <DocumentationFile>C:\SVN\Framework\Nuget\Penguin.Reflection.Serialization\Penguin.Reflection.Serialization.xml</DocumentationFile>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="..\License.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="Templating\MetaSerializer.tt">
+      <LastGenOutput>MetaSerializer.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Templating\MetaSerializer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MetaSerializer.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>
