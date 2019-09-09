@@ -99,8 +99,8 @@ namespace Penguin.Reflection.Serialization.Objects
         internal MetaProperty(MetaConstructor c) : base()
         {
             this.Name = c.PropertyInfo.Name;
-            this.Type = Penguin.Reflection.Serialization.Objects.MetaType.FromConstructor(c, c.PropertyInfo.PropertyType);
-            this.DeclaringType = Penguin.Reflection.Serialization.Objects.MetaType.FromConstructor(c, c.PropertyInfo.DeclaringType);
+            this.Type = MetaType.FromConstructor(c, c.PropertyInfo.PropertyType);
+            this.DeclaringType = MetaType.FromConstructor(c, c.PropertyInfo.DeclaringType);
 
             List<IMetaAttribute> attributes = new List<IMetaAttribute>();
             this.Attributes = attributes;
