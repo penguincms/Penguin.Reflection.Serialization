@@ -4,9 +4,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<PackageLicenseFile>License.txt</PackageLicenseFile>
-    <PackageProjectUrl>http://www.penguinms.com/Nuget</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/penguincms/Penguin.Reflection.Serialization</PackageProjectUrl>
 	<PackageIconUrl>http://www.penguinms.com/client/images/pg.png</PackageIconUrl>
     <Version>2.0.12</Version>
+	<IncludeSymbols>true</IncludeSymbols>    
+<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
 	<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 	<Description>Obscenely useful object serialization system that includes the ability to serialize Attributes. Created to allow MetaData driven editors to update and persist objects without requiring references to the original assemblies in which they are defined. For times when Json is simply not enough. 99.99% functional.</Description>
   </PropertyGroup>
