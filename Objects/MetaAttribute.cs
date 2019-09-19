@@ -3,6 +3,7 @@ using Penguin.Reflection.Serialization.Abstractions.Constructors;
 using Penguin.Reflection.Serialization.Abstractions.Interfaces;
 using Penguin.Reflection.Serialization.Constructors;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Reflection;
 using RType = System.Type;
 
@@ -55,6 +56,8 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="c">The MetaConstructor to  use</param>
         public MetaAttribute(MetaConstructor c) : base()
         {
+            Contract.Requires(c != null);
+
             this.Instance = MetaObject.FromConstructor(c, new ObjectConstructor(c.PropertyInfo, c.Type, (c.Object as AttributeInstance).Instance));
 
             this.Type = MetaType.FromConstructor(c, (c.Object as AttributeInstance).Instance);

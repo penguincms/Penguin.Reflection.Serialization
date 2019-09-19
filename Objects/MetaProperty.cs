@@ -2,6 +2,7 @@
 using Penguin.Reflection.Serialization.Abstractions.Interfaces;
 using Penguin.Reflection.Serialization.Constructors;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Reflection;
 
 namespace Penguin.Reflection.Serialization.Objects
@@ -59,6 +60,8 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="p">Thhe existing MetaProperty</param>
         public MetaProperty(IMetaProperty p) : this()
         {
+            Contract.Requires(p != null);
+
             this.Name = p.Name;
             this.Type = p.Type;
         }
@@ -105,9 +108,9 @@ namespace Penguin.Reflection.Serialization.Objects
             List<IMetaAttribute> attributes = new List<IMetaAttribute>();
             this.Attributes = attributes;
 
-            if (c.Settings.AttributeIncludeSettings != AttributeIncludeSettings.None)
+            if (c.Settings.AttributeIncludeSettings != AttributeIncludeSetting.None)
             {
-                foreach (AttributeInstance a in Cache.GetCustomAttributes(c.PropertyInfo))
+                foreach (AttributeInstance a in TypeCache.GetCustomAttributes(c.PropertyInfo))
                 {
                     if (c.Settings.ShouldAddAttribute(a.Instance.GetType()))
                     {

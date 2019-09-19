@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using Penguin.Reflection.Extensions;
+using System.Diagnostics.Contracts;
 
 <#
 
@@ -62,6 +63,7 @@ public static partial class MetaSerializer {
 		}
 
         public static string Serialize(this IList<Enum> toSerialize) {
+			Contract.Requires(toSerialize != null);
 
             List<string> Properties = new  List<string>();
 
@@ -74,6 +76,8 @@ public static partial class MetaSerializer {
         }
 
         public static string SerializeDictionary(this IDictionary toSerialize) {
+
+			Contract.Requires(toSerialize != null);
 
             List<string> Properties = new  List<string>();
 
@@ -104,6 +108,7 @@ public static partial class MetaSerializer {
         }
 
         public static string SerializeList(this IList toSerialize) {
+			Contract.Requires(toSerialize != null);
 
             List<string> Properties = new  List<string>();
 
@@ -128,6 +133,7 @@ public static partial class MetaSerializer {
     <#    foreach(CodeInterface thisClass in MetaObjects) {#>      
 
         public static string Serialize(this IList<<#=            thisClass.FullName#>> toSerialize) {
+			Contract.Requires(toSerialize != null);
 
             List<string> Properties = new  List<string>();
 
@@ -141,7 +147,9 @@ public static partial class MetaSerializer {
         }
 
         public static string Serialize(this <#=            thisClass.FullName#> toSerialize) {
-            List<string> Properties = new  List<string>();
+            Contract.Requires(toSerialize != null);
+			
+			List<string> Properties = new  List<string>();
 
             Properties.Add($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 

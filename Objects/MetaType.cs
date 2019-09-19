@@ -4,6 +4,7 @@ using Penguin.Reflection.Serialization.Abstractions.Interfaces;
 using Penguin.Reflection.Serialization.Constructors;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using Enum = System.Enum;
@@ -124,9 +125,14 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="properties">Manually set the properties list if type is defining a temporary instance of and object</param>
 		public MetaType(Type type, IList<IMetaObject> properties = null) : base()
         {
+            Contract.Requires(type != null);
+
             if (Nullable.GetUnderlyingType(type) != null)
             {
                 type = Nullable.GetUnderlyingType(type);
+
+                Contract.Assert(type != null);
+
                 this.IsNullable = true;
             }
 
@@ -149,7 +155,7 @@ namespace Penguin.Reflection.Serialization.Objects
                     this.Values.Add(
                         new EnumValue()
                         {
-                            Value = System.Convert.ChangeType(
+                            Value = Convert.ChangeType(
                                 Enum.Parse(type, Name),
                                 Enum.GetUnderlyingType(type)
                             ).ToString(),
@@ -168,6 +174,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Only for use as a placeholder type for manually created rendering models
         /// </summary>
         /// <param name="s"></param>
+        /// <param name="properties">Properties to set for the type</param>
         public MetaType(string s, IList<IMetaObject> properties)
         {
             Name = AssemblyQualifiedName = s;
@@ -186,7 +193,13 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="c">The constructor to use</param>
         /// <param name="o">The object to base the MetaType on</param>
         /// <returns>A new instance of MetaType</returns>
-        public static MetaType FromConstructor(MetaConstructor c, object o) => FromConstructor(c, o.GetType());
+        public static MetaType FromConstructor(MetaConstructor c, object o)
+        {
+            Contract.Requires(c != null);
+            Contract.Requires(o != null);
+
+            return FromConstructor(c, o.GetType());
+        }
 
         /// <summary>
         /// Tests for inequality between two MetaTypes using AssemblyQualifiedName
@@ -209,12 +222,12 @@ namespace Penguin.Reflection.Serialization.Objects
                 return true;
             }
 
-            if (ReferenceEquals(obj1, null))
+            if (obj1 is null)
             {
                 return false;
             }
 
-            if (ReferenceEquals(obj2, null))
+            if (obj2 is null)
             {
                 return false;
             }
@@ -337,9 +350,9 @@ namespace Penguin.Reflection.Serialization.Objects
                 this.Parameters.Add(MetaType.FromConstructor(c, g));
             }
 
-            if (c.Settings.AttributeIncludeSettings != AttributeIncludeSettings.None)
+            if (c.Settings.AttributeIncludeSettings != AttributeIncludeSetting.None)
             {
-                foreach (AttributeInstance a in Cache.GetCustomAttributes(type))
+                foreach (AttributeInstance a in TypeCache.GetCustomAttributes(type))
                 {
                     if (c.Settings.ShouldAddAttribute(a.Instance.GetType()))
                     {

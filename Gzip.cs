@@ -10,7 +10,7 @@ namespace Penguin.Reflection.Serialization
     /// <summary>
     /// Methods for constructing and serializing objects in a Zipped format
     /// </summary>
-    public class GZip
+    public static class GZip
     {
         #region Methods
 

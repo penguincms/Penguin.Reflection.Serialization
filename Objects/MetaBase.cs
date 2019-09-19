@@ -1,6 +1,7 @@
 ﻿using Penguin.Reflection.Serialization.Abstractions.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace Penguin.Reflection.Serialization.Objects
@@ -10,6 +11,8 @@ namespace Penguin.Reflection.Serialization.Objects
     /// </summary>
     public class AbstractMeta : IAbstractMeta
     {
+        private const string CantCreateMessage = "Cant create instance of AbstractMeta";
+
         #region Properties
 
         /// <summary>
@@ -34,7 +37,7 @@ namespace Penguin.Reflection.Serialization.Objects
         {
             if (this.GetType() == typeof(AbstractMeta))
             {
-                throw new Exception("Cant create instance of AbstractMeta");
+                throw new Exception(CantCreateMessage);
             }
 
             this.i = id;
@@ -70,6 +73,8 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns>A hydrated version of the object</returns>
         public T HydrateChild<T>(T toHydrate, IDictionary<int, IAbstractMeta> meta) where T : IAbstractMeta
         {
+            Contract.Requires(meta != null);
+
             if (toHydrate == null)
             {
                 return default;

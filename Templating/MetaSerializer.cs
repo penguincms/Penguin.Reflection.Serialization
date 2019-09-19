@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using Penguin.Reflection.Extensions;
+using System.Diagnostics.Contracts;
 
 
 namespace Penguin.Reflection.Serialization.Templating
@@ -23,11 +24,12 @@ public static partial class MetaSerializer {
 		}
 
         public static string Serialize(this IList<Enum> toSerialize) {
+			Contract.Requires(toSerialize != null);
 
             List<string> Properties = new  List<string>();
 
             foreach(Enum thisChild in toSerialize) {
-                Properties.Add(System.Convert.ChangeType(toSerialize, Enum.GetUnderlyingType(toSerialize.GetType())).ToString());
+                Properties.Add(Convert.ChangeType(toSerialize, Enum.GetUnderlyingType(toSerialize.GetType())).ToString());
             }
 
             return "[" + string.Join(",", Properties) + "]";
@@ -35,6 +37,8 @@ public static partial class MetaSerializer {
         }
 
         public static string SerializeDictionary(this IDictionary toSerialize) {
+
+			Contract.Requires(toSerialize != null);
 
             List<string> Properties = new  List<string>();
 
@@ -104,6 +108,7 @@ public static partial class MetaSerializer {
         }
 
         public static string SerializeList(this IList toSerialize) {
+			Contract.Requires(toSerialize != null);
 
             List<string> Properties = new  List<string>();
 
@@ -167,6 +172,7 @@ public static partial class MetaSerializer {
           
 
         public static string Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaType> toSerialize) {
+			Contract.Requires(toSerialize != null);
 
             List<string> Properties = new  List<string>();
 
@@ -180,7 +186,9 @@ public static partial class MetaSerializer {
         }
 
         public static string Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaType toSerialize) {
-            List<string> Properties = new  List<string>();
+            Contract.Requires(toSerialize != null);
+			
+			List<string> Properties = new  List<string>();
 
             Properties.Add($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
@@ -207,6 +215,7 @@ public static partial class MetaSerializer {
           
 
         public static string Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaProperty> toSerialize) {
+			Contract.Requires(toSerialize != null);
 
             List<string> Properties = new  List<string>();
 
@@ -220,7 +229,9 @@ public static partial class MetaSerializer {
         }
 
         public static string Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaProperty toSerialize) {
-            List<string> Properties = new  List<string>();
+            Contract.Requires(toSerialize != null);
+			
+			List<string> Properties = new  List<string>();
 
             Properties.Add($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
@@ -235,6 +246,7 @@ public static partial class MetaSerializer {
           
 
         public static string Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject> toSerialize) {
+			Contract.Requires(toSerialize != null);
 
             List<string> Properties = new  List<string>();
 
@@ -248,7 +260,9 @@ public static partial class MetaSerializer {
         }
 
         public static string Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject toSerialize) {
-            List<string> Properties = new  List<string>();
+            Contract.Requires(toSerialize != null);
+			
+			List<string> Properties = new  List<string>();
 
             Properties.Add($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
@@ -256,12 +270,12 @@ public static partial class MetaSerializer {
              if (toSerialize.CollectionItems != null && toSerialize.CollectionItems.Any()) { Properties.Add("\"CollectionItems\":" + SerializeList(toSerialize.CollectionItems as IList)); }
             if (toSerialize.Exception != 0) { Properties.Add("\"Exception\":" + toSerialize.Exception.ToString()); }
              if (toSerialize.Meta != null && toSerialize.Meta.Keys.Count > 0) { Properties.Add("\"Meta\":" + SerializeDictionary(toSerialize.Meta as IDictionary)); }
-            if (toSerialize.v.HasValue) { Properties.Add("\"v\":" + toSerialize.v.Value.ToString()); }
              if (toSerialize.Null) { Properties.Add("\"Null\":true"); }
              if (toSerialize.Properties != null && toSerialize.Properties.Any()) { Properties.Add("\"Properties\":" + SerializeList(toSerialize.Properties as IList)); }
              if (toSerialize.Property != null) { Properties.Add("\"Property\":" + Serialize(toSerialize.Property)); }
              if (toSerialize.Template != null) { Properties.Add("\"Template\":" + Serialize(toSerialize.Template)); }
              if (toSerialize.Type != null) { Properties.Add("\"Type\":" + Serialize(toSerialize.Type)); }
+            if (toSerialize.v.HasValue) { Properties.Add("\"v\":" + toSerialize.v.Value.ToString()); }
               if (toSerialize.Value != null) { Properties.Add("\"Value\":\"" + toSerialize.Value.ToJSONValue() + "\""); }
             if (toSerialize.i != 0) { Properties.Add("\"i\":" + toSerialize.i.ToString()); }
              if (toSerialize.IsHydrated) { Properties.Add("\"IsHydrated\":true"); }
@@ -270,6 +284,7 @@ public static partial class MetaSerializer {
           
 
         public static string Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaAttribute> toSerialize) {
+			Contract.Requires(toSerialize != null);
 
             List<string> Properties = new  List<string>();
 
@@ -283,7 +298,9 @@ public static partial class MetaSerializer {
         }
 
         public static string Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaAttribute toSerialize) {
-            List<string> Properties = new  List<string>();
+            Contract.Requires(toSerialize != null);
+			
+			List<string> Properties = new  List<string>();
 
             Properties.Add($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
@@ -297,6 +314,7 @@ public static partial class MetaSerializer {
           
 
         public static string Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IStringHolder> toSerialize) {
+			Contract.Requires(toSerialize != null);
 
             List<string> Properties = new  List<string>();
 
@@ -310,7 +328,9 @@ public static partial class MetaSerializer {
         }
 
         public static string Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IStringHolder toSerialize) {
-            List<string> Properties = new  List<string>();
+            Contract.Requires(toSerialize != null);
+			
+			List<string> Properties = new  List<string>();
 
             Properties.Add($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
@@ -322,6 +342,7 @@ public static partial class MetaSerializer {
           
 
         public static string Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta> toSerialize) {
+			Contract.Requires(toSerialize != null);
 
             List<string> Properties = new  List<string>();
 
@@ -335,7 +356,9 @@ public static partial class MetaSerializer {
         }
 
         public static string Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta toSerialize) {
-            List<string> Properties = new  List<string>();
+            Contract.Requires(toSerialize != null);
+			
+			List<string> Properties = new  List<string>();
 
             Properties.Add($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
@@ -346,6 +369,7 @@ public static partial class MetaSerializer {
           
 
         public static string Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue> toSerialize) {
+			Contract.Requires(toSerialize != null);
 
             List<string> Properties = new  List<string>();
 
@@ -359,7 +383,9 @@ public static partial class MetaSerializer {
         }
 
         public static string Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue toSerialize) {
-            List<string> Properties = new  List<string>();
+            Contract.Requires(toSerialize != null);
+			
+			List<string> Properties = new  List<string>();
 
             Properties.Add($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
@@ -370,6 +396,7 @@ public static partial class MetaSerializer {
           
 
         public static string Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaSerializable> toSerialize) {
+			Contract.Requires(toSerialize != null);
 
             List<string> Properties = new  List<string>();
 
@@ -383,7 +410,9 @@ public static partial class MetaSerializer {
         }
 
         public static string Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaSerializable toSerialize) {
-            List<string> Properties = new  List<string>();
+            Contract.Requires(toSerialize != null);
+			
+			List<string> Properties = new  List<string>();
 
             Properties.Add($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 

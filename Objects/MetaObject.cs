@@ -1,4 +1,5 @@
-﻿using Penguin.Reflection.Abstractions;
+﻿using Penguin.Debugging;
+using Penguin.Reflection.Abstractions;
 using Penguin.Reflection.Extensions;
 using Penguin.Reflection.Serialization.Abstractions.Constructors;
 using Penguin.Reflection.Serialization.Abstractions.Interfaces;
@@ -8,6 +9,7 @@ using Penguin.Reflection.Serialization.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using RType = System.Type;
@@ -113,6 +115,9 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="c">The constructor to use when generating the list</param>
         public MetaObject(string PropertyName, IList<object> Values, MetaConstructor c) : base()
         {
+            Contract.Requires(c != null);
+            Contract.Requires(Values != null);
+
             this.Properties = new List<IMetaObject>();
             this.CollectionItems = new List<IMetaObject>();
 
@@ -120,11 +125,11 @@ namespace Penguin.Reflection.Serialization.Objects
             {
                 if (o != null)
                 {
-                    this.AddItem(MetaObject.FromConstructor(c, new ObjectConstructor(null, null, o)));
+                    this.AddItem(FromConstructor(c, new ObjectConstructor(null, null, o)));
                 }
             }
 
-            this.Type = Penguin.Reflection.Serialization.Objects.MetaType.FromConstructor(c, Values.GetType());
+            this.Type = MetaType.FromConstructor(c, Values.GetType());
 
             this.Property = new MetaProperty()
             {
@@ -138,7 +143,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         /// <param name="Value"></param>
         /// <param name="c"></param>
-        public MetaObject(object Value, MetaConstructor c) : this(c.Clone(Value)) { }
+        public MetaObject(object Value, MetaConstructor c) : this(c?.Clone(Value)) { }
 
         /// <summary>
         /// Creates a single use MetaObject using the default settings
@@ -166,6 +171,8 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="c">The constructor to use</param>
         public MetaObject(MetaConstructor c) : base()
         {
+            Contract.Requires(c != null);
+
             this.Constructor = c;
 
             c.ClaimOwnership(this);
@@ -193,12 +200,12 @@ namespace Penguin.Reflection.Serialization.Objects
             {
                 if (c.Object is null)
                 {
-                    this.v = c.Claim(0.ToString());
+                    this.v = c.Claim("0");
                 }
                 else
                 {
                     RType thisType = c.Type;
-                    this.v = c.Claim(System.Convert.ChangeType(c.Object, Enum.GetUnderlyingType(thisType)).ToString());
+                    this.v = c.Claim(Convert.ChangeType(c.Object, Enum.GetUnderlyingType(thisType)).ToString());
                 }
             }
             else if (thisCoreType == CoreType.Value)
@@ -242,7 +249,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
                             //Ex       Bookshelf.Books => List<T>[0] => Book
                             //Becomes  Bookshelf.Books => Book
-                            MetaObject i = MetaObject.FromConstructor(c, new ObjectConstructor(c.PropertyInfo, c.Type.GetCollectionType(), o));
+                            MetaObject i = FromConstructor(c, new ObjectConstructor(c.PropertyInfo, c.Type.GetCollectionType(), o));
 
                             i.Property = this.Property;
 
@@ -255,7 +262,7 @@ namespace Penguin.Reflection.Serialization.Objects
                     this.CollectionItems = new List<IMetaObject>();
                     RType KVPType = typeof(KeyValuePair<,>).MakeGenericType(c.PropertyInfo.PropertyType.GetGenericArguments()[0], c.PropertyInfo.PropertyType.GetGenericArguments()[0]);
 
-                    this.Template = MetaObject.FromConstructor(c, new ObjectConstructor(c.PropertyInfo, KVPType, null));
+                    this.Template = FromConstructor(c, new ObjectConstructor(c.PropertyInfo, KVPType, null));
 
                     if (!(c.Object is null))
                     {
@@ -274,7 +281,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
                             //Ex       Bookshelf.Books => List<T>[0] => Book
                             //Becomes  Bookshelf.Books => Book
-                            MetaObject i = MetaObject.FromConstructor(c, new ObjectConstructor(c.PropertyInfo, o.GetType(), o));
+                            MetaObject i = FromConstructor(c, new ObjectConstructor(c.PropertyInfo, o.GetType(), o));
 
                             i.Property = this.Property;
 
@@ -309,7 +316,7 @@ namespace Penguin.Reflection.Serialization.Objects
                         }
                         if (c.Object is null)
                         {
-                            i = MetaObject.FromConstructor(c, new ObjectConstructor(thisProperty, null, null));
+                            i = FromConstructor(c, new ObjectConstructor(thisProperty, null, null));
                         }
                         else
                         {
@@ -323,16 +330,19 @@ namespace Penguin.Reflection.Serialization.Objects
                                 }
                                 else
                                 {
-                                    i = MetaObject.FromConstructor(c, new ObjectConstructor(thisProperty, null, Object));
+                                    i = FromConstructor(c, new ObjectConstructor(thisProperty, null, Object));
                                 }
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex.Message);
-                                Console.WriteLine(ex.StackTrace);
+                                if (StaticLogger.IsListening)
+                                {
+                                    StaticLogger.Log(ex.Message, StaticLogger.LoggingLevel.Call);
+                                    StaticLogger.Log(ex.StackTrace, StaticLogger.LoggingLevel.Call);
+                                }
 
-                                i = MetaObject.FromConstructor(c, new ObjectConstructor(thisProperty, null, null));
-                                i.Exception = c.AddException(thisProperty.Name + ": " + ex.Message);
+                                i = FromConstructor(c, new ObjectConstructor(thisProperty, null, null));
+                                i.Exception = c.AddException($"{thisProperty.Name}: {ex.Message}");
                             }
                         }
 
@@ -360,6 +370,8 @@ namespace Penguin.Reflection.Serialization.Objects
         {
             get
             {
+                Contract.Requires(PropertyName != null);
+
                 IMetaObject m = this;
 
                 foreach (string chunk in PropertyName.Split('.'))
@@ -374,19 +386,21 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <summary>
         /// Returns an instance of a property by IMetaProperty
         /// </summary>
-        /// <param name="property">The property to search for</param>
+        /// <param name="metaProperty">The property to search for</param>
         /// <returns>The property if exists, or Error if not</returns>
-        public IMetaObject this[IMetaProperty property]    // Indexer declaration
+        public IMetaObject this[IMetaProperty metaProperty]    // Indexer declaration
         {
             get
             {
-                if (property.Type.IsNullable || property.Type.CoreType == CoreType.Reference)
+                Contract.Requires(metaProperty != null);
+
+                if (metaProperty.Type.IsNullable || metaProperty.Type.CoreType == CoreType.Reference)
                 {
-                    return this.Properties.FirstOrDefault(p => p.Property.Name == property.Name);
+                    return this.Properties.FirstOrDefault(p => p.Property.Name == metaProperty.Name);
                 }
                 else
                 {
-                    return this.Properties.First(p => p.Property.Name == property.Name);
+                    return this.Properties.First(p => p.Property.Name == metaProperty.Name);
                 }
             }
         }
@@ -400,7 +414,12 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         /// <param name="c">The MetaConstructor to use</param>
         /// <returns>A newly serialized and DEHYDRATED object</returns>
-        public static MetaObject FromConstructor(MetaConstructor c) => FromConstructor(c, new ObjectConstructor(c.PropertyInfo, c.Type, c.Object));
+        public static MetaObject FromConstructor(MetaConstructor c)
+        {
+            Contract.Requires(c != null);
+
+            return FromConstructor(c, new ObjectConstructor(c.PropertyInfo, c.Type, c.Object));
+        }
 
         /// <summary>
         /// Creates a new serialized object using the provided Constructor, and object
@@ -418,6 +437,8 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns>A newly serialized and DEHYDRATED object</returns>
         public static MetaObject FromConstructor(MetaConstructor c, ObjectConstructor oc)
         {
+            Contract.Requires(c != null);
+
             MetaObject i;
 
             KeyGroup Wrapper = new KeyGroup(oc);
@@ -567,6 +588,8 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="c">The constructor to register</param>
         public void RegisterConstructor(MetaConstructor c)
         {
+            Contract.Requires(c != null);
+
             this.Meta = c.Meta.Select(v => v.Value).ToDictionary(k => k.i, v => v);
             this.BuildExceptions = c.Exceptions.ToDictionary(k => k.Value, v => v.Key);
             this.IsRoot = true;
@@ -578,6 +601,8 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="instance">The object instance to remove from the collection</param>
         public void RemoveItem(IMetaObject instance)
         {
+            Contract.Requires(instance != null);
+
             instance.SetParent(null);
 
             this.CollectionItems.Remove(instance);
@@ -589,6 +614,8 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="instance">The instance of the property value to remove</param>
         public void RemoveProperty(IMetaObject instance)
         {
+            Contract.Requires(instance != null);
+
             instance.SetParent(null);
 
             this.Properties.Remove(instance);
