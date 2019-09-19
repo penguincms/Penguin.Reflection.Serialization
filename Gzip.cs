@@ -29,9 +29,11 @@ namespace Penguin.Reflection.Serialization
 
             c = c ?? new MetaConstructor();
 
-            string SerializedObject = new MetaObject(o, c).Serialize();
+            StringBuilder target = new StringBuilder();
 
-            return Zip(SerializedObject);
+            new MetaObject(o, c).Serialize(target);
+            
+            return Zip(target.ToString());
         }
 
         /// <summary>

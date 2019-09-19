@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System;
 using Penguin.Reflection.Extensions;
 using System.Diagnostics.Contracts;
+using System.Text;
 
 <#
 
@@ -62,30 +63,37 @@ public static partial class MetaSerializer {
 			}
 		}
 
-        public static string Serialize(this IList<Enum> toSerialize) {
+        public static void Serialize(this IList<Enum> toSerialize, StringBuilder sb) {
 			Contract.Requires(toSerialize != null);
 
-            List<string> Properties = new  List<string>();
+			sb.Append("[");
 
+			int ElementIndex = 0;
             foreach(Enum thisChild in toSerialize) {
-                Properties.Add(System.Convert.ChangeType(toSerialize, Enum.GetUnderlyingType(toSerialize.GetType())).ToString());
+				if(ElementIndex++ > 0){
+					sb.Append(",");
+				}
+                sb.Append(System.Convert.ChangeType(toSerialize, Enum.GetUnderlyingType(toSerialize.GetType())).ToString());
             }
 
-            return "[" + string.Join(",", Properties) + "]";
+            sb.Append("]");
 
         }
 
-        public static string SerializeDictionary(this IDictionary toSerialize) {
+        public static void SerializeDictionary(this IDictionary toSerialize, StringBuilder sb) {
 
 			Contract.Requires(toSerialize != null);
 
-            List<string> Properties = new  List<string>();
+			sb.Append("{");
 
+			int ElementIndex = 0;
 
             foreach(DictionaryEntry thisChild in toSerialize) {
-
+				if(ElementIndex++ > 0) {
+					sb.Append(",");
+				}
             if(thisChild.Value.GetType() == typeof(String)) { 
-                    Properties.Add("\"" + thisChild.Key.ToString() +"\":\"" + thisChild.Value.ToJSONValue() + "\"");
+                    sb.Append($"\"{thisChild.Key.ToString()}\":\"{thisChild.Value.ToJSONValue()}\"");
                     continue;
             }
 
@@ -94,7 +102,8 @@ public static partial class MetaSerializer {
     foreach(CodeInterface thisInterface in MetaObjects) { #>
 
                 if(typeof(<#=thisInterface.FullName#>).IsAssignableFrom(thisChild.Value.GetType())) { 
-                    Properties.Add("\"" + thisChild.Key.ToString() +"\":" + Serialize(thisChild.Value as <#=thisInterface.FullName#>));
+                    sb.Append($"\"{thisChild.Key.ToString()}\":");
+					Serialize(thisChild.Value as <#=thisInterface.FullName#>, sb);
                     continue;
                 }
 
@@ -103,22 +112,26 @@ public static partial class MetaSerializer {
                 throw new Exception("Template does not support Dictionary Value type");
             }
 
-            return "{" + string.Join(",", Properties) + "}";
+			sb.Append("}");
 
         }
 
-        public static string SerializeList(this IList toSerialize) {
+        public static void SerializeList(this IList toSerialize, StringBuilder sb) {
 			Contract.Requires(toSerialize != null);
+			sb.Append("[");
 
-            List<string> Properties = new  List<string>();
-
+			int ElementIndex = 0;
             foreach(object thisChild in toSerialize) {
                 if(thisChild is null) { continue; }
 <#    
     foreach(CodeInterface thisInterface in MetaObjects) { #>
+                
+				if(typeof(<#=thisInterface.FullName#>).IsAssignableFrom(thisChild.GetType())) { 
+					if(ElementIndex++ > 0) {
+						sb.Append(",");
+					}
 
-                if(typeof(<#=thisInterface.FullName#>).IsAssignableFrom(thisChild.GetType())) { 
-                    Properties.Add(Serialize(thisChild as <#=thisInterface.FullName#>));
+                    Serialize(thisChild as <#=thisInterface.FullName#>, sb);
                     continue;
                 }
 
@@ -126,38 +139,42 @@ public static partial class MetaSerializer {
     #>        
 }
 
-            return "[" + string.Join(",", Properties) + "]";
+			sb.Append("]");
 
         }
 
     <#    foreach(CodeInterface thisClass in MetaObjects) {#>      
 
-        public static string Serialize(this IList<<#=            thisClass.FullName#>> toSerialize) {
+        public static void Serialize(this IList<<#=            thisClass.FullName#>> toSerialize, StringBuilder sb) {
 			Contract.Requires(toSerialize != null);
 
-            List<string> Properties = new  List<string>();
-
+            int ElementIndex = 0;
+			sb.Append("[");
 
             foreach(<#=            thisClass.FullName#> thisChild in toSerialize) {
-                Properties.Add(Serialize(thisChild));
+				if(ElementIndex++ > 0) {
+					sb.Append(",");
+				}
+
+                Serialize(thisChild, sb);
             }
 
-            return "[" + string.Join(",", Properties) + "]";
+            sb.Append("]");
 
         }
 
-        public static string Serialize(this <#=            thisClass.FullName#> toSerialize) {
+        public static void Serialize(this <#=            thisClass.FullName#> toSerialize, StringBuilder sb) {
             Contract.Requires(toSerialize != null);
-			
-			List<string> Properties = new  List<string>();
 
-            Properties.Add($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
+			sb.Append("{");
+
+            sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
 <#        
         List<CodeInterface> toCheck = GetBaseTypes(thisClass);
 
         foreach (CodeInterface checkMe in toCheck){
-
+		    int propindex = 0;
             foreach(CodeElement thisMember in checkMe.Members) {
                 if(thisMember.Kind != EnvDTE.vsCMElement.vsCMElementProperty) { continue; }
                 CodeProperty thisProperty = (thisMember as CodeProperty);
@@ -175,33 +192,45 @@ public static partial class MetaSerializer {
 
                 string PropRef = "toSerialize." + thisProperty.Name;
 
-                
                 if (thisTypeName == "String") {
-                #>              if (<#=PropRef#> != null) { Properties.Add("\"<#=                        thisProperty.Name#>\":\"" + <#=PropRef#>.ToJSONValue() + "\""); }
+                #>              if (<#=PropRef#> != null) { sb.Append($",\"<#=                        thisProperty.Name#>\":\"{<#=PropRef#>.ToJSONValue()}\""); }
 <#                } else if (thisTypeName == "Boolean") {
-                #>             if (<#=PropRef#>) { Properties.Add("\"<#=                        thisProperty.Name#>\":true"); }
+                #>             if (<#=PropRef#>) { sb.Append(",\"<#=                        thisProperty.Name#>\":true"); }
 <#                } else if (thisTypeName == "Int32") {
-                #>            if (<#=PropRef#> != 0) { Properties.Add("\"<#=                        thisProperty.Name#>\":" + <#=PropRef#>.ToString()); }
+                #>            if (<#=PropRef#> != 0) { sb.Append($",\"<#=                        thisProperty.Name#>\":{<#=PropRef#>}"); }
 <#                } else if (thisTypeName == "Int32?") {
-                #>            if (<#=PropRef#>.HasValue) { Properties.Add("\"<#=                        thisProperty.Name#>\":" + <#=PropRef#>.Value.ToString()); }
+                #>            if (<#=PropRef#>.HasValue) { sb.Append($",\"<#=                        thisProperty.Name#>\":{<#=PropRef#>.Value}"); }
 <#                } else if (IsEnum) {
-                #>            if ((int)<#=PropRef#> != 0) { Properties.Add("\"<#=                        thisProperty.Name#>\":" + System.Convert.ChangeType(<#=PropRef#>, Enum.GetUnderlyingType(<#=PropRef#>.GetType())).ToString()); }
+                #>            if ((int)<#=PropRef#> != 0) { sb.Append($",\"<#=                        thisProperty.Name#>\":{System.Convert.ChangeType(<#=PropRef#>, Enum.GetUnderlyingType(<#=PropRef#>.GetType()))}"); }
 <#                } else if (MetaObjects.Any(M => M.Name == thisTypeName)) {
-                #>             if (<#=PropRef#> != null) { Properties.Add("\"<#=                        thisProperty.Name#>\":" + Serialize(<#=PropRef#>)); }
+                #>             if (<#=PropRef#> != null) { 
+									sb.Append(",\"<#=                        thisProperty.Name#>\":");
+									Serialize(<#=PropRef#>, sb); 
+							    }
 <#                } else if (thisTypeName == "IList") {
-                #>             if (<#=PropRef#> != null && <#=PropRef#>.Any()) { Properties.Add("\"<#=                        thisProperty.Name#>\":" + SerializeList(<#=PropRef#> as IList)); }
+                #>             if (<#=PropRef#> != null && <#=PropRef#>.Any()) { 
+								sb.Append(",\"<#=                        thisProperty.Name#>\":");
+							   SerializeList(<#=PropRef#> as IList, sb); 
+							   }
 <#                } else if (thisTypeName == "IEnumerable") {
-                #>             if (<#=PropRef#> != null && <#=PropRef#>.Any()) { Properties.Add("\"<#=                        thisProperty.Name#>\":" + SerializeList(<#=PropRef#>.ToList())); }
+                #>             if (<#=PropRef#> != null && <#=PropRef#>.Any()) { 
+								sb.Append(",\"<#=                        thisProperty.Name#>\":");
+								SerializeList(<#=PropRef#>.ToList(), sb); 
+				               }
 <#                } else if (thisTypeName == "IDictionary") {
-                #>             if (<#=PropRef#> != null && <#=PropRef#>.Keys.Count > 0) { Properties.Add("\"<#=                        thisProperty.Name#>\":" + SerializeDictionary(<#=PropRef#> as IDictionary)); }
+                #>             if (<#=PropRef#> != null && <#=PropRef#>.Keys.Count > 0) { 
+									sb.Append(",\"<#=                        thisProperty.Name#>\":");
+									SerializeDictionary(<#=PropRef#> as IDictionary, sb); 
+							   }
 <#                } else {#>
             <#=                        thisProperty.Name #>:<#=                        thisProperty.Type.CodeType.Name #>
 
-<#                    
-                }   
+<#                 
+				
+                }  
                 } 
         }#>
-            return "{" + string.Join(",", Properties) + "}";
+            	sb.Append("}");
         }
     <#    }#>
 } 
