@@ -260,7 +260,10 @@ namespace Penguin.Reflection.Serialization.Objects
                 else if (thisCoreType == CoreType.Dictionary)
                 {
                     this.CollectionItems = new List<IMetaObject>();
-                    RType KVPType = typeof(KeyValuePair<,>).MakeGenericType(c.PropertyInfo.PropertyType.GetGenericArguments()[0], c.PropertyInfo.PropertyType.GetGenericArguments()[0]);
+
+                    Type checkType = c.Object?.GetType() ?? c.PropertyInfo.PropertyType;
+
+                    RType KVPType = typeof(KeyValuePair<,>).MakeGenericType(checkType.GetGenericArguments()[0], checkType.GetGenericArguments()[1]);
 
                     this.Template = FromConstructor(c, new ObjectConstructor(c.PropertyInfo, KVPType, null));
 
