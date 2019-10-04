@@ -13,9 +13,9 @@ namespace Penguin.Reflection.Serialization.Extensions
         /// Tests for type equality between an object implementing ITypeInfo and a Type, by full name
         /// </summary>
         /// <param name="o">The object to test</param>
-        /// <param name="FullName">The full name of the type</param>
+        /// <param name="StringValue">The ToString value of the type</param>
         /// <returns>Whether or not the types are equal</returns>
-        public static bool Is(this ITypeInfo o, string FullName)
+        public static bool Is(this ITypeInfo o, string StringValue)
         {
             if (o is null)
             {
@@ -26,7 +26,7 @@ namespace Penguin.Reflection.Serialization.Extensions
 
             do
             {
-                if (toCheck.FullName == FullName)
+                if (toCheck.ToString() == StringValue)
                 {
                     return true;
                 }

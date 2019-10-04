@@ -203,7 +203,7 @@
             Tests for type equality between an object implementing ITypeInfo and a Type, by full name
             </summary>
             <param name="o">The object to test</param>
-            <param name="FullName">The full name of the type</param>
+            <param name="StringValue">The ToString value of the type</param>
             <returns>Whether or not the types are equal</returns>
         </member>
         <member name="T:Penguin.Reflection.Serialization.GZip">
@@ -704,6 +704,11 @@
             The Name for the type
             </summary>
         </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.StringValue">
+            <summary>
+            ToString called on the Type
+            </summary>
+        </member>
         <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.Namespace">
             <summary>
             The Namespace the type is found in
@@ -771,6 +776,38 @@
             </summary>
             <param name="obj1">This object</param>
             <param name="obj2">The other MetaType to test</param>
+            <returns></returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.op_Inequality(System.Type,Penguin.Reflection.Serialization.Objects.MetaType)">
+            <summary>
+            Tests for inequality between a MetaType an a System Type using the string value
+            </summary>
+            <param name="obj1">This object</param>
+            <param name="obj2">The System Type</param>
+            <returns></returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.op_Equality(System.Type,Penguin.Reflection.Serialization.Objects.MetaType)">
+            <summary>
+            Tests for equality between a MetaType an a System Type using the string value
+            </summary>
+            <param name="obj1">This object</param>
+            <param name="obj2">The System Type</param>
+            <returns></returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.op_Inequality(Penguin.Reflection.Serialization.Objects.MetaType,System.Type)">
+            <summary>
+            Tests for inequality between a MetaType an a System Type using the string value
+            </summary>
+            <param name="obj1">This object</param>
+            <param name="obj2">The System Type</param>
+            <returns></returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.op_Equality(Penguin.Reflection.Serialization.Objects.MetaType,System.Type)">
+            <summary>
+            Tests for equality between a MetaType an a System Type using the string value
+            </summary>
+            <param name="obj1">This object</param>
+            <param name="obj2">The System Type</param>
             <returns></returns>
         </member>
         <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.Equals(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaType)">

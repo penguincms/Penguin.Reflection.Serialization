@@ -52,7 +52,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <summary>
         /// The FullName for this type
         /// </summary>
-        public string FullName => this.Name is null || this.Namespace is null ? null : $"{this.Namespace}.{this.Name}";
+        public string FullName { get; set; }
 
         /// <summary>
         /// True if type is an array
@@ -78,6 +78,11 @@ namespace Penguin.Reflection.Serialization.Objects
         /// The Name for the type
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// ToString called on the Type
+        /// </summary>
+        public string StringValue { get; set; }
 
         /// <summary>
         /// The Namespace the type is found in
@@ -137,9 +142,10 @@ namespace Penguin.Reflection.Serialization.Objects
             }
 
             this.Name = type.Name;
+            this.FullName = type.FullName;
             this.Namespace = type.Namespace;
             this.AssemblyQualifiedName = type.AssemblyQualifiedName;
-
+            this.StringValue = type.ToString();
             this.CoreType = type.GetCoreType();
             this.IsArray = type.IsArray;
 
@@ -222,17 +228,59 @@ namespace Penguin.Reflection.Serialization.Objects
                 return true;
             }
 
-            if (obj1 is null)
-            {
-                return false;
-            }
-
-            if (obj2 is null)
+            if (obj1 is null || obj2 is null)
             {
                 return false;
             }
 
             return (obj1.AssemblyQualifiedName == obj2.AssemblyQualifiedName);
+        }
+        /// <summary>
+        /// Tests for inequality between a MetaType an a System Type using the string value
+        /// </summary>
+        /// <param name="obj1">This object</param>
+        /// <param name="obj2">The System Type</param>
+        /// <returns></returns>
+        public static bool operator !=(System.Type obj1, MetaType obj2) => !(obj1 == obj2);
+        
+        /// <summary>
+        /// Tests for equality between a MetaType an a System Type using the string value
+        /// </summary>
+        /// <param name="obj1">This object</param>
+        /// <param name="obj2">The System Type</param>
+        /// <returns></returns>
+        public static bool operator ==(System.Type obj1, MetaType obj2)
+        {
+            if (obj1 is null || obj2 is null)
+            {
+                return false;
+            }
+
+            return (obj1.ToString() == obj2.ToString());
+        }
+        /// <summary>
+        /// Tests for inequality between a MetaType an a System Type using the string value
+        /// </summary>
+        /// <param name="obj1">This object</param>
+        /// <param name="obj2">The System Type</param>
+        /// <returns></returns>
+        public static bool operator !=(MetaType obj1, System.Type obj2) => !(obj1 == obj2);
+
+        /// <summary>
+        /// Tests for equality between a MetaType an a System Type using the string value
+        /// </summary>
+        /// <param name="obj1">This object</param>
+        /// <param name="obj2">The System Type</param>
+        /// <returns></returns>
+        public static bool operator ==(MetaType obj1, System.Type obj2)
+        {
+
+            if (obj1 is null || obj2 is null)
+            {
+                return false;
+            }
+
+            return (obj1.ToString() == obj2.ToString());
         }
 
         /// <summary>
@@ -310,7 +358,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Returns the Name of the type this MetaObject represents
         /// </summary>
         /// <returns>The Name of the type this MetaObject represents</returns>
-        public override string ToString() => this.Name;
+        public override string ToString() => this.StringValue;
 
         /// <summary>
         /// Returns this, since its a Type
