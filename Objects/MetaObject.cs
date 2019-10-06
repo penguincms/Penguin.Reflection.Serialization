@@ -234,7 +234,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
                     if (!(c.Object is null))
                     {
-                        IEnumerable toGet = c.Object as IEnumerable;
+                        List<object> toGet = ((IEnumerable<object>)c.Object).ToList<object>();
 
                         foreach (object o in toGet)
                         {
