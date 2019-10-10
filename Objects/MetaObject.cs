@@ -21,8 +21,6 @@ namespace Penguin.Reflection.Serialization.Objects
     /// </summary>
 	public class MetaObject : AbstractMeta, ITypeInfo, IMetaObject, IAbstractMeta
     {
-        #region Properties
-
         /// <summary>
         /// Top level exception cache for referencing exception messages. Used because recursive serialization has the potential to generate a LOT
         /// of rerundant errors
@@ -83,10 +81,6 @@ namespace Penguin.Reflection.Serialization.Objects
         /// A string representation of the value if value type, or ToString if not
         /// </summary>
         public string Value { get; set; }
-
-        #endregion Properties
-
-        #region Constructors
 
         /// <summary>
         /// This constructor should only be user externally
@@ -234,7 +228,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
                     if (!(c.Object is null))
                     {
-                        List<object> toGet = ((IEnumerable<object>)c.Object).ToList<object>();
+                        IList toGet = typeof(MetaObject).GetMethod(nameof(MetaObject.GetCollection)).MakeGenericMethod(c.Type.GetCollectionType()).Invoke(null, new object[] { c.Object }) as IList;
 
                         foreach (object o in toGet)
                         {
@@ -360,9 +354,26 @@ namespace Penguin.Reflection.Serialization.Objects
             }
         }
 
-        #endregion Constructors
+        /// <summary>
+        /// Inteded to be called via reflection to turn an IEnumerable of an unknown type into an IList
+        /// </summary>
+        /// <typeparam name="T">The reflected type get for the collection source</typeparam>
+        /// <param name="source">The collection source</param>
+        /// <returns>An IList containing the items</returns>
+        public static IList GetCollection<T>(IEnumerable<T> source)
+        {
+            IList toReturn = Activator.CreateInstance<List<T>>();
 
-        #region Indexers
+            if (source != null)
+            {
+                foreach (T o in source)
+                {
+                    toReturn.Add(o);
+                }
+            }
+
+            return toReturn;
+        }
 
         /// <summary>
         /// Returns an instance of a property by property name. Recursive notation supported using "." delimiter
@@ -407,10 +418,6 @@ namespace Penguin.Reflection.Serialization.Objects
                 }
             }
         }
-
-        #endregion Indexers
-
-        #region Methods
 
         /// <summary>
         /// Creates a new serialized object using the provided MetaConstructor
@@ -641,8 +648,6 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         /// <returns></returns>
         public IMetaType TypeOf() => this.Type;
-
-        #endregion Methods
 
         private MetaConstructor Constructor { get; set; }
 
