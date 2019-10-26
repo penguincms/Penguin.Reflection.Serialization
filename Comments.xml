@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>Penguin.Reflection.Serialization.Local</name>
+        <name>Penguin.Reflection.Serialization</name>
     </assembly>
     <members>
         <member name="T:Penguin.Reflection.Serialization.Constructors.AttributeIncludeSetting">

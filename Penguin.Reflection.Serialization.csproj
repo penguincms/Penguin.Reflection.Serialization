@@ -7,9 +7,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Penguin.Debugging" Version="2.0.0" />
-    <PackageReference Include="Penguin.Reflection.Abstractions" Version="3.0.0" />
-    <PackageReference Include="Penguin.Reflection.Extensions" Version="3.0.0" />
     <PackageReference Include="Penguin.Reflection.Serialization.Abstractions" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
