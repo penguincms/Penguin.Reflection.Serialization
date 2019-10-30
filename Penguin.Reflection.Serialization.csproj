@@ -5,9 +5,11 @@
     <Version>3.0.6</Version>
     <Description>Obscenely useful object serialization system that includes the ability to serialize Attributes. Created to allow MetaData driven editors to update and persist objects without requiring references to the original assemblies in which they are defined. For times when Json is simply not enough. 99.99% functional.</Description>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Penguin.Reflection.Serialization</AssemblyName>
+    <RootNamespace>Penguin.Reflection.Serialization</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Penguin.Reflection.Serialization.Abstractions" Version="3.0.1-T9M1HHH" />
+    <PackageReference Include="Penguin.Reflection.Serialization.Abstractions" Version="3.0.1-T9M2XAX" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Templating\MetaSerializer.tt">
