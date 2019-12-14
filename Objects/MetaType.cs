@@ -207,6 +207,7 @@ namespace Penguin.Reflection.Serialization.Objects
             return FromConstructor(c, o.GetType());
         }
 
+
         /// <summary>
         /// Tests for inequality between two MetaTypes using AssemblyQualifiedName
         /// </summary>
@@ -429,7 +430,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="c">The constuctor to use</param>
         /// <param name="t">The type to base the MetaType on</param>
         /// <returns>A new instance of MetaType</returns>
-        internal static MetaType FromConstructor(MetaConstructor c, Type t)
+        public static MetaType FromConstructor(MetaConstructor c, Type t) // Leave this public. Its used by the Reporting Type Serializer
         {
             string Name = t.Name;
 
