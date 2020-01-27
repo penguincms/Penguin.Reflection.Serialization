@@ -213,7 +213,7 @@ namespace Penguin.Reflection.Serialization.Objects
             }
             else //Reference
             {
-                if (c.Object != null)
+                if (c.Object?.ToString() != null)
                 {
                     this.v = c.Claim(c.Object.ToString());
                 }
