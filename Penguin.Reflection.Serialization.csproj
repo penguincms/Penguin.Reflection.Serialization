@@ -7,6 +7,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Penguin.Reflection.Serialization</AssemblyName>
     <RootNamespace>Penguin.Reflection.Serialization</RootNamespace>
+    <DocumentationFile>Penguin.Reflection.Serialization.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Penguin.Reflection.Serialization.Abstractions" Version="3.0.1-T9QC72V" />
