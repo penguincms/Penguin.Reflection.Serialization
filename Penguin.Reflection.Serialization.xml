@@ -4,52 +4,52 @@
         <name>Penguin.Reflection.Serialization</name>
     </assembly>
     <members>
-        <member name="T:Penguin.Reflection.Serialization.Constructors.AttributeIncludeSettings">
+        <member name="T:Penguin.Reflection.Serialization.Constructors.AttributeIncludeSetting">
             <summary>
             Defines the style of include to use when serializing attributes
             </summary>
         </member>
-        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeIncludeSettings.All">
+        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeIncludeSetting.All">
             <summary>
             All attributes are serialized
             </summary>
         </member>
-        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeIncludeSettings.BlackList">
+        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeIncludeSetting.BlackList">
             <summary>
             Attributes are serialized as long as they dont exist in the constructor blacklist
             </summary>
         </member>
-        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeIncludeSettings.WhiteList">
+        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeIncludeSetting.WhiteList">
             <summary>
             Attributes are only serialized if the type exists in the whitelist
             </summary>
         </member>
-        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeIncludeSettings.None">
+        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeIncludeSetting.None">
             <summary>
             All attributes are skipped during serialization
             </summary>
         </member>
-        <member name="T:Penguin.Reflection.Serialization.Constructors.AttributeMatchSettings">
+        <member name="T:Penguin.Reflection.Serialization.Constructors.AttributeMatchSetting">
             <summary>
             Specifies how attributes should be matched to the whitelist/blacklist for inclusion
             </summary>
         </member>
-        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeMatchSettings.Equality">
+        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeMatchSetting.Equality">
             <summary>
             Uses == on the type
             </summary>
         </member>
-        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeMatchSettings.Name">
+        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeMatchSetting.Name">
             <summary>
             Matches based on type name only
             </summary>
         </member>
-        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeMatchSettings.AssemblyQualifiedName">
+        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeMatchSetting.AssemblyQualifiedName">
             <summary>
             Matches based on AssemblyQualifiedName
             </summary>
         </member>
-        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeMatchSettings.FullName">
+        <member name="F:Penguin.Reflection.Serialization.Constructors.AttributeMatchSetting.FullName">
             <summary>
             Matches based on full name
             </summary>
@@ -75,71 +75,6 @@
             Contains the settings to be used when constructing the serialized object tree
             This is a reference so that the settings can be copied as the MetaConstructor clones itself down the tree
             </summary>
-        </member>
-        <member name="T:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings">
-            <summary>
-            Reference class used to hold settings used during object serialization
-            </summary>
-        </member>
-        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.AttributeBlacklist">
-            <summary>
-            When using AttributeIncludeSettings.Blacklist, this list should contain a list of attribute types to skip serializing
-            </summary>
-        </member>
-        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.AttributeIncludeSettings">
-            <summary>
-            The style of setting used to determine whether or not attributes are serialized
-            </summary>
-        </member>
-        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.AttributeMatchSettings">
-            <summary>
-            Specifies the type of match to use when determining whether or not to serialize assemblies
-            </summary>
-        </member>
-        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.AttributeWhitelist">
-            <summary>
-            When using AttributeIncludeSettings.Whitelist, this list should contain a list of attribute types to serialize
-            </summary>
-        </member>
-        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.IgnoreHiddenForeignTypes">
-            <summary>
-            Ignores properties that match (!thisProperty.ReflectedType.IsVisible &amp;&amp; thisProperty.ReflectedType.Assembly != this.Cache.CallingAssembly). Default True
-            </summary>
-        </member>
-        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.IgnoreInheritedProperties">
-            <summary>
-            Do not traverse below the top level object when serializing properties. This setting is applied recursively and should only be used when serializing
-            DTOs
-            </summary>
-        </member>
-        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.IgnoreNullDeclaringType">
-            <summary>
-            Should ignore dynamic properties. Default True
-            </summary>
-        </member>
-        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.IgnoreTypes">
-            <summary>
-            Types to ignore while serializing. Helpful for ignoring errors. By default ignores Type and MemberInfo since in most cases those are handled seperately
-            </summary>
-        </member>
-        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.#ctor">
-            <summary>
-            Creates a new instance of the constructor settings
-            </summary>
-        </member>
-        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.AddTypeGetterOverride(System.Func{System.Type,System.Type})">
-            <summary>
-            Function that all type resolutions pass through that can affect the return type
-            Usefull for unshelling proxy types. If multiple, they are chained, so be careful
-            </summary>
-            <param name="func">The function that the type passes through</param>
-        </member>
-        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructor.ConstructorSettings.OverridePropertyGetter(System.Reflection.PropertyInfo,System.Func{System.Object,System.Object})">
-            <summary>
-            Overrides the method used to resolve an object property, for returning a custom type (or null to skip)
-            </summary>
-            <param name="pi">The PropertyInfo of the property to be overridden</param>
-            <param name="func">The function to call instead of PropertyInfo.GetValue. Object in is the Parent of the property, object out is the Property Value</param>
         </member>
         <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructor.#ctor">
             <summary>
@@ -198,12 +133,77 @@
             
              </summary>
         </member>
+        <member name="T:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings">
+            <summary>
+            Reference class used to hold settings used during object serialization
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.AttributeBlacklist">
+            <summary>
+            When using AttributeIncludeSettings.Blacklist, this list should contain a list of attribute types to skip serializing
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.AttributeIncludeSettings">
+            <summary>
+            The style of setting used to determine whether or not attributes are serialized
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.AttributeMatchSettings">
+            <summary>
+            Specifies the type of match to use when determining whether or not to serialize assemblies
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.AttributeWhitelist">
+            <summary>
+            When using AttributeIncludeSettings.Whitelist, this list should contain a list of attribute types to serialize
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.IgnoreHiddenForeignTypes">
+            <summary>
+            Ignores properties that match (!thisProperty.ReflectedType.IsVisible &amp;&amp; thisProperty.ReflectedType.Assembly != this.Cache.CallingAssembly). Default True
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.IgnoreInheritedProperties">
+            <summary>
+            Do not traverse below the top level object when serializing properties. This setting is applied recursively and should only be used when serializing
+            DTOs
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.IgnoreNullDeclaringType">
+            <summary>
+            Should ignore dynamic properties. Default True
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.IgnoreTypes">
+            <summary>
+            Types to ignore while serializing. Helpful for ignoring errors. By default ignores Type and MemberInfo since in most cases those are handled seperately
+            </summary>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.#ctor">
+            <summary>
+            Creates a new instance of the constructor settings
+            </summary>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.AddTypeGetterOverride(System.Func{System.Type,System.Type})">
+            <summary>
+            Function that all type resolutions pass through that can affect the return type
+            Usefull for unshelling proxy types. If multiple, they are chained, so be careful
+            </summary>
+            <param name="func">The function that the type passes through</param>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.OverridePropertyGetter(System.Reflection.PropertyInfo,System.Func{System.Object,System.Object})">
+            <summary>
+            Overrides the method used to resolve an object property, for returning a custom type (or null to skip)
+            </summary>
+            <param name="pi">The PropertyInfo of the property to be overridden</param>
+            <param name="func">The function to call instead of PropertyInfo.GetValue. Object in is the Parent of the property, object out is the Property Value</param>
+        </member>
         <member name="M:Penguin.Reflection.Serialization.Extensions.IMetaTypeInfoExtensions.Is(Penguin.Reflection.Serialization.Abstractions.Interfaces.ITypeInfo,System.String)">
             <summary>
             Tests for type equality between an object implementing ITypeInfo and a Type, by full name
             </summary>
             <param name="o">The object to test</param>
-            <param name="FullName">The full name of the type</param>
+            <param name="StringValue">The ToString value of the type</param>
             <returns>Whether or not the types are equal</returns>
         </member>
         <member name="T:Penguin.Reflection.Serialization.GZip">
@@ -460,6 +460,14 @@
             </summary>
             <param name="c">The constructor to use</param>
         </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.GetCollection``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Inteded to be called via reflection to turn an IEnumerable of an unknown type into an IList
+            </summary>
+            <typeparam name="T">The reflected type get for the collection source</typeparam>
+            <param name="source">The collection source</param>
+            <returns>An IList containing the items</returns>
+        </member>
         <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.Item(System.String)">
             <summary>
             Returns an instance of a property by property name. Recursive notation supported using "." delimiter
@@ -471,7 +479,7 @@
             <summary>
             Returns an instance of a property by IMetaProperty
             </summary>
-            <param name="property">The property to search for</param>
+            <param name="metaProperty">The property to search for</param>
             <returns>The property if exists, or Error if not</returns>
         </member>
         <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.FromConstructor(Penguin.Reflection.Serialization.Constructors.MetaConstructor)">
@@ -704,6 +712,11 @@
             The Name for the type
             </summary>
         </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.StringValue">
+            <summary>
+            ToString called on the Type
+            </summary>
+        </member>
         <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.Namespace">
             <summary>
             The Namespace the type is found in
@@ -747,6 +760,7 @@
             Only for use as a placeholder type for manually created rendering models
             </summary>
             <param name="s"></param>
+            <param name="properties">Properties to set for the type</param>
         </member>
         <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.FromConstructor(Penguin.Reflection.Serialization.Constructors.MetaConstructor,System.Object)">
             <summary>
@@ -770,6 +784,38 @@
             </summary>
             <param name="obj1">This object</param>
             <param name="obj2">The other MetaType to test</param>
+            <returns></returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.op_Inequality(System.Type,Penguin.Reflection.Serialization.Objects.MetaType)">
+            <summary>
+            Tests for inequality between a MetaType an a System Type using the string value
+            </summary>
+            <param name="obj1">This object</param>
+            <param name="obj2">The System Type</param>
+            <returns></returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.op_Equality(System.Type,Penguin.Reflection.Serialization.Objects.MetaType)">
+            <summary>
+            Tests for equality between a MetaType an a System Type using the string value
+            </summary>
+            <param name="obj1">This object</param>
+            <param name="obj2">The System Type</param>
+            <returns></returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.op_Inequality(Penguin.Reflection.Serialization.Objects.MetaType,System.Type)">
+            <summary>
+            Tests for inequality between a MetaType an a System Type using the string value
+            </summary>
+            <param name="obj1">This object</param>
+            <param name="obj2">The System Type</param>
+            <returns></returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.op_Equality(Penguin.Reflection.Serialization.Objects.MetaType,System.Type)">
+            <summary>
+            Tests for equality between a MetaType an a System Type using the string value
+            </summary>
+            <param name="obj1">This object</param>
+            <param name="obj2">The System Type</param>
             <returns></returns>
         </member>
         <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.Equals(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaType)">
