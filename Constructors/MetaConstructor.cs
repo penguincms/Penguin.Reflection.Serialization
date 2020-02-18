@@ -133,6 +133,8 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// </summary>
         internal RType Type { get; set; }
 
+        private Dictionary<RType, IList<PropertyInfo>> TypeProperties { get; set; }
+
         internal class CacheContainer
         {
             #region Properties
@@ -287,7 +289,5 @@ namespace Penguin.Reflection.Serialization.Constructors
 
             return !skip;
         }
-
-        private Dictionary<RType, IList<PropertyInfo>> TypeProperties { get; set; }
     }
 }

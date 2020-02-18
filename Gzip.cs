@@ -32,7 +32,7 @@ namespace Penguin.Reflection.Serialization
             StringBuilder target = new StringBuilder();
 
             new MetaObject(o, c).Serialize(target);
-            
+
             return Zip(target.ToString());
         }
 

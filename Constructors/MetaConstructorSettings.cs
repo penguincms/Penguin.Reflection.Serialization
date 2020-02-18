@@ -148,6 +148,12 @@ namespace Penguin.Reflection.Serialization.Constructors
 
         internal List<Func<RType, RType>> TypeGetterOverride { get; set; }
 
+        private List<RType> _AttributeBlacklist { get; set; }
+
+        private List<RType> _AttributeWhitelist { get; set; }
+
+        private object Owner { get; set; }
+
         internal object GetOwner() => this.Owner;
 
         internal bool IsAttributeMatch(Type typeA, Type typeB)
@@ -195,9 +201,5 @@ namespace Penguin.Reflection.Serialization.Constructors
         }
 
         internal void TrySetOwner(object o) => this.Owner = this.Owner ?? o;
-
-        private List<RType> _AttributeBlacklist { get; set; }
-        private List<RType> _AttributeWhitelist { get; set; }
-        private object Owner { get; set; }
     }
 }

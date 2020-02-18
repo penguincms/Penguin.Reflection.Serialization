@@ -82,6 +82,10 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public string Value { get; set; }
 
+        private MetaConstructor Constructor { get; set; }
+
+        private IMetaObject Parent { get; set; }
+
         /// <summary>
         /// This constructor should only be user externally
         /// for creating a temporary instance
@@ -355,27 +359,6 @@ namespace Penguin.Reflection.Serialization.Objects
         }
 
         /// <summary>
-        /// Inteded to be called via reflection to turn an IEnumerable of an unknown type into an IList
-        /// </summary>
-        /// <typeparam name="T">The reflected type get for the collection source</typeparam>
-        /// <param name="source">The collection source</param>
-        /// <returns>An IList containing the items</returns>
-        public static IList GetCollection<T>(IEnumerable<T> source)
-        {
-            IList toReturn = Activator.CreateInstance<List<T>>();
-
-            if (source != null)
-            {
-                foreach (T o in source)
-                {
-                    toReturn.Add(o);
-                }
-            }
-
-            return toReturn;
-        }
-
-        /// <summary>
         /// Returns an instance of a property by property name. Recursive notation supported using "." delimiter
         /// </summary>
         /// <param name="PropertyName">The property name to search for</param>
@@ -468,6 +451,27 @@ namespace Penguin.Reflection.Serialization.Objects
             }
 
             return i;
+        }
+
+        /// <summary>
+        /// Inteded to be called via reflection to turn an IEnumerable of an unknown type into an IList
+        /// </summary>
+        /// <typeparam name="T">The reflected type get for the collection source</typeparam>
+        /// <param name="source">The collection source</param>
+        /// <returns>An IList containing the items</returns>
+        public static IList GetCollection<T>(IEnumerable<T> source)
+        {
+            IList toReturn = Activator.CreateInstance<List<T>>();
+
+            if (source != null)
+            {
+                foreach (T o in source)
+                {
+                    toReturn.Add(o);
+                }
+            }
+
+            return toReturn;
         }
 
         /// <summary>
@@ -648,9 +652,5 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         /// <returns></returns>
         public IMetaType TypeOf() => this.Type;
-
-        private MetaConstructor Constructor { get; set; }
-
-        private IMetaObject Parent { get; set; }
     }
 }
