@@ -130,6 +130,7 @@
         </member>
         <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.Type">
              <summary>
+            
              </summary>
         </member>
         <member name="T:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings">
@@ -459,14 +460,6 @@
             </summary>
             <param name="c">The constructor to use</param>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.GetCollection``1(System.Collections.Generic.IEnumerable{``0})">
-            <summary>
-            Inteded to be called via reflection to turn an IEnumerable of an unknown type into an IList
-            </summary>
-            <typeparam name="T">The reflected type get for the collection source</typeparam>
-            <param name="source">The collection source</param>
-            <returns>An IList containing the items</returns>
-        </member>
         <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.Item(System.String)">
             <summary>
             Returns an instance of a property by property name. Recursive notation supported using "." delimiter
@@ -503,6 +496,14 @@
             <param name="c">The constructor to use for serializing</param>
             <param name="oc">An ObjectConstructor containing the relevant serialization context information</param>
             <returns>A newly serialized and DEHYDRATED object</returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.GetCollection``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Inteded to be called via reflection to turn an IEnumerable of an unknown type into an IList
+            </summary>
+            <typeparam name="T">The reflected type get for the collection source</typeparam>
+            <param name="source">The collection source</param>
+            <returns>An IList containing the items</returns>
         </member>
         <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.AddItem(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject)">
             <summary>
@@ -711,11 +712,6 @@
             The Name for the type
             </summary>
         </member>
-        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.StringValue">
-            <summary>
-            ToString called on the Type
-            </summary>
-        </member>
         <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.Namespace">
             <summary>
             The Namespace the type is found in
@@ -729,6 +725,11 @@
         <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.Properties">
             <summary>
             A list of all the properties found on the type
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.StringValue">
+            <summary>
+            ToString called on the Type
             </summary>
         </member>
         <member name="P:Penguin.Reflection.Serialization.Objects.MetaType.Values">
@@ -777,14 +778,6 @@
             <param name="obj2">The other MetaType to test</param>
             <returns></returns>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.op_Equality(Penguin.Reflection.Serialization.Objects.MetaType,Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaType)">
-            <summary>
-            Tests for equality between two MetaTypes using AssemblyQualifiedName
-            </summary>
-            <param name="obj1">This object</param>
-            <param name="obj2">The other MetaType to test</param>
-            <returns></returns>
-        </member>
         <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.op_Inequality(System.Type,Penguin.Reflection.Serialization.Objects.MetaType)">
             <summary>
             Tests for inequality between a MetaType an a System Type using the string value
@@ -793,17 +786,25 @@
             <param name="obj2">The System Type</param>
             <returns></returns>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.op_Equality(System.Type,Penguin.Reflection.Serialization.Objects.MetaType)">
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.op_Inequality(Penguin.Reflection.Serialization.Objects.MetaType,System.Type)">
             <summary>
-            Tests for equality between a MetaType an a System Type using the string value
+            Tests for inequality between a MetaType an a System Type using the string value
             </summary>
             <param name="obj1">This object</param>
             <param name="obj2">The System Type</param>
             <returns></returns>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.op_Inequality(Penguin.Reflection.Serialization.Objects.MetaType,System.Type)">
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.op_Equality(Penguin.Reflection.Serialization.Objects.MetaType,Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaType)">
             <summary>
-            Tests for inequality between a MetaType an a System Type using the string value
+            Tests for equality between two MetaTypes using AssemblyQualifiedName
+            </summary>
+            <param name="obj1">This object</param>
+            <param name="obj2">The other MetaType to test</param>
+            <returns></returns>
+        </member>
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.op_Equality(System.Type,Penguin.Reflection.Serialization.Objects.MetaType)">
+            <summary>
+            Tests for equality between a MetaType an a System Type using the string value
             </summary>
             <param name="obj1">This object</param>
             <param name="obj2">The System Type</param>
