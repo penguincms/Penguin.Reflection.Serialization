@@ -10,7 +10,7 @@
     <DocumentationFile>Penguin.Reflection.Serialization.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Penguin.Reflection.Serialization.Abstractions" Version="3.0.1-T9RVMZA" />
+    <PackageReference Include="Penguin.Reflection.Serialization.Abstractions" Version="3.0.1-T9SAD4U" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Templating\MetaSerializer.tt">
