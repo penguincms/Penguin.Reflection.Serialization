@@ -13,10 +13,10 @@ namespace Penguin.Reflection.Serialization.Constructors
     /// </summary>
     public class MetaConstructorSettings
     {
-        private const string CantSetBlacklistMessage = "Can not set attribute blacklist when attribute whitelist is set";
-        private const string CantSetWhitelesMessage = "Can not set attribute whitelist when attribute blacklist is set";
-        private const string UndefinedAttributeSerializationSettingsMessage = "Undefined attribute serialization settings";
-        private const string UndefinedMatchTypeMessage = "Undefined attribute match type settings";
+        private const string CANT_SET_BLACKLIST_MESSAGE = "Can not set attribute blacklist when attribute whitelist is set";
+        private const string CANT_SET_WHITELES_MESSAGE = "Can not set attribute whitelist when attribute blacklist is set";
+        private const string UNDEFINED_ATTRIBUTE_SERIALIZATION_SETTINGS_MESSAGE = "Undefined attribute serialization settings";
+        private const string UNDEFINED_MATCH_TYPE_MESSAGE = "Undefined attribute match type settings";
 
         #region Properties
 
@@ -25,20 +25,17 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// </summary>
         public List<RType> AttributeBlacklist
         {
-            get
-            {
-                return _AttributeBlacklist;
-            }
+            get => this._AttributeBlacklist;
             set
             {
-                if (_AttributeWhitelist is null)
+                if (this._AttributeWhitelist is null)
                 {
-                    AttributeIncludeSettings = AttributeIncludeSetting.BlackList;
-                    _AttributeBlacklist = value;
+                    this.AttributeIncludeSettings = AttributeIncludeSetting.BlackList;
+                    this._AttributeBlacklist = value;
                 }
                 else
                 {
-                    throw new UnauthorizedAccessException(CantSetBlacklistMessage);
+                    throw new UnauthorizedAccessException(CANT_SET_BLACKLIST_MESSAGE);
                 }
             }
         }
@@ -58,20 +55,17 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// </summary>
         public List<RType> AttributeWhitelist
         {
-            get
-            {
-                return _AttributeWhitelist;
-            }
+            get => this._AttributeWhitelist;
             set
             {
-                if (_AttributeBlacklist is null)
+                if (this._AttributeBlacklist is null)
                 {
-                    AttributeIncludeSettings = AttributeIncludeSetting.WhiteList;
-                    _AttributeWhitelist = value;
+                    this.AttributeIncludeSettings = AttributeIncludeSetting.WhiteList;
+                    this._AttributeWhitelist = value;
                 }
                 else
                 {
-                    throw new Exception(CantSetWhitelesMessage);
+                    throw new Exception(CANT_SET_WHITELES_MESSAGE);
                 }
             }
         }
@@ -128,7 +122,10 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// Usefull for unshelling proxy types. If multiple, they are chained, so be careful
         /// </summary>
         /// <param name="func">The function that the type passes through</param>
-        public void AddTypeGetterOverride(Func<RType, RType> func) => this.TypeGetterOverride.Add(func);
+        public void AddTypeGetterOverride(Func<RType, RType> func)
+        {
+            this.TypeGetterOverride.Add(func);
+        }
 
         /// <summary>
         /// Overrides the method used to resolve an object property, for returning a custom type (or null to skip)
@@ -148,17 +145,20 @@ namespace Penguin.Reflection.Serialization.Constructors
 
         internal List<Func<RType, RType>> TypeGetterOverride { get; set; }
 
-        private List<RType> _AttributeBlacklist { get; set; }
+        private List<RType> _AttributeBlacklist;
 
-        private List<RType> _AttributeWhitelist { get; set; }
+        private List<RType> _AttributeWhitelist;
 
         private object Owner { get; set; }
 
-        internal object GetOwner() => this.Owner;
+        internal object GetOwner()
+        {
+            return this.Owner;
+        }
 
         internal bool IsAttributeMatch(Type typeA, Type typeB)
         {
-            switch (AttributeMatchSettings)
+            switch (this.AttributeMatchSettings)
             {
                 case AttributeMatchSetting.Equality:
                     return typeA == typeB;
@@ -173,33 +173,39 @@ namespace Penguin.Reflection.Serialization.Constructors
                     return typeA.FullName == typeB.FullName;
 
                 default:
-                    throw new Exception(UndefinedMatchTypeMessage);
+                    throw new Exception(UNDEFINED_MATCH_TYPE_MESSAGE);
             }
         }
 
-        internal bool IsOwner(object o) => this.Owner == o;
+        internal bool IsOwner(object o)
+        {
+            return this.Owner == o;
+        }
 
         internal bool ShouldAddAttribute(RType attributeType)
         {
-            switch (AttributeIncludeSettings)
+            switch (this.AttributeIncludeSettings)
             {
                 case AttributeIncludeSetting.All:
                     return true;
 
                 case AttributeIncludeSetting.WhiteList:
-                    return AttributeWhitelist != null && AttributeWhitelist.Any(t => IsAttributeMatch(t, attributeType));
+                    return this.AttributeWhitelist != null && this.AttributeWhitelist.Any(t => this.IsAttributeMatch(t, attributeType));
 
                 case AttributeIncludeSetting.BlackList:
-                    return AttributeBlacklist is null || !AttributeWhitelist.Any(t => IsAttributeMatch(t, attributeType));
+                    return this.AttributeBlacklist is null || !this.AttributeWhitelist.Any(t => this.IsAttributeMatch(t, attributeType));
 
                 case AttributeIncludeSetting.None:
                     return false;
 
                 default:
-                    throw new ArgumentException(UndefinedAttributeSerializationSettingsMessage);
+                    throw new ArgumentException(UNDEFINED_ATTRIBUTE_SERIALIZATION_SETTINGS_MESSAGE);
             }
         }
 
-        internal void TrySetOwner(object o) => this.Owner = this.Owner ?? o;
+        internal void TrySetOwner(object o)
+        {
+            this.Owner = this.Owner ?? o;
+        }
     }
 }

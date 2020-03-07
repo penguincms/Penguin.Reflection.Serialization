@@ -75,7 +75,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <summary>
         /// The index of the Value in the Meta dictionary, if the value of this object is cached there
         /// </summary>
-        public int? v { get; set; }
+        public int? V { get; set; }
 
         /// <summary>
         /// A string representation of the value if value type, or ToString if not
@@ -92,8 +92,8 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public MetaObject()
         {
-            Properties = new List<IMetaObject>();
-            CollectionItems = new List<IMetaObject>();
+            this.Properties = new List<IMetaObject>();
+            this.CollectionItems = new List<IMetaObject>();
         }
 
         /// <summary>
@@ -198,12 +198,12 @@ namespace Penguin.Reflection.Serialization.Objects
             {
                 if (c.Object is null)
                 {
-                    this.v = c.Claim("0");
+                    this.V = c.Claim("0");
                 }
                 else
                 {
                     RType thisType = c.Type;
-                    this.v = c.Claim(Convert.ChangeType(c.Object, Enum.GetUnderlyingType(thisType)).ToString());
+                    this.V = c.Claim(Convert.ChangeType(c.Object, Enum.GetUnderlyingType(thisType)).ToString());
                 }
             }
             else if (thisCoreType == CoreType.Value)
@@ -212,14 +212,14 @@ namespace Penguin.Reflection.Serialization.Objects
 
                 if (Default != null)
                 {
-                    this.v = c.Claim(Default);
+                    this.V = c.Claim(Default);
                 }
             }
             else //Reference
             {
                 if (c.Object?.ToString() != null)
                 {
-                    this.v = c.Claim(c.Object.ToString());
+                    this.V = c.Claim(c.Object.ToString());
                 }
 
                 this.Properties = new List<IMetaObject>();
@@ -354,7 +354,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
             if (c.IsOwner(this))
             {
-                RegisterConstructor(c);
+                this.RegisterConstructor(c);
             }
         }
 
@@ -420,7 +420,10 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="c">The constructor to use for serialization</param>
         /// <param name="o">The object to serialize</param>
         /// <returns>A newly serialized and DEHYDRATED object</returns>
-        public static MetaObject FromConstructor(MetaConstructor c, object o) => FromConstructor(c, new ObjectConstructor(null, null, o));
+        public static MetaObject FromConstructor(MetaConstructor c, object o)
+        {
+            return FromConstructor(c, new ObjectConstructor(null, null, o));
+        }
 
         /// <summary>
         /// Creates a new serialized object using the provided Constructor, and Object Constructor
@@ -518,7 +521,10 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Gets the CoreType of this instance from the set type
         /// </summary>
         /// <returns>The CoreType of this instance</returns>
-        public CoreType GetCoreType() => this.Type?.CoreType ?? CoreType.Null;
+        public CoreType GetCoreType()
+        {
+            return this.Type?.CoreType ?? CoreType.Null;
+        }
 
         /// <summary>
         /// Returns the Parent of this object (property holder) or null if empty.
@@ -526,7 +532,10 @@ namespace Penguin.Reflection.Serialization.Objects
         /// since Dehydration can cause objects to dereference parents.
         /// </summary>
         /// <returns>The parent of the object or null if no parent</returns>
-        public IMetaObject GetParent() => this.Parent;
+        public IMetaObject GetParent()
+        {
+            return this.Parent;
+        }
 
         /// <summary>
         /// Checks to see if this objects declared type contains a property
@@ -534,7 +543,9 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="PropertyName">The property name to check for</param>
         /// <returns>Whether or not the objects declared type contains a property</returns>
         public bool HasProperty(string PropertyName)    // Indexer declaration
-            => this.Type.Properties.Any(p => p.Name == PropertyName);
+        {
+            return this.Type.Properties.Any(p => p.Name == PropertyName);
+        }
 
         /// <summary>
         /// Hydrates this object instance. Should be called once the serialized object is ready for use
@@ -566,9 +577,9 @@ namespace Penguin.Reflection.Serialization.Objects
                 this.HydrateList(this.CollectionItems, meta);
             }
 
-            if (this.v.HasValue)
+            if (this.V.HasValue)
             {
-                this.Value = (meta[this.v.Value] as StringHolder).v;
+                this.Value = (meta[this.V.Value] as StringHolder).v;
             }
 
             this.IsHydrated = true;
@@ -639,18 +650,27 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Call this while recursing through the object structure to ensure that the parent on each object is set correctly
         /// </summary>
         /// <param name="parent">The parent of this object</param>
-        public void SetParent(IMetaObject parent) => this.Parent = parent;
+        public void SetParent(IMetaObject parent)
+        {
+            this.Parent = parent;
+        }
 
         /// <summary>
         /// Returns the Property.Name ?? Type.Name ?? Empty in that order
         /// </summary>
         /// <returns></returns>
-        public override string ToString() => $"{this.Property?.Name ?? this.Type?.Name ?? string.Empty}";
+        public override string ToString()
+        {
+            return $"{this.Property?.Name ?? this.Type?.Name ?? string.Empty}";
+        }
 
         /// <summary>
         /// The Property.Name ?? Type.Name ?? Empty in that order
         /// </summary>
         /// <returns></returns>
-        public IMetaType TypeOf() => this.Type;
+        public IMetaType TypeOf()
+        {
+            return this.Type;
+        }
     }
 }

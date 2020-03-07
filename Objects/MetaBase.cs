@@ -11,7 +11,7 @@ namespace Penguin.Reflection.Serialization.Objects
     /// </summary>
     public class AbstractMeta : IAbstractMeta
     {
-        private const string CantCreateMessage = "Cant create instance of AbstractMeta";
+        private const string CANT_CREATE_MESSAGE = "Cant create instance of AbstractMeta";
 
         #region Properties
 
@@ -37,7 +37,7 @@ namespace Penguin.Reflection.Serialization.Objects
         {
             if (this.GetType() == typeof(AbstractMeta))
             {
-                throw new Exception(CantCreateMessage);
+                throw new Exception(CANT_CREATE_MESSAGE);
             }
 
             this.i = id;
@@ -108,7 +108,7 @@ namespace Penguin.Reflection.Serialization.Objects
                 return;
             }
 
-            for (int i = 0; i < toHydrate.Count(); i++)
+            for (int i = 0; i < toHydrate.Count; i++)
             {
                 if (!toHydrate[i].IsHydrated)
                 {

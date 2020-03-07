@@ -32,7 +32,7 @@ namespace Penguin.Reflection.Serialization.Objects
                 c.Cache.Attributes.Add(a.Instance, c.Cache.Attributes.Count);
             }
 
-            Key = $"@{c.Cache.Attributes[a.Instance]}|{a.IsInherited}";
+            this.Key = $"@{c.Cache.Attributes[a.Instance]}|{a.IsInherited}";
         }
 
         public AttributeWrapper(AttributeInstance a, RType t, MetaConstructor c)
@@ -45,14 +45,17 @@ namespace Penguin.Reflection.Serialization.Objects
                 c.Cache.Attributes.Add(a.Instance, c.Cache.Attributes.Count);
             }
 
-            Key = $"@{c.Cache.Attributes[a.Instance]}|{a.IsInherited}";
+            this.Key = $"@{c.Cache.Attributes[a.Instance]}|{a.IsInherited}";
         }
 
         #endregion Constructors
 
         #region Methods
 
-        public override string GetKey() => Key;
+        public override string GetKey()
+        {
+            return this.Key;
+        }
 
         #endregion Methods
 

@@ -94,11 +94,20 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Returns the Type Name
         /// </summary>
         /// <returns>The Type Name</returns>
-        public override string ToString() => this.Type.Name;
+        public override string ToString()
+        {
+            return this.Type.Name;
+        }
 
-        internal static MetaAttribute FromConstructor(MetaConstructor c, AttributeInstance o, PropertyInfo p) => FromConstructor(c, new AttributeWrapper(o, p, c));
+        internal static MetaAttribute FromConstructor(MetaConstructor c, AttributeInstance o, PropertyInfo p)
+        {
+            return FromConstructor(c, new AttributeWrapper(o, p, c));
+        }
 
-        internal static MetaAttribute FromConstructor(MetaConstructor c, AttributeInstance o, RType t) => FromConstructor(c, new AttributeWrapper(o, t, c));
+        internal static MetaAttribute FromConstructor(MetaConstructor c, AttributeInstance o, RType t)
+        {
+            return FromConstructor(c, new AttributeWrapper(o, t, c));
+        }
 
         internal static MetaAttribute FromConstructor(MetaConstructor c, AttributeWrapper wrapper)
         {
