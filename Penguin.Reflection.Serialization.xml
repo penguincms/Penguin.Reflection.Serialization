@@ -394,7 +394,7 @@
             The type information for this Meta instance
             </summary>
         </member>
-        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.v">
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.V">
             <summary>
             The index of the Value in the Meta dictionary, if the value of this object is cached there
             </summary>
