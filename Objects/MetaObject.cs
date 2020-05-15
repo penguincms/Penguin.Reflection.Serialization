@@ -444,7 +444,7 @@ namespace Penguin.Reflection.Serialization.Objects
                 AbstractMeta placeHolder = c.Claim(Wrapper);
                 i = new MetaObject(c.Clone(oc))
                 {
-                    i = placeHolder.i
+                    I = placeHolder.I
                 };
                 c.UpdateClaim(i, Wrapper);
             }
@@ -560,7 +560,7 @@ namespace Penguin.Reflection.Serialization.Objects
                 this.Meta[0] = this;
             }
 
-            meta = meta ?? this.Meta ?? this.Constructor.Meta.Select(v => v.Value).ToDictionary(k => k.i, v => v);
+            meta = meta ?? this.Meta ?? this.Constructor.Meta.Select(v => v.Value).ToDictionary(k => k.I, v => v);
             ;
 
             this.Property = this.HydrateChild(this.Property, meta);
@@ -579,7 +579,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
             if (this.V.HasValue)
             {
-                this.Value = (meta[this.V.Value] as StringHolder).v;
+                this.Value = (meta[this.V.Value] as StringHolder).V;
             }
 
             this.IsHydrated = true;
@@ -615,7 +615,7 @@ namespace Penguin.Reflection.Serialization.Objects
         {
             Contract.Requires(c != null);
 
-            this.Meta = c.Meta.Select(v => v.Value).ToDictionary(k => k.i, v => v);
+            this.Meta = c.Meta.Select(v => v.Value).ToDictionary(k => k.I, v => v);
             this.BuildExceptions = c.Exceptions.ToDictionary(k => k.Value, v => v.Key);
             this.IsRoot = true;
         }

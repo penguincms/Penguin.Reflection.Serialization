@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 
 namespace Penguin.Reflection.Serialization.Objects
 {
@@ -18,7 +17,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <summary>
         /// An ID associated with an index in the MetaConstructor list
         /// </summary>
-        public int i { get; set; }
+        public int I { get; set; }
 
         /// <summary>
         /// Whether or not this object has been hydrated to resolve child references
@@ -40,7 +39,7 @@ namespace Penguin.Reflection.Serialization.Objects
                 throw new Exception(CANT_CREATE_MESSAGE);
             }
 
-            this.i = id;
+            this.I = id;
         }
 
         /// <summary>
@@ -48,7 +47,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public AbstractMeta()
         {
-            this.i = -1;
+            this.I = -1;
         }
 
         #endregion Constructors
@@ -79,7 +78,7 @@ namespace Penguin.Reflection.Serialization.Objects
             {
                 return default;
             }
-            else if (toHydrate.i < 0 && !toHydrate.IsHydrated)
+            else if (toHydrate.I < 0 && !toHydrate.IsHydrated)
             {
                 //For manually created instances, in case they have automatically
                 //generated children
@@ -88,13 +87,13 @@ namespace Penguin.Reflection.Serialization.Objects
 
                 return toHydrate;
             }
-            else if (toHydrate.i < 0 || toHydrate.IsHydrated)
+            else if (toHydrate.I < 0 || toHydrate.IsHydrated)
             {
                 return toHydrate;
             }
             else
             {
-                toHydrate = (T)meta[toHydrate.i];
+                toHydrate = (T)meta[toHydrate.I];
                 toHydrate.IsHydrated = true;
                 toHydrate.Hydrate(meta);
                 return toHydrate;
@@ -112,9 +111,9 @@ namespace Penguin.Reflection.Serialization.Objects
             {
                 if (!toHydrate[i].IsHydrated)
                 {
-                    if (toHydrate[i].i >= 0)
+                    if (toHydrate[i].I >= 0)
                     {
-                        toHydrate[i] = (T)this.HydrateChild(meta[toHydrate[i].i], meta);
+                        toHydrate[i] = (T)this.HydrateChild(meta[toHydrate[i].I], meta);
                     }
                     else
                     {

@@ -315,7 +315,7 @@ namespace Penguin.Reflection.Serialization.Templating
                 sb.Append(",\"Values\":");
                 SerializeList(toSerialize.Values as IList, sb);
             }
-            if (toSerialize.i != 0) { sb.Append($",\"i\":{toSerialize.i}"); }
+            if (toSerialize.I != 0) { sb.Append($",\"i\":{toSerialize.I}"); }
             if (toSerialize.IsHydrated) { sb.Append(",\"IsHydrated\":true"); }
             if (toSerialize.Attributes != null && toSerialize.Attributes.Any())
             {
@@ -371,7 +371,7 @@ namespace Penguin.Reflection.Serialization.Templating
                 sb.Append(",\"Type\":");
                 Serialize(toSerialize.Type, sb);
             }
-            if (toSerialize.i != 0) { sb.Append($",\"i\":{toSerialize.i}"); }
+            if (toSerialize.I != 0) { sb.Append($",\"i\":{toSerialize.I}"); }
             if (toSerialize.IsHydrated) { sb.Append(",\"IsHydrated\":true"); }
             if (toSerialize.Attributes != null && toSerialize.Attributes.Any())
             {
@@ -450,7 +450,7 @@ namespace Penguin.Reflection.Serialization.Templating
             }
             if (toSerialize.V.HasValue) { sb.Append($",\"v\":{toSerialize.V.Value}"); }
             if (toSerialize.Value != null) { sb.Append($",\"Value\":\"{toSerialize.Value.ToJSONValue()}\""); }
-            if (toSerialize.i != 0) { sb.Append($",\"i\":{toSerialize.i}"); }
+            if (toSerialize.I != 0) { sb.Append($",\"i\":{toSerialize.I}"); }
             if (toSerialize.IsHydrated) { sb.Append(",\"IsHydrated\":true"); }
             sb.Append("}");
         }
@@ -496,7 +496,7 @@ namespace Penguin.Reflection.Serialization.Templating
                 sb.Append(",\"Type\":");
                 Serialize(toSerialize.Type, sb);
             }
-            if (toSerialize.i != 0) { sb.Append($",\"i\":{toSerialize.i}"); }
+            if (toSerialize.I != 0) { sb.Append($",\"i\":{toSerialize.I}"); }
             if (toSerialize.IsHydrated) { sb.Append(",\"IsHydrated\":true"); }
             sb.Append("}");
         }
@@ -531,8 +531,8 @@ namespace Penguin.Reflection.Serialization.Templating
 
             sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
-            if (toSerialize.v != null) { sb.Append($",\"v\":\"{toSerialize.v.ToJSONValue()}\""); }
-            if (toSerialize.i != 0) { sb.Append($",\"i\":{toSerialize.i}"); }
+            if (toSerialize.V != null) { sb.Append($",\"v\":\"{toSerialize.V.ToJSONValue()}\""); }
+            if (toSerialize.I != 0) { sb.Append($",\"i\":{toSerialize.I}"); }
             if (toSerialize.IsHydrated) { sb.Append(",\"IsHydrated\":true"); }
             sb.Append("}");
         }
@@ -567,7 +567,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
             sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
-            if (toSerialize.i != 0) { sb.Append($",\"i\":{toSerialize.i}"); }
+            if (toSerialize.I != 0) { sb.Append($",\"i\":{toSerialize.I}"); }
             if (toSerialize.IsHydrated) { sb.Append(",\"IsHydrated\":true"); }
             sb.Append("}");
         }

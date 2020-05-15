@@ -13,7 +13,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <summary>
         /// The value of the underlying string
         /// </summary>
-        public string v { get; set; }
+        public string V { get; set; }
 
         #endregion Properties
     }

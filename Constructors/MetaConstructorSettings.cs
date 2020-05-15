@@ -23,6 +23,8 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// <summary>
         /// When using AttributeIncludeSettings.Blacklist, this list should contain a list of attribute types to skip serializing
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "<Pending>")]
         public List<RType> AttributeBlacklist
         {
             get => this._AttributeBlacklist;
@@ -50,9 +52,12 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// </summary>
         public AttributeMatchSetting AttributeMatchSettings { get; set; }
 
+
         /// <summary>
         /// When using AttributeIncludeSettings.Whitelist, this list should contain a list of attribute types to serialize
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public List<RType> AttributeWhitelist
         {
             get => this._AttributeWhitelist;
@@ -141,14 +146,11 @@ namespace Penguin.Reflection.Serialization.Constructors
 
         #endregion Methods
 
+        private List<RType> _AttributeBlacklist;
+        private List<RType> _AttributeWhitelist;
         internal Dictionary<string, Func<object, object>> PropertyGetterOverride { get; set; }
 
         internal List<Func<RType, RType>> TypeGetterOverride { get; set; }
-
-        private List<RType> _AttributeBlacklist;
-
-        private List<RType> _AttributeWhitelist;
-
         private object Owner { get; set; }
 
         internal object GetOwner()

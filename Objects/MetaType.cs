@@ -461,7 +461,7 @@ namespace Penguin.Reflection.Serialization.Objects
                 AbstractMeta placeHolder = c.Claim(t);
                 i = new MetaType(c.Clone(t))
                 {
-                    i = placeHolder.i
+                    I = placeHolder.I
                 };
                 c.UpdateClaim(i, t);
 

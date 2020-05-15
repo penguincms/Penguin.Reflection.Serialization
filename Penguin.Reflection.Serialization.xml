@@ -302,7 +302,7 @@
             Placeholder class used to provide basic functionality for Meta types as well as providing common type for list placement
             </summary>
         </member>
-        <member name="P:Penguin.Reflection.Serialization.Objects.AbstractMeta.i">
+        <member name="P:Penguin.Reflection.Serialization.Objects.AbstractMeta.I">
             <summary>
             An ID associated with an index in the MetaConstructor list
             </summary>
@@ -870,7 +870,7 @@
             Removes a lot of redundancy on large recursive trees
             </summary>
         </member>
-        <member name="P:Penguin.Reflection.Serialization.Objects.StringHolder.v">
+        <member name="P:Penguin.Reflection.Serialization.Objects.StringHolder.V">
             <summary>
             The value of the underlying string
             </summary>

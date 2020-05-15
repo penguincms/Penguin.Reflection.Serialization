@@ -119,7 +119,7 @@ namespace Penguin.Reflection.Serialization.Objects
                 //Drop the type the attribute is declared on so we dont think we're trying to override the attribute.GetType()
                 a = new MetaAttribute(c.Clone(new ObjectConstructor(wrapper.PropertyInfo, wrapper.Attribute.Instance.GetType(), wrapper.Attribute)))
                 {
-                    i = placeHolder.i
+                    I = placeHolder.I
                 };
                 c.UpdateClaim(a, wrapper);
             }

@@ -1,4 +1,5 @@
-﻿using Penguin.Reflection.Serialization.Abstractions.Constructors;
+﻿using Penguin.Extensions.Collections;
+using Penguin.Reflection.Serialization.Abstractions.Constructors;
 using Penguin.Reflection.Serialization.Abstractions.Interfaces;
 using Penguin.Reflection.Serialization.Abstractions.Wrappers;
 using Penguin.Reflection.Serialization.Extensions;
@@ -25,13 +26,13 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// <summary>
         /// Any exceptions that occured during serialization are listed here along with the Id(i) of the object that threw the error
         /// </summary>
-        public Dictionary<string, int> Exceptions { get; set; }
+        public Dictionary<string, int> Exceptions { get; } = new Dictionary<string, int>();
 
         /// <summary>
         /// Contains a list of references used for rehydrating the object tree. This exists to keep the serialized (json) size as small as possible by avoiding the
         /// need for reference handling as well as avoiding struct duplication
         /// </summary>
-        public Dictionary<object, IAbstractMeta> Meta { get; set; }
+        public Dictionary<object, IAbstractMeta> Meta { get; } = new Dictionary<object, IAbstractMeta>();
 
         /// <summary>
         /// Contains the settings to be used when constructing the serialized object tree
@@ -48,11 +49,9 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// </summary>
         public MetaConstructor()
         {
-            this.Meta = this.Meta ?? new Dictionary<object, IAbstractMeta>();
             this.Settings = this.Settings ?? new MetaConstructorSettings();
             this.Cache = new CacheContainer();
             this.TypeProperties = new Dictionary<RType, IList<PropertyInfo>>();
-            this.Exceptions = new Dictionary<string, int>();
         }
 
         /// <summary>
@@ -126,9 +125,18 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// <returns>A new instance of a MetaConstructor</returns>
         public MetaConstructor Clone(ObjectConstructor oc)
         {
-            Contract.Requires(oc != null);
+            if (oc is null)
+            {
+                throw new ArgumentNullException(nameof(oc));
+            }
 
-            return new MetaConstructor(oc) { Meta = Meta, Settings = Settings, Cache = Cache, Exceptions = Exceptions };
+            MetaConstructor clone = new MetaConstructor(oc) { Settings = Settings, Cache = Cache };
+
+            clone.Meta.AddRange(this.Meta);
+            clone.Exceptions.AddRange(Exceptions);
+
+            
+            return clone;
         }
 
         #endregion Methods
@@ -187,6 +195,7 @@ namespace Penguin.Reflection.Serialization.Constructors
             this.Object = oc.Object;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         internal static object GetKey(object o)
         {
             if (o is PropertyInfo || o is RType || o is System.Attribute || o is KeyGroup || o is string)
@@ -218,17 +227,17 @@ namespace Penguin.Reflection.Serialization.Constructors
             {
                 int Index = this.Meta.Count;
 
-                this.Meta.Add(s, new StringHolder() { v = s, i = Index });
+                this.Meta.Add(s, new StringHolder() { V = s, I = Index });
             }
 
-            return this.Meta[s].i;
+            return this.Meta[s].I;
         }
 
         internal AbstractMeta Claim(object o)
         {
             AbstractMeta placeHolder = new AbstractMeta()
             {
-                i = this.Meta.Count
+                I = this.Meta.Count
             };
 
             this.Meta.Add(GetKey(o), placeHolder);
@@ -249,7 +258,7 @@ namespace Penguin.Reflection.Serialization.Constructors
             }
             else
             {
-                int ToReturn = this.Meta[GetKey(o)].i;
+                int ToReturn = this.Meta[GetKey(o)].I;
 
                 return ToReturn;
             }
@@ -284,9 +293,10 @@ namespace Penguin.Reflection.Serialization.Constructors
             return this.Settings.IsOwner(o);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         internal void UpdateClaim(AbstractMeta a, object o)
         {
-            if (a.i < 0)
+            if (a.I < 0)
             {
                 throw new Exception(ID_LESS_0_SERIALIZATION_EXCEPTION_MESSAGE);
             }

@@ -135,7 +135,7 @@ namespace Penguin.Reflection.Serialization.Objects
                 AbstractMeta placeHolder = c.Claim(propertyInfo);
                 p = new MetaProperty(c.Clone(propertyInfo))
                 {
-                    i = placeHolder.i
+                    I = placeHolder.I
                 };
                 c.UpdateClaim(p, propertyInfo);
             }
