@@ -226,21 +226,6 @@
             <param name="bytes">The byte[] to unzip</param>
             <returns>The original string</returns>
         </member>
-        <member name="T:Penguin.Reflection.Serialization.Objects.EnumValue">
-            <summary>
-            Object used for serializing/holding an enum value representation
-            </summary>
-        </member>
-        <member name="P:Penguin.Reflection.Serialization.Objects.EnumValue.Label">
-            <summary>
-            The name of the option
-            </summary>
-        </member>
-        <member name="P:Penguin.Reflection.Serialization.Objects.EnumValue.Value">
-            <summary>
-            The Value of the option
-            </summary>
-        </member>
         <member name="T:Penguin.Reflection.Serialization.Objects.MetaAttribute">
             <summary>
             Meta representation of an attribute, including the retrieved instance with properties

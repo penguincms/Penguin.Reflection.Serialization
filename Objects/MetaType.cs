@@ -1,6 +1,7 @@
 ﻿using Penguin.Reflection.Abstractions;
 using Penguin.Reflection.Extensions;
 using Penguin.Reflection.Serialization.Abstractions.Interfaces;
+using Penguin.Reflection.Serialization.Abstractions.Objects;
 using Penguin.Reflection.Serialization.Constructors;
 using System;
 using System.Collections.Generic;
