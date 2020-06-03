@@ -8,7 +8,7 @@ namespace Penguin.Reflection.Serialization.Objects
     /// <summary>
     /// Placeholder class used to provide basic functionality for Meta types as well as providing common type for list placement
     /// </summary>
-    public class AbstractMeta : IAbstractMeta
+    public class AbstractMeta : IAbstractMeta, IHydratable
     {
         private const string CANT_CREATE_MESSAGE = "Cant create instance of AbstractMeta";
 
@@ -58,7 +58,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Hydrates all child properties
         /// </summary>
         /// <param name="meta">The dictionary containing the reference list of objects-Ids for used with hydration</param>
-        public virtual void Hydrate(IDictionary<int, IAbstractMeta> meta = null)
+        public virtual void Hydrate(IDictionary<int, IHydratable> meta = null)
         {
         }
 
@@ -70,7 +70,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="toHydrate">The property to be hydrated</param>
         /// <param name="meta">The dictionary containing the reference list of objects-Ids for used with hydration</param>
         /// <returns>A hydrated version of the object</returns>
-        public T HydrateChild<T>(T toHydrate, IDictionary<int, IAbstractMeta> meta) where T : IAbstractMeta
+        public T HydrateChild<T>(T toHydrate, IDictionary<int, IHydratable> meta) where T : IHydratable
         {
             Contract.Requires(meta != null);
 
@@ -100,7 +100,7 @@ namespace Penguin.Reflection.Serialization.Objects
             }
         }
 
-        internal virtual void HydrateList<T>(IList<T> toHydrate, IDictionary<int, IAbstractMeta> meta) where T : IAbstractMeta
+        internal virtual void HydrateList<T>(IList<T> toHydrate, IDictionary<int, IHydratable> meta) where T : IHydratable
         {
             if (toHydrate is null)
             {

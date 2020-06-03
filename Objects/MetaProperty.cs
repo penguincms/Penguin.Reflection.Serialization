@@ -14,25 +14,31 @@ namespace Penguin.Reflection.Serialization.Objects
     {
         #region Properties
 
+        IEnumerable<IMetaAttribute> IHasAttributes.Attributes => this.Attributes;
+
         /// <summary>
         /// A list of attributes declared on this property
         /// </summary>
-        public IEnumerable<IMetaAttribute> Attributes { get; set; }
+        public IEnumerable<MetaAttribute> Attributes { get; set; }
+
+        IMetaType IMetaProperty.DeclaringType => this.Type;
 
         /// <summary>
         /// The DeclaringType of this property
         /// </summary>
-        public IMetaType DeclaringType { get; set; }
+        public MetaType DeclaringType { get; set; }
 
         /// <summary>
         /// The name of this property
         /// </summary>
         public string Name { get; set; }
 
+        IMetaType IMetaProperty.Type => this.Type;
+
         /// <summary>
         /// The Type of this property
         /// </summary>
-        public IMetaType Type { get; set; }
+        public MetaType Type { get; set; }
 
         #endregion Properties
 
@@ -51,14 +57,14 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public MetaProperty()
         {
-            this.Attributes = new List<IMetaAttribute>();
+            this.Attributes = new List<MetaAttribute>();
         }
 
         /// <summary>
         /// Creates an instance of this object from an existing MetaProperty using Name and Type
         /// </summary>
         /// <param name="p">Thhe existing MetaProperty</param>
-        public MetaProperty(IMetaProperty p) : this()
+        public MetaProperty(MetaProperty p) : this()
         {
             Contract.Requires(p != null);
 
@@ -74,12 +80,12 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Hydrates this property using a list of MetaInformation provided by the constructor
         /// </summary>
         /// <param name="meta"></param>
-        public override void Hydrate(IDictionary<int, IAbstractMeta> meta = null)
+        public override void Hydrate(IDictionary<int, IHydratable> meta = null)
         {
             //This should be done through an accessor because right now we're relying on
             //The fact that the constructor sets it to a list, which is not the correct way
             //to do this.
-            this.HydrateList(this.Attributes as IList<IMetaAttribute>, meta);
+            this.HydrateList(this.Attributes as IList<MetaAttribute>, meta);
 
             this.Type = this.HydrateChild(this.Type, meta);
             this.DeclaringType = this.HydrateChild(this.DeclaringType, meta);
@@ -111,7 +117,7 @@ namespace Penguin.Reflection.Serialization.Objects
             this.Type = MetaType.FromConstructor(c, c.PropertyInfo.PropertyType);
             this.DeclaringType = MetaType.FromConstructor(c, c.PropertyInfo.DeclaringType);
 
-            List<IMetaAttribute> attributes = new List<IMetaAttribute>();
+            List<MetaAttribute> attributes = new List<MetaAttribute>();
             this.Attributes = attributes;
 
             if (c.Settings.AttributeIncludeSettings != AttributeIncludeSetting.None)

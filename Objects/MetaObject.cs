@@ -27,10 +27,12 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public IDictionary<int, string> BuildExceptions { get; set; }
 
+        IReadOnlyList<IMetaObject> IMetaObject.CollectionItems => this.CollectionItems;
+
         /// <summary>
         /// If this object is a collection, this list contains the contents
         /// </summary>
-        public IList<IMetaObject> CollectionItems { get; set; }
+        public List<MetaObject> CollectionItems { get; set; }
 
         /// <summary>
         /// If this object was not created due to an error, this should contain the ID of the error
@@ -45,32 +47,42 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <summary>
         /// MetaData cache for top level object to reference during deserialization. Not useful for anything but deserialization
         /// </summary>
-        public IDictionary<int, IAbstractMeta> Meta { get; set; }
+        public IDictionary<int, IHydratable> Meta { get; set; }
 
         /// <summary>
         /// True if the object was created using a null
         /// </summary>
         public bool Null { get; set; }
 
+        IMetaObject IMetaObject.Parent { get => this.Parent; set => this.Parent = (MetaObject)value; }
+        public MetaObject Parent { get; set; }
+        IReadOnlyList<IMetaObject> IMetaObject.Properties => this.Properties;
+
         /// <summary>
         /// A list of the accessible (child) properties for this object
         /// </summary>
-        public IList<IMetaObject> Properties { get; set; }
+        public List<MetaObject> Properties { get; set; }
+
+        IMetaProperty IMetaObject.Property => this.Property;
 
         /// <summary>
         /// The parent property referencing this object. Unreliable in local types
         /// </summary>
-        public IMetaProperty Property { get; set; }
+        public MetaProperty Property { get; set; }
+
+        IMetaObject IMetaObject.Template => this.Template;
 
         /// <summary>
         /// If this is a collection, this contains an empty instance of the collection unit type (for creating new children)
         /// </summary>
-        public IMetaObject Template { get; set; }
+        public MetaObject Template { get; set; }
+
+        IMetaType IMetaObject.Type => this.Type;
 
         /// <summary>
         /// The type information for this Meta instance
         /// </summary>
-        public IMetaType Type { get; set; }
+        public MetaType Type { get; set; }
 
         /// <summary>
         /// The index of the Value in the Meta dictionary, if the value of this object is cached there
@@ -84,16 +96,14 @@ namespace Penguin.Reflection.Serialization.Objects
 
         private MetaConstructor Constructor { get; set; }
 
-        private IMetaObject Parent { get; set; }
-
         /// <summary>
         /// This constructor should only be user externally
         /// for creating a temporary instance
         /// </summary>
         public MetaObject()
         {
-            this.Properties = new List<IMetaObject>();
-            this.CollectionItems = new List<IMetaObject>();
+            this.Properties = new List<MetaObject>();
+            this.CollectionItems = new List<MetaObject>();
         }
 
         /// <summary>
@@ -116,8 +126,8 @@ namespace Penguin.Reflection.Serialization.Objects
             Contract.Requires(c != null);
             Contract.Requires(Values != null);
 
-            this.Properties = new List<IMetaObject>();
-            this.CollectionItems = new List<IMetaObject>();
+            this.Properties = new List<MetaObject>();
+            this.CollectionItems = new List<MetaObject>();
 
             foreach (object o in Values)
             {
@@ -188,11 +198,12 @@ namespace Penguin.Reflection.Serialization.Objects
 
             CoreType thisCoreType = (c.Type).GetCoreType();
 
-            if (c.Object is IMetaObject)
+            if (c.Object is MetaObject mo)
             {
-                this.Properties = new List<IMetaObject>();
-
-                this.AddProperty(c.Object as IMetaObject);
+                this.Properties = new List<MetaObject>
+                {
+                    mo
+                };
             }
             else if (thisCoreType == CoreType.Enum)
             {
@@ -222,11 +233,11 @@ namespace Penguin.Reflection.Serialization.Objects
                     this.V = c.Claim(c.Object.ToString());
                 }
 
-                this.Properties = new List<IMetaObject>();
+                this.Properties = new List<MetaObject>();
 
                 if (thisCoreType == CoreType.Collection)
                 {
-                    this.CollectionItems = new List<IMetaObject>();
+                    this.CollectionItems = new List<MetaObject>();
 
                     this.Template = MetaObject.FromConstructor(c, new ObjectConstructor(c.PropertyInfo, c.Type.GetCollectionType(), null));
 
@@ -257,7 +268,7 @@ namespace Penguin.Reflection.Serialization.Objects
                 }
                 else if (thisCoreType == CoreType.Dictionary)
                 {
-                    this.CollectionItems = new List<IMetaObject>();
+                    this.CollectionItems = new List<MetaObject>();
 
                     Type checkType = c.Object?.GetType() ?? c.PropertyInfo.PropertyType;
 
@@ -309,7 +320,7 @@ namespace Penguin.Reflection.Serialization.Objects
                             continue;
                         }
 
-                        IMetaObject i;
+                        MetaObject i;
 
                         if (!c.Validate(thisProperty))
                         {
@@ -325,9 +336,9 @@ namespace Penguin.Reflection.Serialization.Objects
                             {
                                 object Object = c.GetValue(thisProperty);
 
-                                if (Object is IMetaObject)
+                                if (Object is MetaObject)
                                 {
-                                    i = Object as IMetaObject;
+                                    i = Object as MetaObject;
                                 }
                                 else
                                 {
@@ -481,16 +492,16 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Adds an item to the underlying collection and sets this object as its parent
         /// </summary>
         /// <param name="instance">The item to add to the collection</param>
-        public void AddItem(IMetaObject instance)
+        public void AddItem(MetaObject instance)
         {
             if (instance is null)
             {
                 return;
             }
 
-            if (instance.GetParent() != null)
+            if (instance.Parent != null)
             {
-                instance.GetParent().RemoveItem(instance);
+                instance.Parent.RemoveItem(instance);
             }
 
             instance.SetParent(this);
@@ -501,19 +512,19 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Adds a Property Value to this object
         /// </summary>
         /// <param name="instance">The Property Object to add</param>
-        public void AddProperty(IMetaObject instance)
+        public void AddProperty(MetaObject instance)
         {
             if (instance is null)
             {
                 return;
             }
 
-            if (instance.GetParent() != null)
+            if (instance.Parent != null)
             {
-                instance.GetParent().RemoveProperty(instance);
+                instance.Parent.RemoveProperty(instance);
             }
 
-            instance.SetParent(this);
+            instance.Parent = this;
             this.Properties.Add(instance);
         }
 
@@ -551,7 +562,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Hydrates this object instance. Should be called once the serialized object is ready for use
         /// </summary>
         /// <param name="meta">An optional MetaData dictionary to use as the cache for hydration. Not needed if this is a top level instance, as it is provided by the internal constructor</param>
-        public override void Hydrate(IDictionary<int, IAbstractMeta> meta = null)
+        public override void Hydrate(IDictionary<int, IHydratable> meta = null)
         {
             //If we never updated the root meta because it was called outside of the
             //recursive function
@@ -600,7 +611,7 @@ namespace Penguin.Reflection.Serialization.Objects
                     return true;
                 }
 
-                parent = parent.GetParent();
+                parent = parent.Parent;
             }
 
             return false;
@@ -624,11 +635,11 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Removes an item instance from the underlying collection. Does not dereference parent
         /// </summary>
         /// <param name="instance">The object instance to remove from the collection</param>
-        public void RemoveItem(IMetaObject instance)
+        public void RemoveItem(MetaObject instance)
         {
             Contract.Requires(instance != null);
 
-            instance.SetParent(null);
+            instance.Parent = null;
 
             this.CollectionItems.Remove(instance);
         }
@@ -637,11 +648,11 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Removes a property from this object. Does not dereference parent
         /// </summary>
         /// <param name="instance">The instance of the property value to remove</param>
-        public void RemoveProperty(IMetaObject instance)
+        public void RemoveProperty(MetaObject instance)
         {
             Contract.Requires(instance != null);
 
-            instance.SetParent(null);
+            instance.Parent = null;
 
             this.Properties.Remove(instance);
         }
@@ -650,7 +661,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Call this while recursing through the object structure to ensure that the parent on each object is set correctly
         /// </summary>
         /// <param name="parent">The parent of this object</param>
-        public void SetParent(IMetaObject parent)
+        public void SetParent(MetaObject parent)
         {
             this.Parent = parent;
         }

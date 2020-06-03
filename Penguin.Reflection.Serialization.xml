@@ -270,7 +270,7 @@
             <param name="PropertyName">The name of the property to search for</param>
             <returns>The property, if it exists</returns>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.MetaAttribute.Hydrate(System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta})">
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaAttribute.Hydrate(System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IHydratable})">
             <summary>
             Hydrates this instance of the MetaObject
             </summary>
@@ -308,13 +308,13 @@
             Creates an abstract meta instance with the intent of creating temporary objects for using serialization code without needing a serialized object
             </summary>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.AbstractMeta.Hydrate(System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta})">
+        <member name="M:Penguin.Reflection.Serialization.Objects.AbstractMeta.Hydrate(System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IHydratable})">
             <summary>
             Hydrates all child properties
             </summary>
             <param name="meta">The dictionary containing the reference list of objects-Ids for used with hydration</param>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.AbstractMeta.HydrateChild``1(``0,System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta})">
+        <member name="M:Penguin.Reflection.Serialization.Objects.AbstractMeta.HydrateChild``1(``0,System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IHydratable})">
             <summary>
             Recursively hydrates a child property using the provided dictionary
             </summary>
@@ -490,13 +490,13 @@
             <param name="source">The collection source</param>
             <returns>An IList containing the items</returns>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.AddItem(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject)">
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.AddItem(Penguin.Reflection.Serialization.Objects.MetaObject)">
             <summary>
             Adds an item to the underlying collection and sets this object as its parent
             </summary>
             <param name="instance">The item to add to the collection</param>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.AddProperty(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject)">
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.AddProperty(Penguin.Reflection.Serialization.Objects.MetaObject)">
             <summary>
             Adds a Property Value to this object
             </summary>
@@ -523,7 +523,7 @@
             <param name="PropertyName">The property name to check for</param>
             <returns>Whether or not the objects declared type contains a property</returns>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.Hydrate(System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta})">
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.Hydrate(System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IHydratable})">
             <summary>
             Hydrates this object instance. Should be called once the serialized object is ready for use
             </summary>
@@ -542,19 +542,19 @@
             </summary>
             <param name="c">The constructor to register</param>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.RemoveItem(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject)">
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.RemoveItem(Penguin.Reflection.Serialization.Objects.MetaObject)">
             <summary>
             Removes an item instance from the underlying collection. Does not dereference parent
             </summary>
             <param name="instance">The object instance to remove from the collection</param>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.RemoveProperty(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject)">
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.RemoveProperty(Penguin.Reflection.Serialization.Objects.MetaObject)">
             <summary>
             Removes a property from this object. Does not dereference parent
             </summary>
             <param name="instance">The instance of the property value to remove</param>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.SetParent(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject)">
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.SetParent(Penguin.Reflection.Serialization.Objects.MetaObject)">
             <summary>
             Call this while recursing through the object structure to ensure that the parent on each object is set correctly
             </summary>
@@ -608,13 +608,13 @@
             Creates a new empty instance of this object for temporary use
             </summary>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.MetaProperty.#ctor(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaProperty)">
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaProperty.#ctor(Penguin.Reflection.Serialization.Objects.MetaProperty)">
             <summary>
             Creates an instance of this object from an existing MetaProperty using Name and Type
             </summary>
             <param name="p">Thhe existing MetaProperty</param>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.MetaProperty.Hydrate(System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta})">
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaProperty.Hydrate(System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IHydratable})">
             <summary>
             Hydrates this property using a list of MetaInformation provided by the constructor
             </summary>
@@ -733,14 +733,14 @@
             Creates a new instance of this type for temporary use
             </summary>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.#ctor(System.Type,System.Collections.Generic.IList{Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject})">
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.#ctor(System.Type,System.Collections.Generic.IEnumerable{Penguin.Reflection.Serialization.Objects.MetaObject})">
             <summary>
             Base type generation or shortcut for temporary instance
             </summary>
             <param name="type"></param>
             <param name="properties">Manually set the properties list if type is defining a temporary instance of and object</param>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.#ctor(System.String,System.Collections.Generic.IList{Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject})">
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.#ctor(System.String,System.Collections.Generic.IEnumerable{Penguin.Reflection.Serialization.Objects.MetaObject})">
             <summary>
             Only for use as a placeholder type for manually created rendering models
             </summary>
@@ -823,7 +823,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.Hydrate(System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta})">
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaType.Hydrate(System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IHydratable})">
             <summary>
             Hydrates this instance using a provided list of Meta information generated by a MetaConstructor
             </summary>

@@ -16,20 +16,24 @@ namespace Penguin.Reflection.Serialization.Objects
     {
         #region Properties
 
+        IMetaObject IMetaAttribute.Instance => Instance;
+
         /// <summary>
         /// An instance representing the retrieved attribute
         /// </summary>
-        public IMetaObject Instance { get; set; }
+        public MetaObject Instance { get; set; }
 
         /// <summary>
         /// True if the attribute is declared on a parent type
         /// </summary>
         public bool IsInherited { get; set; }
 
+        IMetaType IMetaAttribute.Type => Type;
+
         /// <summary>
         /// The Type of the attribute
         /// </summary>
-        public IMetaType Type { get; set; }
+        public MetaType Type { get; set; }
 
         #endregion Properties
 
@@ -84,7 +88,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Hydrates this instance of the MetaObject
         /// </summary>
         /// <param name="meta">The dictionary of MetaData generated during construction</param>
-        public override void Hydrate(IDictionary<int, IAbstractMeta> meta = null)
+        public override void Hydrate(IDictionary<int, IHydratable> meta = null)
         {
             this.Type = this.HydrateChild(this.Type, meta);
             this.Instance = this.HydrateChild(this.Instance, meta);

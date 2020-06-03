@@ -25,10 +25,12 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public string AssemblyQualifiedName { get; set; }
 
+        IEnumerable<IMetaAttribute> IHasAttributes.Attributes => this.Attributes;
+
         /// <summary>
         /// The attributes declared on the underlying type, along with instances
         /// </summary>
-        public IEnumerable<IMetaAttribute> Attributes { get; set; }
+        public List<MetaAttribute> Attributes { get; set; }
 
         /// <summary>
         /// The base type for the underlying type
@@ -85,25 +87,31 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public string Namespace { get; set; }
 
+        IReadOnlyList<IMetaType> IMetaType.Parameters => this.Parameters;
+
         /// <summary>
         /// Generic parameters used for constructing the type
         /// </summary>
-        public IList<IMetaType> Parameters { get; set; }
+        public List<MetaType> Parameters { get; set; }
+
+        IReadOnlyList<IMetaProperty> IHasProperties.Properties => this.Properties;
 
         /// <summary>
         /// A list of all the properties found on the type
         /// </summary>
-        public IList<IMetaProperty> Properties { get; set; }
+        public List<MetaProperty> Properties { get; set; }
 
         /// <summary>
         /// ToString called on the Type
         /// </summary>
         public string StringValue { get; set; }
 
+        IReadOnlyList<IEnumValue> IMetaType.Values => this.Values;
+
         /// <summary>
         /// If the type is an enum, this contains all of the possible values
         /// </summary>
-        public IList<IEnumValue> Values { get; set; }
+        public List<IEnumValue> Values { get; set; }
 
         #endregion Properties
 
@@ -129,9 +137,12 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         /// <param name="type"></param>
         /// <param name="properties">Manually set the properties list if type is defining a temporary instance of and object</param>
-		public MetaType(Type type, IList<IMetaObject> properties = null) : base()
+        public MetaType(Type type, IEnumerable<MetaObject> properties = null) : base()
         {
-            Contract.Requires(type != null);
+            if (type is null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
 
             if (Nullable.GetUnderlyingType(type) != null)
             {
@@ -152,24 +163,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
             this.IsNumeric = type.IsNumericType();
             this.Default = type.GetDefaultValue()?.ToString();
-
-            if (type.IsEnum)
-            {
-                this.Values = new List<IEnumValue>();
-
-                foreach (string Name in Enum.GetNames(type))
-                {
-                    this.Values.Add(
-                        new EnumValue()
-                        {
-                            Value = Convert.ChangeType(
-                                Enum.Parse(type, Name),
-                                Enum.GetUnderlyingType(type)
-                            ).ToString(),
-                            Label = Name
-                        });
-                }
-            }
+            this.Values = GetEnumValues(type);
 
             if (properties != null)
             {
@@ -182,12 +176,39 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         /// <param name="s"></param>
         /// <param name="properties">Properties to set for the type</param>
-        public MetaType(string s, IList<IMetaObject> properties)
+        public MetaType(string s, IEnumerable<MetaObject> properties)
         {
             this.Name = this.AssemblyQualifiedName = s;
             this.Namespace = "Dynamic";
 
             this.Properties = properties.Select(p => p.Property).ToList();
+        }
+
+        public static List<IEnumValue> GetEnumValues(Type type)
+        {
+            if (type.IsEnum)
+            {
+                List<IEnumValue> Values = new List<IEnumValue>();
+
+                foreach (string Name in Enum.GetNames(type))
+                {
+                    Values.Add(
+                        new EnumValue()
+                        {
+                            Value = Convert.ChangeType(
+                                Enum.Parse(type, Name),
+                                Enum.GetUnderlyingType(type)
+                            ).ToString(),
+                            Label = Name
+                        });
+                }
+
+                return Values;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         #endregion Constructors
@@ -202,8 +223,15 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns>A new instance of MetaType</returns>
         public static MetaType FromConstructor(MetaConstructor c, object o)
         {
-            Contract.Requires(c != null);
-            Contract.Requires(o != null);
+            if (c is null)
+            {
+                throw new ArgumentNullException(nameof(c));
+            }
+
+            if (o is null)
+            {
+                throw new ArgumentNullException(nameof(o));
+            }
 
             return FromConstructor(c, o.GetType());
         }
@@ -349,20 +377,26 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Hydrates this instance using a provided list of Meta information generated by a MetaConstructor
         /// </summary>
         /// <param name="meta"></param>
-        public override void Hydrate(IDictionary<int, IAbstractMeta> meta = null)
+        public override void Hydrate(IDictionary<int, IHydratable> meta = null)
         {
             //This should be done through an accessor because right now we're relying on
             //The fact that the constructor sets it to a list, which is not the correct way
             //to do this.
-            this.HydrateList(this.Attributes as IList<IMetaAttribute>, meta);
+            this.HydrateList(this.Attributes as IList<MetaAttribute>, meta);
 
             this.HydrateList(this.Parameters, meta);
 
             this.HydrateList(this.Properties, meta);
 
-            this.BaseType = this.HydrateChild(this.BaseType, meta);
+            if (this.BaseType is MetaType bt)
+            {
+                this.BaseType = this.HydrateChild(bt, meta);
+            }
 
-            this.CollectionType = this.HydrateChild(this.CollectionType, meta);
+            if (this.CollectionType is MetaType ct)
+            {
+                this.CollectionType = this.HydrateChild(ct, meta);
+            }
         }
 
         /// <summary>
@@ -395,9 +429,9 @@ namespace Penguin.Reflection.Serialization.Objects
                 this.IsNullable = true;
             }
 
-            this.Parameters = new List<IMetaType>();
+            this.Parameters = new List<MetaType>();
 
-            List<IMetaAttribute> attributes = new List<IMetaAttribute>();
+            List<MetaAttribute> attributes = new List<MetaAttribute>();
             this.Attributes = attributes;
 
             if (type.BaseType != null)
@@ -426,7 +460,7 @@ namespace Penguin.Reflection.Serialization.Objects
                 }
             }
 
-            this.Properties = new List<IMetaProperty>();
+            this.Properties = new List<MetaProperty>();
 
             if (this.CoreType != CoreType.Value)
             {

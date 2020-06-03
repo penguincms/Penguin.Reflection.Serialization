@@ -1,4 +1,5 @@
 ﻿using Penguin.Reflection.Extensions;
+using Penguin.Reflection.Serialization.Objects;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -71,34 +72,34 @@ namespace Penguin.Reflection.Serialization.Templating
 
 
 
-                if (typeof(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaType).IsAssignableFrom(thisChild.Value.GetType()))
+                if (typeof(MetaType).IsAssignableFrom(thisChild.Value.GetType()))
                 {
                     sb.Append($"\"{thisChild.Key.ToString()}\":");
-                    Serialize(thisChild.Value as Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaType, sb);
+                    Serialize(thisChild.Value as MetaType, sb);
                     continue;
                 }
 
 
-                if (typeof(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaProperty).IsAssignableFrom(thisChild.Value.GetType()))
+                if (typeof(MetaProperty).IsAssignableFrom(thisChild.Value.GetType()))
                 {
                     sb.Append($"\"{thisChild.Key.ToString()}\":");
-                    Serialize(thisChild.Value as Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaProperty, sb);
+                    Serialize(thisChild.Value as MetaProperty, sb);
                     continue;
                 }
 
 
-                if (typeof(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject).IsAssignableFrom(thisChild.Value.GetType()))
+                if (typeof(MetaObject).IsAssignableFrom(thisChild.Value.GetType()))
                 {
                     sb.Append($"\"{thisChild.Key.ToString()}\":");
-                    Serialize(thisChild.Value as Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject, sb);
+                    Serialize(thisChild.Value as MetaObject, sb);
                     continue;
                 }
 
 
-                if (typeof(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaAttribute).IsAssignableFrom(thisChild.Value.GetType()))
+                if (typeof(MetaAttribute).IsAssignableFrom(thisChild.Value.GetType()))
                 {
                     sb.Append($"\"{thisChild.Key.ToString()}\":");
-                    Serialize(thisChild.Value as Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaAttribute, sb);
+                    Serialize(thisChild.Value as MetaAttribute, sb);
                     continue;
                 }
 
@@ -152,50 +153,50 @@ namespace Penguin.Reflection.Serialization.Templating
             {
                 if (thisChild is null) { continue; }
 
-                if (typeof(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaType).IsAssignableFrom(thisChild.GetType()))
+                if (typeof(MetaType).IsAssignableFrom(thisChild.GetType()))
                 {
                     if (ElementIndex++ > 0)
                     {
                         sb.Append(",");
                     }
 
-                    Serialize(thisChild as Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaType, sb);
+                    Serialize(thisChild as MetaType, sb);
                     continue;
                 }
 
 
-                if (typeof(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaProperty).IsAssignableFrom(thisChild.GetType()))
+                if (typeof(MetaProperty).IsAssignableFrom(thisChild.GetType()))
                 {
                     if (ElementIndex++ > 0)
                     {
                         sb.Append(",");
                     }
 
-                    Serialize(thisChild as Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaProperty, sb);
+                    Serialize(thisChild as MetaProperty, sb);
                     continue;
                 }
 
 
-                if (typeof(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject).IsAssignableFrom(thisChild.GetType()))
+                if (typeof(MetaObject).IsAssignableFrom(thisChild.GetType()))
                 {
                     if (ElementIndex++ > 0)
                     {
                         sb.Append(",");
                     }
 
-                    Serialize(thisChild as Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject, sb);
+                    Serialize(thisChild as MetaObject, sb);
                     continue;
                 }
 
 
-                if (typeof(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaAttribute).IsAssignableFrom(thisChild.GetType()))
+                if (typeof(MetaAttribute).IsAssignableFrom(thisChild.GetType()))
                 {
                     if (ElementIndex++ > 0)
                     {
                         sb.Append(",");
                     }
 
-                    Serialize(thisChild as Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaAttribute, sb);
+                    Serialize(thisChild as MetaAttribute, sb);
                     continue;
                 }
 
@@ -256,14 +257,14 @@ namespace Penguin.Reflection.Serialization.Templating
 
 
 
-        public static void Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaType> toSerialize, StringBuilder sb)
+        public static void Serialize(this IList<MetaType> toSerialize, StringBuilder sb)
         {
             Contract.Requires(toSerialize != null);
 
             int ElementIndex = 0;
             sb.Append("[");
 
-            foreach (Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaType thisChild in toSerialize)
+            foreach (MetaType thisChild in toSerialize)
             {
                 if (ElementIndex++ > 0)
                 {
@@ -277,9 +278,12 @@ namespace Penguin.Reflection.Serialization.Templating
 
         }
 
-        public static void Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaType toSerialize, StringBuilder sb)
+        public static void Serialize(this MetaType toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            if (toSerialize is null)
+            {
+                throw new ArgumentNullException(nameof(toSerialize));
+            }
 
             sb.Append("{");
 
@@ -331,14 +335,14 @@ namespace Penguin.Reflection.Serialization.Templating
         }
 
 
-        public static void Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaProperty> toSerialize, StringBuilder sb)
+        public static void Serialize(this IList<MetaProperty> toSerialize, StringBuilder sb)
         {
             Contract.Requires(toSerialize != null);
 
             int ElementIndex = 0;
             sb.Append("[");
 
-            foreach (Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaProperty thisChild in toSerialize)
+            foreach (MetaProperty thisChild in toSerialize)
             {
                 if (ElementIndex++ > 0)
                 {
@@ -352,7 +356,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         }
 
-        public static void Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaProperty toSerialize, StringBuilder sb)
+        public static void Serialize(this MetaProperty toSerialize, StringBuilder sb)
         {
             Contract.Requires(toSerialize != null);
 
@@ -360,13 +364,13 @@ namespace Penguin.Reflection.Serialization.Templating
 
             sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
-            if (toSerialize.DeclaringType != null)
+            if (!(toSerialize.DeclaringType is null))
             {
                 sb.Append(",\"DeclaringType\":");
                 Serialize(toSerialize.DeclaringType, sb);
             }
-            if (toSerialize.Name != null) { sb.Append($",\"Name\":\"{toSerialize.Name.ToJSONValue()}\""); }
-            if (toSerialize.Type != null)
+            if (!(toSerialize.Name is null)) { sb.Append($",\"Name\":\"{toSerialize.Name.ToJSONValue()}\""); }
+            if (!(toSerialize.Type is null))
             {
                 sb.Append(",\"Type\":");
                 Serialize(toSerialize.Type, sb);
@@ -382,14 +386,14 @@ namespace Penguin.Reflection.Serialization.Templating
         }
 
 
-        public static void Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject> toSerialize, StringBuilder sb)
+        public static void Serialize(this IList<MetaObject> toSerialize, StringBuilder sb)
         {
             Contract.Requires(toSerialize != null);
 
             int ElementIndex = 0;
             sb.Append("[");
 
-            foreach (Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject thisChild in toSerialize)
+            foreach (MetaObject thisChild in toSerialize)
             {
                 if (ElementIndex++ > 0)
                 {
@@ -403,7 +407,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         }
 
-        public static void Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaObject toSerialize, StringBuilder sb)
+        public static void Serialize(this MetaObject toSerialize, StringBuilder sb)
         {
             Contract.Requires(toSerialize != null);
 
@@ -443,7 +447,7 @@ namespace Penguin.Reflection.Serialization.Templating
                 sb.Append(",\"Template\":");
                 Serialize(toSerialize.Template, sb);
             }
-            if (toSerialize.Type != null)
+            if (!(toSerialize.Type is null))
             {
                 sb.Append(",\"Type\":");
                 Serialize(toSerialize.Type, sb);
@@ -456,14 +460,14 @@ namespace Penguin.Reflection.Serialization.Templating
         }
 
 
-        public static void Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaAttribute> toSerialize, StringBuilder sb)
+        public static void Serialize(this IList<MetaAttribute> toSerialize, StringBuilder sb)
         {
             Contract.Requires(toSerialize != null);
 
             int ElementIndex = 0;
             sb.Append("[");
 
-            foreach (Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaAttribute thisChild in toSerialize)
+            foreach (MetaAttribute thisChild in toSerialize)
             {
                 if (ElementIndex++ > 0)
                 {
@@ -477,7 +481,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         }
 
-        public static void Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaAttribute toSerialize, StringBuilder sb)
+        public static void Serialize(this MetaAttribute toSerialize, StringBuilder sb)
         {
             Contract.Requires(toSerialize != null);
 
@@ -491,7 +495,7 @@ namespace Penguin.Reflection.Serialization.Templating
                 Serialize(toSerialize.Instance, sb);
             }
             if (toSerialize.IsInherited) { sb.Append(",\"IsInherited\":true"); }
-            if (toSerialize.Type != null)
+            if (!(toSerialize.Type is null))
             {
                 sb.Append(",\"Type\":");
                 Serialize(toSerialize.Type, sb);
@@ -538,7 +542,7 @@ namespace Penguin.Reflection.Serialization.Templating
         }
 
 
-        public static void Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta> toSerialize, StringBuilder sb)
+        public static void Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IHydratable> toSerialize, StringBuilder sb)
         {
             Contract.Requires(toSerialize != null);
 
@@ -559,7 +563,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         }
 
-        public static void Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta toSerialize, StringBuilder sb)
+        public static void Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IHydratable toSerialize, StringBuilder sb)
         {
             Contract.Requires(toSerialize != null);
 

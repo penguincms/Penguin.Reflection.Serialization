@@ -6,7 +6,6 @@ using Penguin.Reflection.Serialization.Extensions;
 using Penguin.Reflection.Serialization.Objects;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using RType = System.Type;
@@ -32,7 +31,7 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// Contains a list of references used for rehydrating the object tree. This exists to keep the serialized (json) size as small as possible by avoiding the
         /// need for reference handling as well as avoiding struct duplication
         /// </summary>
-        public Dictionary<object, IAbstractMeta> Meta { get; } = new Dictionary<object, IAbstractMeta>();
+        public Dictionary<object, IHydratable> Meta { get; } = new Dictionary<object, IHydratable>();
 
         /// <summary>
         /// Contains the settings to be used when constructing the serialized object tree
@@ -135,7 +134,6 @@ namespace Penguin.Reflection.Serialization.Constructors
             clone.Meta.AddRange(this.Meta);
             clone.Exceptions.AddRange(Exceptions);
 
-            
             return clone;
         }
 
