@@ -63,10 +63,13 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <summary>
         /// Creates an instance of this object from an existing MetaProperty using Name and Type
         /// </summary>
-        /// <param name="p">Thhe existing MetaProperty</param>
+        /// <param name="p">The existing MetaProperty</param>
         public MetaProperty(MetaProperty p) : this()
         {
-            Contract.Requires(p != null);
+            if (p is null)
+            {
+                throw new System.ArgumentNullException(nameof(p));
+            }
 
             this.Name = p.Name;
             this.Type = p.Type;

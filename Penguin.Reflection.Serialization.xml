@@ -187,7 +187,7 @@
         <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.AddTypeGetterOverride(System.Func{System.Type,System.Type})">
             <summary>
             Function that all type resolutions pass through that can affect the return type
-            Usefull for unshelling proxy types. If multiple, they are chained, so be careful
+            Useful for unshelling proxy types. If multiple, they are chained, so be careful
             </summary>
             <param name="func">The function that the type passes through</param>
         </member>
@@ -328,6 +328,20 @@
             The most commonly used class, a fully serialized object for use in MetaSerialization systems
             </summary>
         </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.Item(System.String)">
+            <summary>
+            Returns an instance of a property by property name. Recursive notation supported using "." delimiter
+            </summary>
+            <param name="PropertyName">The property name to search for</param>
+            <returns>The property if exists, or Error if not</returns>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.Item(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaProperty)">
+            <summary>
+            Returns an instance of a property by IMetaProperty
+            </summary>
+            <param name="metaProperty">The property to search for</param>
+            <returns>The property if exists, or Error if not</returns>
+        </member>
         <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.BuildExceptions">
             <summary>
             Top level exception cache for referencing exception messages. Used because recursive serialization has the potential to generate a LOT
@@ -444,20 +458,6 @@
             Creates a new MetaObject using a constructor that should contain the object information to serialize
             </summary>
             <param name="c">The constructor to use</param>
-        </member>
-        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.Item(System.String)">
-            <summary>
-            Returns an instance of a property by property name. Recursive notation supported using "." delimiter
-            </summary>
-            <param name="PropertyName">The property name to search for</param>
-            <returns>The property if exists, or Error if not</returns>
-        </member>
-        <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.Item(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaProperty)">
-            <summary>
-            Returns an instance of a property by IMetaProperty
-            </summary>
-            <param name="metaProperty">The property to search for</param>
-            <returns>The property if exists, or Error if not</returns>
         </member>
         <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.FromConstructor(Penguin.Reflection.Serialization.Constructors.MetaConstructor)">
             <summary>
@@ -612,7 +612,7 @@
             <summary>
             Creates an instance of this object from an existing MetaProperty using Name and Type
             </summary>
-            <param name="p">Thhe existing MetaProperty</param>
+            <param name="p">The existing MetaProperty</param>
         </member>
         <member name="M:Penguin.Reflection.Serialization.Objects.MetaProperty.Hydrate(System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IHydratable})">
             <summary>
@@ -845,7 +845,7 @@
             <summary>
             Creates a new MetaType from a given type
             </summary>
-            <param name="c">The constuctor to use</param>
+            <param name="c">The constructor to use</param>
             <param name="t">The type to base the MetaType on</param>
             <returns>A new instance of MetaType</returns>
         </member>

@@ -22,8 +22,58 @@ namespace Penguin.Reflection.Serialization.Objects
 	public class MetaObject : AbstractMeta, ITypeInfo, IMetaObject, IAbstractMeta
     {
         /// <summary>
+        /// Returns an instance of a property by property name. Recursive notation supported using "." delimiter
+        /// </summary>
+        /// <param name="PropertyName">The property name to search for</param>
+        /// <returns>The property if exists, or Error if not</returns>
+        public IMetaObject this[string PropertyName]
+        {
+            get
+            {
+                if (PropertyName is null)
+                {
+                    throw new ArgumentNullException(nameof(PropertyName));
+                }
+
+                IMetaObject m = this;
+
+                foreach (string chunk in PropertyName.Split('.'))
+                {
+                    m = m.Properties.First(p => p.Property.Name == chunk);
+                }
+
+                return m;
+            }
+        }
+
+        /// <summary>
+        /// Returns an instance of a property by IMetaProperty
+        /// </summary>
+        /// <param name="metaProperty">The property to search for</param>
+        /// <returns>The property if exists, or Error if not</returns>
+        public IMetaObject this[IMetaProperty metaProperty]    // Indexer declaration
+        {
+            get
+            {
+                if (metaProperty is null)
+                {
+                    throw new ArgumentNullException(nameof(metaProperty));
+                }
+
+                if (metaProperty.Type.IsNullable || metaProperty.Type.CoreType == CoreType.Reference)
+                {
+                    return this.Properties.FirstOrDefault(p => p.Property.Name == metaProperty.Name);
+                }
+                else
+                {
+                    return this.Properties.First(p => p.Property.Name == metaProperty.Name);
+                }
+            }
+        }
+
+        /// <summary>
         /// Top level exception cache for referencing exception messages. Used because recursive serialization has the potential to generate a LOT
-        /// of rerundant errors
+        /// of redundant errors
         /// </summary>
         public IDictionary<int, string> BuildExceptions { get; set; }
 
@@ -123,8 +173,10 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="c">The constructor to use when generating the list</param>
         public MetaObject(string PropertyName, IList<object> Values, MetaConstructor c) : base()
         {
-            Contract.Requires(c != null);
-            Contract.Requires(Values != null);
+            if (Values is null)
+            {
+                throw new ArgumentNullException(nameof(Values));
+            }
 
             this.Properties = new List<MetaObject>();
             this.CollectionItems = new List<MetaObject>();
@@ -179,9 +231,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="c">The constructor to use</param>
         public MetaObject(MetaConstructor c) : base()
         {
-            Contract.Requires(c != null);
-
-            this.Constructor = c;
+            this.Constructor = c ?? throw new ArgumentNullException(nameof(c));
 
             c.ClaimOwnership(this);
 
@@ -370,57 +420,16 @@ namespace Penguin.Reflection.Serialization.Objects
         }
 
         /// <summary>
-        /// Returns an instance of a property by property name. Recursive notation supported using "." delimiter
-        /// </summary>
-        /// <param name="PropertyName">The property name to search for</param>
-        /// <returns>The property if exists, or Error if not</returns>
-        public IMetaObject this[string PropertyName]
-        {
-            get
-            {
-                Contract.Requires(PropertyName != null);
-
-                IMetaObject m = this;
-
-                foreach (string chunk in PropertyName.Split('.'))
-                {
-                    m = m.Properties.First(p => p.Property.Name == chunk);
-                }
-
-                return m;
-            }
-        }
-
-        /// <summary>
-        /// Returns an instance of a property by IMetaProperty
-        /// </summary>
-        /// <param name="metaProperty">The property to search for</param>
-        /// <returns>The property if exists, or Error if not</returns>
-        public IMetaObject this[IMetaProperty metaProperty]    // Indexer declaration
-        {
-            get
-            {
-                Contract.Requires(metaProperty != null);
-
-                if (metaProperty.Type.IsNullable || metaProperty.Type.CoreType == CoreType.Reference)
-                {
-                    return this.Properties.FirstOrDefault(p => p.Property.Name == metaProperty.Name);
-                }
-                else
-                {
-                    return this.Properties.First(p => p.Property.Name == metaProperty.Name);
-                }
-            }
-        }
-
-        /// <summary>
         /// Creates a new serialized object using the provided MetaConstructor
         /// </summary>
         /// <param name="c">The MetaConstructor to use</param>
         /// <returns>A newly serialized and DEHYDRATED object</returns>
         public static MetaObject FromConstructor(MetaConstructor c)
         {
-            Contract.Requires(c != null);
+            if (c is null)
+            {
+                throw new ArgumentNullException(nameof(c));
+            }
 
             return FromConstructor(c, new ObjectConstructor(c.PropertyInfo, c.Type, c.Object));
         }
@@ -444,7 +453,10 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns>A newly serialized and DEHYDRATED object</returns>
         public static MetaObject FromConstructor(MetaConstructor c, ObjectConstructor oc)
         {
-            Contract.Requires(c != null);
+            if (c is null)
+            {
+                throw new ArgumentNullException(nameof(c));
+            }
 
             MetaObject i;
 
@@ -468,7 +480,7 @@ namespace Penguin.Reflection.Serialization.Objects
         }
 
         /// <summary>
-        /// Inteded to be called via reflection to turn an IEnumerable of an unknown type into an IList
+        /// Intended to be called via reflection to turn an IEnumerable of an unknown type into an IList
         /// </summary>
         /// <typeparam name="T">The reflected type get for the collection source</typeparam>
         /// <param name="source">The collection source</param>
@@ -624,7 +636,10 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="c">The constructor to register</param>
         public void RegisterConstructor(MetaConstructor c)
         {
-            Contract.Requires(c != null);
+            if (c is null)
+            {
+                throw new ArgumentNullException(nameof(c));
+            }
 
             this.Meta = c.Meta.Select(v => v.Value).ToDictionary(k => k.I, v => v);
             this.BuildExceptions = c.Exceptions.ToDictionary(k => k.Value, v => v.Key);
@@ -637,7 +652,10 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="instance">The object instance to remove from the collection</param>
         public void RemoveItem(MetaObject instance)
         {
-            Contract.Requires(instance != null);
+            if (instance is null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
 
             instance.Parent = null;
 
@@ -650,7 +668,10 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="instance">The instance of the property value to remove</param>
         public void RemoveProperty(MetaObject instance)
         {
-            Contract.Requires(instance != null);
+            if (instance is null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
 
             instance.Parent = null;
 

@@ -31,7 +31,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         public static void Serialize(this IList<Enum> toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            
 
             sb.Append("[");
 
@@ -52,7 +52,7 @@ namespace Penguin.Reflection.Serialization.Templating
         public static void SerializeDictionary(this IDictionary toSerialize, StringBuilder sb)
         {
 
-            Contract.Requires(toSerialize != null);
+            
 
             sb.Append("{");
 
@@ -145,7 +145,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         public static void SerializeList(this IList toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            
             sb.Append("[");
 
             int ElementIndex = 0;
@@ -259,7 +259,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         public static void Serialize(this IList<MetaType> toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            
 
             int ElementIndex = 0;
             sb.Append("[");
@@ -337,7 +337,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         public static void Serialize(this IList<MetaProperty> toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            
 
             int ElementIndex = 0;
             sb.Append("[");
@@ -358,7 +358,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         public static void Serialize(this MetaProperty toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            
 
             sb.Append("{");
 
@@ -388,7 +388,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         public static void Serialize(this IList<MetaObject> toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            
 
             int ElementIndex = 0;
             sb.Append("[");
@@ -409,7 +409,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         public static void Serialize(this MetaObject toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            
 
             sb.Append("{");
 
@@ -462,7 +462,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         public static void Serialize(this IList<MetaAttribute> toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            
 
             int ElementIndex = 0;
             sb.Append("[");
@@ -483,7 +483,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         public static void Serialize(this MetaAttribute toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            
 
             sb.Append("{");
 
@@ -508,7 +508,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         public static void Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IStringHolder> toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            
 
             int ElementIndex = 0;
             sb.Append("[");
@@ -529,7 +529,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         public static void Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IStringHolder toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            
 
             sb.Append("{");
 
@@ -544,7 +544,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         public static void Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IHydratable> toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            
 
             int ElementIndex = 0;
             sb.Append("[");
@@ -565,7 +565,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         public static void Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IHydratable toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            
 
             sb.Append("{");
 
@@ -579,7 +579,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         public static void Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue> toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            
 
             int ElementIndex = 0;
             sb.Append("[");
@@ -600,7 +600,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         public static void Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            
 
             sb.Append("{");
 
@@ -614,7 +614,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         public static void Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaSerializable> toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            
 
             int ElementIndex = 0;
             sb.Append("[");
@@ -635,7 +635,7 @@ namespace Penguin.Reflection.Serialization.Templating
 
         public static void Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaSerializable toSerialize, StringBuilder sb)
         {
-            Contract.Requires(toSerialize != null);
+            
 
             sb.Append("{");
 

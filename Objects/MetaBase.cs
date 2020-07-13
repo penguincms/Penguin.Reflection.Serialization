@@ -72,8 +72,6 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns>A hydrated version of the object</returns>
         public T HydrateChild<T>(T toHydrate, IDictionary<int, IHydratable> meta) where T : IHydratable
         {
-            Contract.Requires(meta != null);
-
             if (toHydrate == null)
             {
                 return default;
@@ -93,6 +91,11 @@ namespace Penguin.Reflection.Serialization.Objects
             }
             else
             {
+                if (meta is null)
+                {
+                    throw new ArgumentNullException(nameof(meta));
+                }
+
                 toHydrate = (T)meta[toHydrate.I];
                 toHydrate.IsHydrated = true;
                 toHydrate.Hydrate(meta);

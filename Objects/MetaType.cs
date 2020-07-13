@@ -186,6 +186,11 @@ namespace Penguin.Reflection.Serialization.Objects
 
         public static List<IEnumValue> GetEnumValues(Type type)
         {
+            if (type is null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
             if (type.IsEnum)
             {
                 List<IEnumValue> Values = new List<IEnumValue>();
@@ -477,11 +482,21 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <summary>
         /// Creates a new MetaType from a given type
         /// </summary>
-        /// <param name="c">The constuctor to use</param>
+        /// <param name="c">The constructor to use</param>
         /// <param name="t">The type to base the MetaType on</param>
         /// <returns>A new instance of MetaType</returns>
         public static MetaType FromConstructor(MetaConstructor c, Type t) // Leave this public. Its used by the Reporting Type Serializer
         {
+            if (c is null)
+            {
+                throw new ArgumentNullException(nameof(c));
+            }
+
+            if (t is null)
+            {
+                throw new ArgumentNullException(nameof(t));
+            }
+
             string Name = t.Name;
 
             foreach (System.Func<Type, Type> typeOverride in c.Settings.TypeGetterOverride)

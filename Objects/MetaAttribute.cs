@@ -60,7 +60,10 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="c">The MetaConstructor to  use</param>
         public MetaAttribute(MetaConstructor c) : base()
         {
-            Contract.Requires(c != null);
+            if (c is null)
+            {
+                throw new System.ArgumentNullException(nameof(c));
+            }
 
             this.Instance = MetaObject.FromConstructor(c, new ObjectConstructor(c.PropertyInfo, c.Type, (c.Object as AttributeInstance).Instance));
 

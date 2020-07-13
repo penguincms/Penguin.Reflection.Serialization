@@ -52,7 +52,6 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// </summary>
         public AttributeMatchSetting AttributeMatchSettings { get; set; }
 
-
         /// <summary>
         /// When using AttributeIncludeSettings.Whitelist, this list should contain a list of attribute types to serialize
         /// </summary>
@@ -124,7 +123,7 @@ namespace Penguin.Reflection.Serialization.Constructors
 
         /// <summary>
         /// Function that all type resolutions pass through that can affect the return type
-        /// Usefull for unshelling proxy types. If multiple, they are chained, so be careful
+        /// Useful for unshelling proxy types. If multiple, they are chained, so be careful
         /// </summary>
         /// <param name="func">The function that the type passes through</param>
         public void AddTypeGetterOverride(Func<RType, RType> func)
@@ -139,7 +138,10 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// <param name="func">The function to call instead of PropertyInfo.GetValue. Object in is the Parent of the property, object out is the Property Value</param>
         public void OverridePropertyGetter(PropertyInfo pi, Func<object, object> func)
         {
-            Contract.Requires(pi != null);
+            if (pi is null)
+            {
+                throw new ArgumentNullException(nameof(pi));
+            }
 
             this.PropertyGetterOverride.Add(pi.GetUniquePropertyId(), func);
         }

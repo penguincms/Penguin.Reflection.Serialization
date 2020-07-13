@@ -64,7 +64,7 @@ public static partial class MetaSerializer {
 		}
 
         public static void Serialize(this IList<Enum> toSerialize, StringBuilder sb) {
-			Contract.Requires(toSerialize != null);
+			
 
 			sb.Append("[");
 
@@ -82,7 +82,7 @@ public static partial class MetaSerializer {
 
         public static void SerializeDictionary(this IDictionary toSerialize, StringBuilder sb) {
 
-			Contract.Requires(toSerialize != null);
+			
 
 			sb.Append("{");
 
@@ -117,7 +117,7 @@ public static partial class MetaSerializer {
         }
 
         public static void SerializeList(this IList toSerialize, StringBuilder sb) {
-			Contract.Requires(toSerialize != null);
+			
 			sb.Append("[");
 
 			int ElementIndex = 0;
@@ -146,7 +146,7 @@ public static partial class MetaSerializer {
     <#    foreach(CodeInterface thisClass in MetaObjects) {#>      
 
         public static void Serialize(this IList<<#=            thisClass.FullName#>> toSerialize, StringBuilder sb) {
-			Contract.Requires(toSerialize != null);
+			
 
             int ElementIndex = 0;
 			sb.Append("[");
@@ -164,7 +164,7 @@ public static partial class MetaSerializer {
         }
 
         public static void Serialize(this <#=            thisClass.FullName#> toSerialize, StringBuilder sb) {
-            Contract.Requires(toSerialize != null);
+            
 
 			sb.Append("{");
 
