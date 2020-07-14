@@ -345,7 +345,7 @@
         <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.BuildExceptions">
             <summary>
             Top level exception cache for referencing exception messages. Used because recursive serialization has the potential to generate a LOT
-            of rerundant errors
+            of redundant errors
             </summary>
         </member>
         <member name="P:Penguin.Reflection.Serialization.Objects.MetaObject.CollectionItems">
@@ -484,7 +484,7 @@
         </member>
         <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.GetCollection``1(System.Collections.Generic.IEnumerable{``0})">
             <summary>
-            Inteded to be called via reflection to turn an IEnumerable of an unknown type into an IList
+            Intended to be called via reflection to turn an IEnumerable of an unknown type into an IList
             </summary>
             <typeparam name="T">The reflected type get for the collection source</typeparam>
             <param name="source">The collection source</param>
