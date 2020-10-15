@@ -1,4 +1,4 @@
-﻿<#@ template language="C#" debug="false" hostspecific="true" #>
+﻿<#@ template language="C#" debug="true" hostspecific="true" #>
 <#@ assembly name="System" #>
 <#@ assembly name="System.Core" #>
 <#@ assembly name="System.Data.Entity" #>
@@ -16,7 +16,7 @@ using System;
 using Penguin.Reflection.Extensions;
 using System.Diagnostics.Contracts;
 using System.Text;
-
+ 
 <#
 
     EnvDTE.DTE visualStudio = (this.Host as IServiceProvider).GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
@@ -26,7 +26,7 @@ using System.Text;
     EnvDTE.Project  ServerProject = null;
 
     foreach(EnvDTE.Project project in projects) {
-        if(project.Name == "Penguin.Reflection.Serialization") {
+        if(project.Name == "Penguin.Reflection.Serialization" || project.Name == "Penguin.Reflection.Serialization.Local") {
             ServerProject = project;
         }
     }
@@ -66,17 +66,17 @@ public static partial class MetaSerializer {
         public static void Serialize(this IList<Enum> toSerialize, StringBuilder sb) {
 			
 
-			sb.Append("[");
+			sb.Append('[');
 
 			int ElementIndex = 0;
             foreach(Enum thisChild in toSerialize) {
 				if(ElementIndex++ > 0){
-					sb.Append(",");
+					sb.Append(',');
 				}
                 sb.Append(System.Convert.ChangeType(toSerialize, Enum.GetUnderlyingType(toSerialize.GetType())).ToString());
             }
 
-            sb.Append("]");
+            sb.Append(']');
 
         }
 
@@ -84,15 +84,15 @@ public static partial class MetaSerializer {
 
 			
 
-			sb.Append("{");
+			sb.Append('{');
 
 			int ElementIndex = 0;
 
             foreach(DictionaryEntry thisChild in toSerialize) {
 				if(ElementIndex++ > 0) {
-					sb.Append(",");
+					sb.Append(',');
 				}
-            if(thisChild.Value.GetType() == typeof(String)) { 
+            if(thisChild.Value.GetType() == typeof(string)) { 
                     sb.Append($"\"{thisChild.Key.ToString()}\":\"{thisChild.Value.ToJSONValue()}\"");
                     continue;
             }
@@ -112,13 +112,13 @@ public static partial class MetaSerializer {
                 throw new Exception("Template does not support Dictionary Value type");
             }
 
-			sb.Append("}");
+			sb.Append('}');
 
         }
 
         public static void SerializeList(this IList toSerialize, StringBuilder sb) {
 			
-			sb.Append("[");
+			sb.Append('[');
 
 			int ElementIndex = 0;
             foreach(object thisChild in toSerialize) {
@@ -128,7 +128,7 @@ public static partial class MetaSerializer {
                 
 				if(typeof(<#=thisInterface.FullName#>).IsAssignableFrom(thisChild.GetType())) { 
 					if(ElementIndex++ > 0) {
-						sb.Append(",");
+						sb.Append(',');
 					}
 
                     Serialize(thisChild as <#=thisInterface.FullName#>, sb);
@@ -139,7 +139,7 @@ public static partial class MetaSerializer {
     #>        
 }
 
-			sb.Append("]");
+			sb.Append(']');
 
         }
 
@@ -149,24 +149,24 @@ public static partial class MetaSerializer {
 			
 
             int ElementIndex = 0;
-			sb.Append("[");
+			sb.Append('[');
 
             foreach(<#=            thisClass.FullName#> thisChild in toSerialize) {
 				if(ElementIndex++ > 0) {
-					sb.Append(",");
+					sb.Append(',');
 				}
 
                 Serialize(thisChild, sb);
             }
 
-            sb.Append("]");
+            sb.Append(']');
 
         }
 
         public static void Serialize(this <#=            thisClass.FullName#> toSerialize, StringBuilder sb) {
             
 
-			sb.Append("{");
+			sb.Append('{');
 
             sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
@@ -178,9 +178,11 @@ public static partial class MetaSerializer {
             foreach(CodeElement thisMember in checkMe.Members) {
                 if(thisMember.Kind != EnvDTE.vsCMElement.vsCMElementProperty) { continue; }
                 CodeProperty thisProperty = (thisMember as CodeProperty);
-                if(thisProperty.Name == "this") { continue; }
+
+                if(thisProperty.Name == "this" || thisProperty.Name == "Parent") { continue; }
                 string thisTypeName= thisProperty.Type.CodeType.Name;
                 bool IsEnum = thisProperty.Type.CodeType.IsDerivedFrom["System.Enum"];
+                
                 
                 string DictType = string.Empty;  
 
@@ -222,6 +224,11 @@ public static partial class MetaSerializer {
 									sb.Append(",\"<#=                        thisProperty.Name#>\":");
 									SerializeDictionary(<#=PropRef#> as IDictionary, sb); 
 							   }
+<#                } else if (thisTypeName == "IReadOnlyList") {
+                #>             if (<#=PropRef#> is IList il_<#=thisProperty.Name#> && il_<#=thisProperty.Name#>.Count > 0) { 
+									sb.Append(",\"<#=                        thisProperty.Name#>\":");
+							        SerializeList(il_<#=thisProperty.Name#> as IList, sb); 
+							   }
 <#                } else {#>
             <#=                        thisProperty.Name #>:<#=                        thisProperty.Type.CodeType.Name #>
 
@@ -230,7 +237,7 @@ public static partial class MetaSerializer {
                 }  
                 } 
         }#>
-            	sb.Append("}");
+            	sb.Append('}');
         }
     <#    }#>
 } 
