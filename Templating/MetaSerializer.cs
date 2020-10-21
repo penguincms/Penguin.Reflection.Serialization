@@ -95,16 +95,16 @@ public static partial class MetaSerializer {
                 }
 
 
-                if(typeof(Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue).IsAssignableFrom(thisChild.Value.GetType())) { 
+                if(typeof(Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta).IsAssignableFrom(thisChild.Value.GetType())) { 
                     sb.Append($"\"{thisChild.Key.ToString()}\":");
-					Serialize(thisChild.Value as Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue, sb);
+					Serialize(thisChild.Value as Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta, sb);
                     continue;
                 }
 
 
-                if(typeof(Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta).IsAssignableFrom(thisChild.Value.GetType())) { 
+                if(typeof(Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue).IsAssignableFrom(thisChild.Value.GetType())) { 
                     sb.Append($"\"{thisChild.Key.ToString()}\":");
-					Serialize(thisChild.Value as Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta, sb);
+					Serialize(thisChild.Value as Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue, sb);
                     continue;
                 }
 
@@ -181,22 +181,22 @@ public static partial class MetaSerializer {
                 }
 
                 
-				if(typeof(Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue).IsAssignableFrom(thisChild.GetType())) { 
-					if(ElementIndex++ > 0) {
-						sb.Append(',');
-					}
-
-                    Serialize(thisChild as Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue, sb);
-                    continue;
-                }
-
-                
 				if(typeof(Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta).IsAssignableFrom(thisChild.GetType())) { 
 					if(ElementIndex++ > 0) {
 						sb.Append(',');
 					}
 
                     Serialize(thisChild as Penguin.Reflection.Serialization.Abstractions.Interfaces.IAbstractMeta, sb);
+                    continue;
+                }
+
+                
+				if(typeof(Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue).IsAssignableFrom(thisChild.GetType())) { 
+					if(ElementIndex++ > 0) {
+						sb.Append(',');
+					}
+
+                    Serialize(thisChild as Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue, sb);
                     continue;
                 }
 
@@ -244,6 +244,7 @@ public static partial class MetaSerializer {
 
             sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
+
               if (toSerialize.AssemblyQualifiedName != null) { sb.Append($",\"AssemblyQualifiedName\":\"{toSerialize.AssemblyQualifiedName.ToJSONValue()}\""); }
              if (toSerialize.BaseType != null) { 
 									sb.Append(",\"BaseType\":");
@@ -264,11 +265,11 @@ public static partial class MetaSerializer {
               if (toSerialize.Namespace != null) { sb.Append($",\"Namespace\":\"{toSerialize.Namespace.ToJSONValue()}\""); }
              if (toSerialize.Parameters is IList il_Parameters && il_Parameters.Count > 0) { 
 									sb.Append(",\"Parameters\":");
-							        SerializeList(il_Parameters as IList, sb); 
+							        SerializeList(il_Parameters, sb); 
 							   }
              if (toSerialize.Values is IList il_Values && il_Values.Count > 0) { 
 									sb.Append(",\"Values\":");
-							        SerializeList(il_Values as IList, sb); 
+							        SerializeList(il_Values, sb); 
 							   }
              if (toSerialize.Attributes != null && toSerialize.Attributes.Any()) { 
 								sb.Append(",\"Attributes\":");
@@ -276,7 +277,7 @@ public static partial class MetaSerializer {
 				               }
              if (toSerialize.Properties is IList il_Properties && il_Properties.Count > 0) { 
 									sb.Append(",\"Properties\":");
-							        SerializeList(il_Properties as IList, sb); 
+							        SerializeList(il_Properties, sb); 
 							   }
             	sb.Append('}');
         }
@@ -306,6 +307,7 @@ public static partial class MetaSerializer {
 			sb.Append('{');
 
             sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
+
 
              if (toSerialize.DeclaringType != null) { 
 									sb.Append(",\"DeclaringType\":");
@@ -349,14 +351,19 @@ public static partial class MetaSerializer {
 
             sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
+            if((toSerialize as Penguin.Reflection.Serialization.Objects.MetaObject)?.Meta is IDictionary id){
+                sb.Append(",\"Meta\":");
+                SerializeDictionary(id, sb); 
+            }
+            
              if (toSerialize.CollectionItems is IList il_CollectionItems && il_CollectionItems.Count > 0) { 
 									sb.Append(",\"CollectionItems\":");
-							        SerializeList(il_CollectionItems as IList, sb); 
+							        SerializeList(il_CollectionItems, sb); 
 							   }
              if (toSerialize.Null) { sb.Append(",\"Null\":true"); }
              if (toSerialize.Properties is IList il_Properties && il_Properties.Count > 0) { 
 									sb.Append(",\"Properties\":");
-							        SerializeList(il_Properties as IList, sb); 
+							        SerializeList(il_Properties, sb); 
 							   }
              if (toSerialize.Property != null) { 
 									sb.Append(",\"Property\":");
@@ -400,6 +407,7 @@ public static partial class MetaSerializer {
 
             sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
+
               if (toSerialize.V != null) { sb.Append($",\"V\":\"{toSerialize.V.ToJSONValue()}\""); }
             if (toSerialize.I != 0) { sb.Append($",\"I\":{toSerialize.I}"); }
              if (toSerialize.IsHydrated) { sb.Append(",\"IsHydrated\":true"); }
@@ -432,6 +440,7 @@ public static partial class MetaSerializer {
 
             sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
+
              if (toSerialize.Instance != null) { 
 									sb.Append(",\"Instance\":");
 									Serialize(toSerialize.Instance, sb); 
@@ -441,37 +450,6 @@ public static partial class MetaSerializer {
 									sb.Append(",\"Type\":");
 									Serialize(toSerialize.Type, sb); 
 							    }
-            	sb.Append('}');
-        }
-          
-
-        public static void Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue> toSerialize, StringBuilder sb) {
-			
-
-            int ElementIndex = 0;
-			sb.Append('[');
-
-            foreach(Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue thisChild in toSerialize) {
-				if(ElementIndex++ > 0) {
-					sb.Append(',');
-				}
-
-                Serialize(thisChild, sb);
-            }
-
-            sb.Append(']');
-
-        }
-
-        public static void Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue toSerialize, StringBuilder sb) {
-            
-
-			sb.Append('{');
-
-            sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
-
-              if (toSerialize.Label != null) { sb.Append($",\"Label\":\"{toSerialize.Label.ToJSONValue()}\""); }
-              if (toSerialize.Value != null) { sb.Append($",\"Value\":\"{toSerialize.Value.ToJSONValue()}\""); }
             	sb.Append('}');
         }
           
@@ -501,6 +479,39 @@ public static partial class MetaSerializer {
 
             sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
+
+            	sb.Append('}');
+        }
+          
+
+        public static void Serialize(this IList<Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue> toSerialize, StringBuilder sb) {
+			
+
+            int ElementIndex = 0;
+			sb.Append('[');
+
+            foreach(Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue thisChild in toSerialize) {
+				if(ElementIndex++ > 0) {
+					sb.Append(',');
+				}
+
+                Serialize(thisChild, sb);
+            }
+
+            sb.Append(']');
+
+        }
+
+        public static void Serialize(this Penguin.Reflection.Serialization.Abstractions.Interfaces.IEnumValue toSerialize, StringBuilder sb) {
+            
+
+			sb.Append('{');
+
+            sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
+
+
+              if (toSerialize.Label != null) { sb.Append($",\"Label\":\"{toSerialize.Label.ToJSONValue()}\""); }
+              if (toSerialize.Value != null) { sb.Append($",\"Value\":\"{toSerialize.Value.ToJSONValue()}\""); }
             	sb.Append('}');
         }
           
@@ -529,6 +540,7 @@ public static partial class MetaSerializer {
 			sb.Append('{');
 
             sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
+
 
             	sb.Append('}');
         }

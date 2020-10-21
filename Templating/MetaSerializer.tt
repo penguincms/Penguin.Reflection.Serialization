@@ -170,6 +170,12 @@ public static partial class MetaSerializer {
 
             sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
+<#if (thisClass.Name == "IMetaObject") {#>
+            if((toSerialize as Penguin.Reflection.Serialization.Objects.MetaObject)?.Meta is IDictionary id){
+                SerializeDictionary(id, sb); 
+            }
+            <#}#>
+
 <#        
         List<CodeInterface> toCheck = GetBaseTypes(thisClass);
 
@@ -227,7 +233,7 @@ public static partial class MetaSerializer {
 <#                } else if (thisTypeName == "IReadOnlyList") {
                 #>             if (<#=PropRef#> is IList il_<#=thisProperty.Name#> && il_<#=thisProperty.Name#>.Count > 0) { 
 									sb.Append(",\"<#=                        thisProperty.Name#>\":");
-							        SerializeList(il_<#=thisProperty.Name#> as IList, sb); 
+							        SerializeList(il_<#=thisProperty.Name#>, sb); 
 							   }
 <#                } else {#>
             <#=                        thisProperty.Name #>:<#=                        thisProperty.Type.CodeType.Name #>
