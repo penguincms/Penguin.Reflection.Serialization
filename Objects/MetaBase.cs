@@ -1,7 +1,6 @@
 ﻿using Penguin.Reflection.Serialization.Abstractions.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 
 namespace Penguin.Reflection.Serialization.Objects
 {

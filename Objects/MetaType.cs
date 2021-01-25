@@ -387,7 +387,7 @@ namespace Penguin.Reflection.Serialization.Objects
             //This should be done through an accessor because right now we're relying on
             //The fact that the constructor sets it to a list, which is not the correct way
             //to do this.
-            this.HydrateList(this.Attributes as IList<MetaAttribute>, meta);
+            this.HydrateList(this.Attributes, meta);
 
             this.HydrateList(this.Parameters, meta);
 

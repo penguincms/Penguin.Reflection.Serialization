@@ -3,7 +3,6 @@ using Penguin.Reflection.Serialization.Abstractions.Constructors;
 using Penguin.Reflection.Serialization.Abstractions.Interfaces;
 using Penguin.Reflection.Serialization.Constructors;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Reflection;
 using RType = System.Type;
 
@@ -16,7 +15,7 @@ namespace Penguin.Reflection.Serialization.Objects
     {
         #region Properties
 
-        IMetaObject IMetaAttribute.Instance => Instance;
+        IMetaObject IMetaAttribute.Instance => this.Instance;
 
         /// <summary>
         /// An instance representing the retrieved attribute
@@ -28,7 +27,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public bool IsInherited { get; set; }
 
-        IMetaType IMetaAttribute.Type => Type;
+        IMetaType IMetaAttribute.Type => this.Type;
 
         /// <summary>
         /// The Type of the attribute

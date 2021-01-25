@@ -132,7 +132,7 @@ namespace Penguin.Reflection.Serialization.Constructors
             MetaConstructor clone = new MetaConstructor(oc) { Settings = Settings, Cache = Cache };
 
             clone.Meta.AddRange(this.Meta);
-            clone.Exceptions.AddRange(Exceptions);
+            clone.Exceptions.AddRange(this.Exceptions);
 
             return clone;
         }
@@ -193,7 +193,6 @@ namespace Penguin.Reflection.Serialization.Constructors
             this.Object = oc.Object;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         internal static object GetKey(object o)
         {
             if (o is PropertyInfo || o is RType || o is System.Attribute || o is KeyGroup || o is string)
@@ -291,7 +290,6 @@ namespace Penguin.Reflection.Serialization.Constructors
             return this.Settings.IsOwner(o);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         internal void UpdateClaim(AbstractMeta a, object o)
         {
             if (a.I < 0)

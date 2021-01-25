@@ -1,7 +1,6 @@
 ﻿using Penguin.Reflection.Serialization.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using RType = System.Type;
@@ -23,7 +22,6 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// <summary>
         /// When using AttributeIncludeSettings.Blacklist, this list should contain a list of attribute types to skip serializing
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "<Pending>")]
         public List<RType> AttributeBlacklist
         {
@@ -56,7 +54,6 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// When using AttributeIncludeSettings.Whitelist, this list should contain a list of attribute types to serialize
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "<Pending>")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public List<RType> AttributeWhitelist
         {
             get => this._AttributeWhitelist;
