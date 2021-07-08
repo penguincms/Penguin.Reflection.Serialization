@@ -149,7 +149,8 @@ namespace Penguin.Reflection.Serialization.Templating
             int ElementIndex = 0;
             foreach (object thisChild in toSerialize)
             {
-                if (thisChild is null) { continue; }
+                if (thisChild is null)
+                { continue; }
 
                 if (typeof(Penguin.Reflection.Serialization.Abstractions.Interfaces.IMetaType).IsAssignableFrom(thisChild.GetType()))
                 {
@@ -285,7 +286,8 @@ namespace Penguin.Reflection.Serialization.Templating
             sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
 
-            if (toSerialize.AssemblyQualifiedName != null) { sb.Append($",\"AssemblyQualifiedName\":\"{toSerialize.AssemblyQualifiedName.ToJSONValue()}\""); }
+            if (toSerialize.AssemblyQualifiedName != null)
+            { sb.Append($",\"AssemblyQualifiedName\":\"{toSerialize.AssemblyQualifiedName.ToJSONValue()}\""); }
             if (toSerialize.BaseType != null)
             {
                 sb.Append(",\"BaseType\":");
@@ -296,15 +298,24 @@ namespace Penguin.Reflection.Serialization.Templating
                 sb.Append(",\"CollectionType\":");
                 Serialize(toSerialize.CollectionType, sb);
             }
-            if (toSerialize.CoreType != 0) { sb.Append($",\"CoreType\":{System.Convert.ChangeType(toSerialize.CoreType, Enum.GetUnderlyingType(toSerialize.CoreType.GetType()))}"); }
-            if (toSerialize.Default != null) { sb.Append($",\"Default\":\"{toSerialize.Default.ToJSONValue()}\""); }
-            if (toSerialize.FullName != null) { sb.Append($",\"FullName\":\"{toSerialize.FullName.ToJSONValue()}\""); }
-            if (toSerialize.IsArray) { sb.Append(",\"IsArray\":true"); }
-            if (toSerialize.IsEnum) { sb.Append(",\"IsEnum\":true"); }
-            if (toSerialize.IsNullable) { sb.Append(",\"IsNullable\":true"); }
-            if (toSerialize.IsNumeric) { sb.Append(",\"IsNumeric\":true"); }
-            if (toSerialize.Name != null) { sb.Append($",\"Name\":\"{toSerialize.Name.ToJSONValue()}\""); }
-            if (toSerialize.Namespace != null) { sb.Append($",\"Namespace\":\"{toSerialize.Namespace.ToJSONValue()}\""); }
+            if (toSerialize.CoreType != 0)
+            { sb.Append($",\"CoreType\":{System.Convert.ChangeType(toSerialize.CoreType, Enum.GetUnderlyingType(toSerialize.CoreType.GetType()))}"); }
+            if (toSerialize.Default != null)
+            { sb.Append($",\"Default\":\"{toSerialize.Default.ToJSONValue()}\""); }
+            if (toSerialize.FullName != null)
+            { sb.Append($",\"FullName\":\"{toSerialize.FullName.ToJSONValue()}\""); }
+            if (toSerialize.IsArray)
+            { sb.Append(",\"IsArray\":true"); }
+            if (toSerialize.IsEnum)
+            { sb.Append(",\"IsEnum\":true"); }
+            if (toSerialize.IsNullable)
+            { sb.Append(",\"IsNullable\":true"); }
+            if (toSerialize.IsNumeric)
+            { sb.Append(",\"IsNumeric\":true"); }
+            if (toSerialize.Name != null)
+            { sb.Append($",\"Name\":\"{toSerialize.Name.ToJSONValue()}\""); }
+            if (toSerialize.Namespace != null)
+            { sb.Append($",\"Namespace\":\"{toSerialize.Namespace.ToJSONValue()}\""); }
             if (toSerialize.Parameters is IList il_Parameters && il_Parameters.Count > 0)
             {
                 sb.Append(",\"Parameters\":");
@@ -364,7 +375,8 @@ namespace Penguin.Reflection.Serialization.Templating
                 sb.Append(",\"DeclaringType\":");
                 Serialize(toSerialize.DeclaringType, sb);
             }
-            if (toSerialize.Name != null) { sb.Append($",\"Name\":\"{toSerialize.Name.ToJSONValue()}\""); }
+            if (toSerialize.Name != null)
+            { sb.Append($",\"Name\":\"{toSerialize.Name.ToJSONValue()}\""); }
             if (toSerialize.Type != null)
             {
                 sb.Append(",\"Type\":");
@@ -419,7 +431,8 @@ namespace Penguin.Reflection.Serialization.Templating
                 sb.Append(",\"CollectionItems\":");
                 SerializeList(il_CollectionItems, sb);
             }
-            if (toSerialize.Null) { sb.Append(",\"Null\":true"); }
+            if (toSerialize.Null)
+            { sb.Append(",\"Null\":true"); }
             if (toSerialize.Properties is IList il_Properties && il_Properties.Count > 0)
             {
                 sb.Append(",\"Properties\":");
@@ -440,7 +453,8 @@ namespace Penguin.Reflection.Serialization.Templating
                 sb.Append(",\"Type\":");
                 Serialize(toSerialize.Type, sb);
             }
-            if (toSerialize.Value != null) { sb.Append($",\"Value\":\"{toSerialize.Value.ToJSONValue()}\""); }
+            if (toSerialize.Value != null)
+            { sb.Append($",\"Value\":\"{toSerialize.Value.ToJSONValue()}\""); }
             sb.Append('}');
         }
 
@@ -475,9 +489,12 @@ namespace Penguin.Reflection.Serialization.Templating
             sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
 
-            if (toSerialize.V != null) { sb.Append($",\"V\":\"{toSerialize.V.ToJSONValue()}\""); }
-            if (toSerialize.I != 0) { sb.Append($",\"I\":{toSerialize.I}"); }
-            if (toSerialize.IsHydrated) { sb.Append(",\"IsHydrated\":true"); }
+            if (toSerialize.V != null)
+            { sb.Append($",\"V\":\"{toSerialize.V.ToJSONValue()}\""); }
+            if (toSerialize.I != 0)
+            { sb.Append($",\"I\":{toSerialize.I}"); }
+            if (toSerialize.IsHydrated)
+            { sb.Append(",\"IsHydrated\":true"); }
             sb.Append('}');
         }
 
@@ -517,7 +534,8 @@ namespace Penguin.Reflection.Serialization.Templating
                 sb.Append(",\"Instance\":");
                 Serialize(toSerialize.Instance, sb);
             }
-            if (toSerialize.IsInherited) { sb.Append(",\"IsInherited\":true"); }
+            if (toSerialize.IsInherited)
+            { sb.Append(",\"IsInherited\":true"); }
             if (toSerialize.Type != null)
             {
                 sb.Append(",\"Type\":");
@@ -591,8 +609,10 @@ namespace Penguin.Reflection.Serialization.Templating
             sb.Append($"\"$type\":\"{toSerialize.GetType().FullName}, {AssemblyName}\"");
 
 
-            if (toSerialize.Label != null) { sb.Append($",\"Label\":\"{toSerialize.Label.ToJSONValue()}\""); }
-            if (toSerialize.Value != null) { sb.Append($",\"Value\":\"{toSerialize.Value.ToJSONValue()}\""); }
+            if (toSerialize.Label != null)
+            { sb.Append($",\"Label\":\"{toSerialize.Label.ToJSONValue()}\""); }
+            if (toSerialize.Value != null)
+            { sb.Append($",\"Value\":\"{toSerialize.Value.ToJSONValue()}\""); }
             sb.Append('}');
         }
 

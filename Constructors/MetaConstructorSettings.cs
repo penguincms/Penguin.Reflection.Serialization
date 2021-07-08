@@ -22,7 +22,7 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// <summary>
         /// When using AttributeIncludeSettings.Blacklist, this list should contain a list of attribute types to skip serializing
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "<Pending>")]
+        
         public List<RType> AttributeBlacklist
         {
             get => this._AttributeBlacklist;
@@ -53,7 +53,7 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// <summary>
         /// When using AttributeIncludeSettings.Whitelist, this list should contain a list of attribute types to serialize
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "<Pending>")]
+        
         public List<RType> AttributeWhitelist
         {
             get => this._AttributeWhitelist;

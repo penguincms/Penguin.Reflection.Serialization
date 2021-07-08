@@ -89,8 +89,8 @@ namespace Penguin.Reflection.Serialization.Objects
             //to do this.
             this.HydrateList(this.Attributes as IList<MetaAttribute>, meta);
 
-            this.Type = this.HydrateChild(this.Type, meta);
-            this.DeclaringType = this.HydrateChild(this.DeclaringType, meta);
+            this.Type = HydrateChild(this.Type, meta);
+            this.DeclaringType = HydrateChild(this.DeclaringType, meta);
         }
 
         /// <summary>

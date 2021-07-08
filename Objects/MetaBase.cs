@@ -69,7 +69,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="toHydrate">The property to be hydrated</param>
         /// <param name="meta">The dictionary containing the reference list of objects-Ids for used with hydration</param>
         /// <returns>A hydrated version of the object</returns>
-        public T HydrateChild<T>(T toHydrate, IDictionary<int, IHydratable> meta) where T : IHydratable
+        public static T HydrateChild<T>(T toHydrate, IDictionary<int, IHydratable> meta) where T : IHydratable
         {
             if (toHydrate == null)
             {
@@ -115,7 +115,7 @@ namespace Penguin.Reflection.Serialization.Objects
                 {
                     if (toHydrate[i].I >= 0)
                     {
-                        toHydrate[i] = (T)this.HydrateChild(meta[toHydrate[i].I], meta);
+                        toHydrate[i] = (T)HydrateChild(meta[toHydrate[i].I], meta);
                     }
                     else
                     {

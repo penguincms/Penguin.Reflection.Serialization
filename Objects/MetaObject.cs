@@ -585,9 +585,9 @@ namespace Penguin.Reflection.Serialization.Objects
             meta = meta ?? this.Meta ?? this.Constructor.Meta.Select(v => v.Value).ToDictionary(k => k.I, v => v);
             ;
 
-            this.Property = this.HydrateChild(this.Property, meta);
-            this.Type = this.HydrateChild(this.Type, meta);
-            this.Template = this.HydrateChild(this.Template, meta);
+            this.Property = HydrateChild(this.Property, meta);
+            this.Type = HydrateChild(this.Type, meta);
+            this.Template = HydrateChild(this.Template, meta);
 
             if (this.GetCoreType() != CoreType.Value || (this.Properties != null && this.Properties.Any()))
             {

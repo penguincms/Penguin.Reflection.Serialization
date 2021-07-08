@@ -92,8 +92,8 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="meta">The dictionary of MetaData generated during construction</param>
         public override void Hydrate(IDictionary<int, IHydratable> meta = null)
         {
-            this.Type = this.HydrateChild(this.Type, meta);
-            this.Instance = this.HydrateChild(this.Instance, meta);
+            this.Type = HydrateChild(this.Type, meta);
+            this.Instance = HydrateChild(this.Instance, meta);
         }
 
         /// <summary>

@@ -395,12 +395,12 @@ namespace Penguin.Reflection.Serialization.Objects
 
             if (this.BaseType is MetaType bt)
             {
-                this.BaseType = this.HydrateChild(bt, meta);
+                this.BaseType = HydrateChild(bt, meta);
             }
 
             if (this.CollectionType is MetaType ct)
             {
-                this.CollectionType = this.HydrateChild(ct, meta);
+                this.CollectionType = HydrateChild(ct, meta);
             }
         }
 
