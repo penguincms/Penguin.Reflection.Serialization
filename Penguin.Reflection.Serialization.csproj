@@ -11,7 +11,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Penguin.Extensions.Collections" Version="5.0.6-TAHULSY" />
-    <PackageReference Include="Penguin.Reflection.Serialization.Abstractions" Version="5.0.6-TAKDH3F" />
+    <PackageReference Include="Penguin.Reflection.Serialization.Abstractions" Version="5.0.6-TAKOD19" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Templating\MetaSerializer.tt">
