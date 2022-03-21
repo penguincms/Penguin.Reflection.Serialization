@@ -52,10 +52,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
         #region Methods
 
-        public override string GetKey()
-        {
-            return this.Key;
-        }
+        public override string GetKey() => this.Key;
 
         #endregion Methods
 

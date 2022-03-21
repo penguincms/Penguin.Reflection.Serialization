@@ -247,10 +247,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="obj1">This object</param>
         /// <param name="obj2">The other MetaType to test</param>
         /// <returns></returns>
-        public static bool operator !=(MetaType obj1, IMetaType obj2)
-        {
-            return !(obj1 == obj2);
-        }
+        public static bool operator !=(MetaType obj1, IMetaType obj2) => !(obj1 == obj2);
 
         /// <summary>
         /// Tests for inequality between a MetaType an a System Type using the string value
@@ -258,10 +255,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="obj1">This object</param>
         /// <param name="obj2">The System Type</param>
         /// <returns></returns>
-        public static bool operator !=(System.Type obj1, MetaType obj2)
-        {
-            return !(obj1 == obj2);
-        }
+        public static bool operator !=(System.Type obj1, MetaType obj2) => !(obj1 == obj2);
 
         /// <summary>
         /// Tests for inequality between a MetaType an a System Type using the string value
@@ -269,10 +263,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="obj1">This object</param>
         /// <param name="obj2">The System Type</param>
         /// <returns></returns>
-        public static bool operator !=(MetaType obj1, System.Type obj2)
-        {
-            return !(obj1 == obj2);
-        }
+        public static bool operator !=(MetaType obj1, System.Type obj2) => !(obj1 == obj2);
 
         /// <summary>
         /// Tests for equality between two MetaTypes using AssemblyQualifiedName
@@ -408,19 +399,13 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Returns the Name of the type this MetaObject represents
         /// </summary>
         /// <returns>The Name of the type this MetaObject represents</returns>
-        public override string ToString()
-        {
-            return this.StringValue;
-        }
+        public override string ToString() => this.StringValue;
 
         /// <summary>
         /// Returns this, since its a Type
         /// </summary>
         /// <returns>this</returns>
-        public IMetaType TypeOf()
-        {
-            return this;
-        }
+        public IMetaType TypeOf() => this;
 
         #endregion Methods
 

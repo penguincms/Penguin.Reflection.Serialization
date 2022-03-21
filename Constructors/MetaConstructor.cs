@@ -82,40 +82,28 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// Sets the input object as the top level owner of the metadata tree
         /// </summary>
         /// <param name="o">The object to set</param>
-        public void ClaimOwnership(object o)
-        {
-            this.Settings.TrySetOwner(o);
-        }
+        public void ClaimOwnership(object o) => this.Settings.TrySetOwner(o);
 
         /// <summary>
         /// Clones an instance of this constructor
         /// </summary>
         /// <param name="o">The object to use as the basis for serialization</param>
         /// <returns>A new instance of a MetaConstructor</returns>
-        public MetaConstructor Clone(object o)
-        {
-            return this.Clone(new ObjectConstructor(null, null, o));
-        }
+        public MetaConstructor Clone(object o) => this.Clone(new ObjectConstructor(null, null, o));
 
         /// <summary>
         /// Clones an instance of this constructor
         /// </summary>
         /// <param name="p">The property info to use as the basis for serialization</param>
         /// <returns>A new instance of a MetaConstructor</returns>
-        public MetaConstructor Clone(PropertyInfo p)
-        {
-            return this.Clone(new ObjectConstructor(p, null, null));
-        }
+        public MetaConstructor Clone(PropertyInfo p) => this.Clone(new ObjectConstructor(p, null, null));
 
         /// <summary>
         /// Clones an instance of this constructor
         /// </summary>
         /// <param name="t">The Type to use as the basis for serialization</param>
         /// <returns>A new instance of a MetaConstructor</returns>
-        public MetaConstructor Clone(RType t)
-        {
-            return this.Clone(new ObjectConstructor(null, t, null));
-        }
+        public MetaConstructor Clone(RType t) => this.Clone(new ObjectConstructor(null, t, null));
 
         /// <summary>
         /// Clones an instance of this constructor
@@ -242,10 +230,7 @@ namespace Penguin.Reflection.Serialization.Constructors
             return placeHolder;
         }
 
-        internal bool Contains(object o)
-        {
-            return this.Meta.ContainsKey(GetKey(o));
-        }
+        internal bool Contains(object o) => this.Meta.ContainsKey(GetKey(o));
 
         internal int GetId(object o)
         {
@@ -285,10 +270,7 @@ namespace Penguin.Reflection.Serialization.Constructors
             }
         }
 
-        internal bool IsOwner(object o)
-        {
-            return this.Settings.IsOwner(o);
-        }
+        internal bool IsOwner(object o) => this.Settings.IsOwner(o);
 
         internal void UpdateClaim(AbstractMeta a, object o)
         {

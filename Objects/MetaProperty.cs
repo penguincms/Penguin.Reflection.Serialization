@@ -97,19 +97,13 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Returns the fully qualified name of this property
         /// </summary>
         /// <returns>The fully qualified name of this property</returns>
-        public override string ToString()
-        {
-            return $"{this.Type.Name} {this.Name}";
-        }
+        public override string ToString() => $"{this.Type.Name} {this.Name}";
 
         /// <summary>
         /// Returns the type of the underlying property
         /// </summary>
         /// <returns>The fully qualified name of this property</returns>
-        public IMetaType TypeOf()
-        {
-            return this.Type;
-        }
+        public IMetaType TypeOf() => this.Type;
 
         #endregion Methods
 

@@ -22,7 +22,7 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// <summary>
         /// When using AttributeIncludeSettings.Blacklist, this list should contain a list of attribute types to skip serializing
         /// </summary>
-        
+
         public List<RType> AttributeBlacklist
         {
             get => this._AttributeBlacklist;
@@ -53,7 +53,7 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// <summary>
         /// When using AttributeIncludeSettings.Whitelist, this list should contain a list of attribute types to serialize
         /// </summary>
-        
+
         public List<RType> AttributeWhitelist
         {
             get => this._AttributeWhitelist;
@@ -123,10 +123,7 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// Useful for unshelling proxy types. If multiple, they are chained, so be careful
         /// </summary>
         /// <param name="func">The function that the type passes through</param>
-        public void AddTypeGetterOverride(Func<RType, RType> func)
-        {
-            this.TypeGetterOverride.Add(func);
-        }
+        public void AddTypeGetterOverride(Func<RType, RType> func) => this.TypeGetterOverride.Add(func);
 
         /// <summary>
         /// Overrides the method used to resolve an object property, for returning a custom type (or null to skip)
@@ -152,10 +149,7 @@ namespace Penguin.Reflection.Serialization.Constructors
         internal List<Func<RType, RType>> TypeGetterOverride { get; set; }
         private object Owner { get; set; }
 
-        internal object GetOwner()
-        {
-            return this.Owner;
-        }
+        internal object GetOwner() => this.Owner;
 
         internal bool IsAttributeMatch(Type typeA, Type typeB)
         {
@@ -178,10 +172,7 @@ namespace Penguin.Reflection.Serialization.Constructors
             }
         }
 
-        internal bool IsOwner(object o)
-        {
-            return this.Owner == o;
-        }
+        internal bool IsOwner(object o) => this.Owner == o;
 
         internal bool ShouldAddAttribute(RType attributeType)
         {
@@ -204,9 +195,6 @@ namespace Penguin.Reflection.Serialization.Constructors
             }
         }
 
-        internal void TrySetOwner(object o)
-        {
-            this.Owner = this.Owner ?? o;
-        }
+        internal void TrySetOwner(object o) => this.Owner = this.Owner ?? o;
     }
 }
