@@ -375,6 +375,7 @@ namespace Penguin.Reflection.Serialization.Objects
                         {
                             continue;
                         }
+
                         if (c.Object is null)
                         {
                             i = FromConstructor(c, new ObjectConstructor(thisProperty, null, null));
@@ -384,6 +385,11 @@ namespace Penguin.Reflection.Serialization.Objects
                             try
                             {
                                 object Object = c.GetValue(thisProperty);
+
+                                if(Object is System.Type && c.Settings.IgnoreTypeValueProperties)
+                                {
+                                    continue;
+                                }
 
                                 if (Object is MetaObject)
                                 {
@@ -461,10 +467,12 @@ namespace Penguin.Reflection.Serialization.Objects
             if (!c.Contains(Wrapper))
             {
                 AbstractMeta placeHolder = c.Claim(Wrapper);
+
                 i = new MetaObject(c.Clone(oc))
                 {
                     I = placeHolder.I
                 };
+
                 c.UpdateClaim(i, Wrapper);
             }
             else
@@ -489,7 +497,7 @@ namespace Penguin.Reflection.Serialization.Objects
             {
                 foreach (T o in source)
                 {
-                    toReturn.Add(o);
+                    _ = toReturn.Add(o);
                 }
             }
 
@@ -571,8 +579,7 @@ namespace Penguin.Reflection.Serialization.Objects
                 this.Meta[0] = this;
             }
 
-            meta = meta ?? this.Meta ?? this.Constructor.Meta.Select(v => v.Value).ToDictionary(k => k.I, v => v);
-            ;
+            meta = meta ?? this.Meta ?? this.Constructor.Meta.Select(v => v.Value).ToDictionary(k => k.I, v => v);            
 
             this.Property = HydrateChild(this.Property, meta);
             this.Type = HydrateChild(this.Type, meta);
@@ -647,7 +654,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
             instance.Parent = null;
 
-            this.CollectionItems.Remove(instance);
+            _ = this.CollectionItems.Remove(instance);
         }
 
         /// <summary>
@@ -663,7 +670,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
             instance.Parent = null;
 
-            this.Properties.Remove(instance);
+            _ = _ = this.Properties.Remove(instance);
         }
 
         /// <summary>

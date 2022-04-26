@@ -349,6 +349,7 @@ namespace Penguin.Reflection.Serialization.Objects
             {
                 return false;
             }
+
             if (ReferenceEquals(this, obj))
             {
                 return true;
@@ -443,7 +444,9 @@ namespace Penguin.Reflection.Serialization.Objects
             {
                 foreach (AttributeInstance a in TypeCache.GetCustomAttributes(type))
                 {
-                    if (c.Settings.ShouldAddAttribute(a.Instance.GetType()))
+                    Type at = a.Instance.GetType();
+
+                    if (c.Settings.ShouldAddAttribute(at))
                     {
                         attributes.Add(MetaAttribute.FromConstructor(c, a, type));
                     }

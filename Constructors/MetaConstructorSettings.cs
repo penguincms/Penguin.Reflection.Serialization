@@ -1,6 +1,7 @@
 ﻿using Penguin.Reflection.Serialization.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using RType = System.Type;
@@ -77,6 +78,16 @@ namespace Penguin.Reflection.Serialization.Constructors
         public bool IgnoreHiddenForeignTypes { get; set; }
 
         /// <summary>
+        /// Ignores properties that hold "object"
+        /// </summary>
+        public bool IgnoreObjectProperties { get; set; }
+
+        /// <summary>
+        /// Ignores property values holding System.Type information. (default True)
+        /// </summary>
+        public bool IgnoreTypeValueProperties { get; set; } = true;
+
+        /// <summary>
         /// Do not traverse below the top level object when serializing properties. This setting is applied recursively and should only be used when serializing
         /// DTOs
         /// </summary>
@@ -149,6 +160,25 @@ namespace Penguin.Reflection.Serialization.Constructors
         internal List<Func<RType, RType>> TypeGetterOverride { get; set; }
         private object Owner { get; set; }
 
+        /// <summary>
+        /// A list of attribute types to skip based on namespace, since 
+        /// not all compiler generated attributes are accessible using type
+        /// </summary>
+        public HashSet<string> ForceSkipNameSpaces { get; internal set; } = new HashSet<string>()
+        {
+            "System.Runtime"
+        };
+
+        /// <summary>
+        /// A list of attribute types to skip based on name, since 
+        /// not all compiler generated attributes are accessible using type
+        /// </summary>
+        public HashSet<string> ForceSkip { get; internal set; } = new HashSet<string>()
+        {
+            "System.AttributeUsageAttribute",
+            "System.SerializableAttribute"
+        };
+
         internal object GetOwner() => this.Owner;
 
         internal bool IsAttributeMatch(Type typeA, Type typeB)
@@ -176,6 +206,17 @@ namespace Penguin.Reflection.Serialization.Constructors
 
         internal bool ShouldAddAttribute(RType attributeType)
         {
+            if(this.ForceSkipNameSpaces.Any(f => attributeType.FullName.IndexOf(f + ".") == 0))
+            {
+                //Debug.WriteLine("Force skipping attribute: " + attributeType.Name);
+                return false;
+            }
+
+            if(this.ForceSkip.Contains(attributeType.FullName))
+            {
+                return false;
+            }
+
             switch (this.AttributeIncludeSettings)
             {
                 case AttributeIncludeSetting.All:

@@ -25,13 +25,13 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// <summary>
         /// Any exceptions that occured during serialization are listed here along with the Id(i) of the object that threw the error
         /// </summary>
-        public Dictionary<string, int> Exceptions { get; } = new Dictionary<string, int>();
+        public Dictionary<string, int> Exceptions { get; private set; } = new Dictionary<string, int>();
 
         /// <summary>
         /// Contains a list of references used for rehydrating the object tree. This exists to keep the serialized (json) size as small as possible by avoiding the
         /// need for reference handling as well as avoiding struct duplication
         /// </summary>
-        public Dictionary<object, IHydratable> Meta { get; } = new Dictionary<object, IHydratable>();
+        public Dictionary<object, IHydratable> Meta { get; private set; } = new Dictionary<object, IHydratable>();
 
         /// <summary>
         /// Contains the settings to be used when constructing the serialized object tree
@@ -119,8 +119,8 @@ namespace Penguin.Reflection.Serialization.Constructors
 
             MetaConstructor clone = new MetaConstructor(oc) { Settings = Settings, Cache = Cache };
 
-            clone.Meta.AddRange(this.Meta);
-            clone.Exceptions.AddRange(this.Exceptions);
+            clone.Meta = this.Meta;
+            clone.Exceptions = this.Exceptions;
 
             return clone;
         }
@@ -278,6 +278,7 @@ namespace Penguin.Reflection.Serialization.Constructors
             {
                 throw new Exception(ID_LESS_0_SERIALIZATION_EXCEPTION_MESSAGE);
             }
+
             this.Meta[GetKey(o)] = a;
         }
 
@@ -292,6 +293,7 @@ namespace Penguin.Reflection.Serialization.Constructors
             skip = skip || this.Settings.IgnoreTypes.Contains(thisProperty.DeclaringType);
             skip = skip || (HiddenType && this.Settings.IgnoreHiddenForeignTypes);
             skip = skip || thisProperty.GetIndexParameters().Any();
+            skip = skip || (this.Settings.IgnoreObjectProperties && thisProperty.PropertyType == typeof(object));
 
             return !skip;
         }

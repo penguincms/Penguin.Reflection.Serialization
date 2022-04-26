@@ -163,6 +163,16 @@
             Ignores properties that match (!thisProperty.ReflectedType.IsVisible &amp;&amp; thisProperty.ReflectedType.Assembly != this.Cache.CallingAssembly). Default True
             </summary>
         </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.IgnoreObjectProperties">
+            <summary>
+            Ignores properties that hold "object"
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.IgnoreTypeValueProperties">
+            <summary>
+            Ignores property values holding System.Type information. (default True)
+            </summary>
+        </member>
         <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.IgnoreInheritedProperties">
             <summary>
             Do not traverse below the top level object when serializing properties. This setting is applied recursively and should only be used when serializing
@@ -197,6 +207,18 @@
             </summary>
             <param name="pi">The PropertyInfo of the property to be overridden</param>
             <param name="func">The function to call instead of PropertyInfo.GetValue. Object in is the Parent of the property, object out is the Property Value</param>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.ForceSkipNameSpaces">
+            <summary>
+            A list of attribute types to skip based on namespace, since 
+            not all compiler generated attributes are accessible using type
+            </summary>
+        </member>
+        <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.ForceSkip">
+            <summary>
+            A list of attribute types to skip based on name, since 
+            not all compiler generated attributes are accessible using type
+            </summary>
         </member>
         <member name="M:Penguin.Reflection.Serialization.Extensions.IMetaTypeInfoExtensions.Is(Penguin.Reflection.Serialization.Abstractions.Interfaces.ITypeInfo,System.String)">
             <summary>
