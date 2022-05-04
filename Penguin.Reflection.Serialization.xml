@@ -121,7 +121,7 @@
             <param name="t">The Type to use as the basis for serialization</param>
             <returns>A new instance of a MetaConstructor</returns>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructor.Clone(Penguin.Reflection.Serialization.Abstractions.Constructors.ObjectConstructor)">
+        <member name="M:Penguin.Reflection.Serialization.Constructors.MetaConstructor.Clone(Penguin.Reflection.Serialization.Abstractions.Objects.ObjectConstructor)">
             <summary>
             Clones an instance of this constructor
             </summary>
@@ -496,7 +496,7 @@
             <param name="o">The object to serialize</param>
             <returns>A newly serialized and DEHYDRATED object</returns>
         </member>
-        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.FromConstructor(Penguin.Reflection.Serialization.Constructors.MetaConstructor,Penguin.Reflection.Serialization.Abstractions.Constructors.ObjectConstructor)">
+        <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.FromConstructor(Penguin.Reflection.Serialization.Constructors.MetaConstructor,Penguin.Reflection.Serialization.Abstractions.Objects.ObjectConstructor)">
             <summary>
             Creates a new serialized object using the provided Constructor, and Object Constructor
             </summary>

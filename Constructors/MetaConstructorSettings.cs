@@ -1,7 +1,6 @@
 ﻿using Penguin.Reflection.Serialization.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using RType = System.Type;
@@ -134,7 +133,10 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// Useful for unshelling proxy types. If multiple, they are chained, so be careful
         /// </summary>
         /// <param name="func">The function that the type passes through</param>
-        public void AddTypeGetterOverride(Func<RType, RType> func) => this.TypeGetterOverride.Add(func);
+        public void AddTypeGetterOverride(Func<RType, RType> func)
+        {
+            this.TypeGetterOverride.Add(func);
+        }
 
         /// <summary>
         /// Overrides the method used to resolve an object property, for returning a custom type (or null to skip)
@@ -179,7 +181,10 @@ namespace Penguin.Reflection.Serialization.Constructors
             "System.SerializableAttribute"
         };
 
-        internal object GetOwner() => this.Owner;
+        internal object GetOwner()
+        {
+            return this.Owner;
+        }
 
         internal bool IsAttributeMatch(Type typeA, Type typeB)
         {
@@ -202,17 +207,20 @@ namespace Penguin.Reflection.Serialization.Constructors
             }
         }
 
-        internal bool IsOwner(object o) => this.Owner == o;
+        internal bool IsOwner(object o)
+        {
+            return this.Owner == o;
+        }
 
         internal bool ShouldAddAttribute(RType attributeType)
         {
-            if(this.ForceSkipNameSpaces.Any(f => attributeType.FullName.IndexOf(f + ".") == 0))
+            if (this.ForceSkipNameSpaces.Any(f => attributeType.FullName.IndexOf(f + ".") == 0))
             {
                 //Debug.WriteLine("Force skipping attribute: " + attributeType.Name);
                 return false;
             }
 
-            if(this.ForceSkip.Contains(attributeType.FullName))
+            if (this.ForceSkip.Contains(attributeType.FullName))
             {
                 return false;
             }
@@ -236,6 +244,9 @@ namespace Penguin.Reflection.Serialization.Constructors
             }
         }
 
-        internal void TrySetOwner(object o) => this.Owner = this.Owner ?? o;
+        internal void TrySetOwner(object o)
+        {
+            this.Owner = this.Owner ?? o;
+        }
     }
 }

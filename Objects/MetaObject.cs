@@ -1,8 +1,8 @@
 ﻿using Penguin.Debugging;
 using Penguin.Reflection.Abstractions;
 using Penguin.Reflection.Extensions;
-using Penguin.Reflection.Serialization.Abstractions.Constructors;
 using Penguin.Reflection.Serialization.Abstractions.Interfaces;
+using Penguin.Reflection.Serialization.Abstractions.Objects;
 using Penguin.Reflection.Serialization.Abstractions.Wrappers;
 using Penguin.Reflection.Serialization.Constructors;
 using Penguin.Reflection.Serialization.Extensions;
@@ -241,11 +241,11 @@ namespace Penguin.Reflection.Serialization.Objects
                 this.Property = Penguin.Reflection.Serialization.Objects.MetaProperty.FromConstructor(c, c.PropertyInfo);
             }
 
-            this.Null = (c.Object is null);
+            this.Null = c.Object is null;
 
             this.Type = Penguin.Reflection.Serialization.Objects.MetaType.FromConstructor(c, c.Type);
 
-            CoreType thisCoreType = (c.Type).GetCoreType();
+            CoreType thisCoreType = c.Type.GetCoreType();
 
             if (c.Object is MetaObject mo)
             {
@@ -386,7 +386,7 @@ namespace Penguin.Reflection.Serialization.Objects
                             {
                                 object Object = c.GetValue(thisProperty);
 
-                                if(Object is System.Type && c.Settings.IgnoreTypeValueProperties)
+                                if (Object is System.Type && c.Settings.IgnoreTypeValueProperties)
                                 {
                                     continue;
                                 }
@@ -445,7 +445,10 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="c">The constructor to use for serialization</param>
         /// <param name="o">The object to serialize</param>
         /// <returns>A newly serialized and DEHYDRATED object</returns>
-        public static MetaObject FromConstructor(MetaConstructor c, object o) => FromConstructor(c, new ObjectConstructor(null, null, o));
+        public static MetaObject FromConstructor(MetaConstructor c, object o)
+        {
+            return FromConstructor(c, new ObjectConstructor(null, null, o));
+        }
 
         /// <summary>
         /// Creates a new serialized object using the provided Constructor, and Object Constructor
@@ -548,7 +551,19 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Gets the CoreType of this instance from the set type
         /// </summary>
         /// <returns>The CoreType of this instance</returns>
-        public CoreType GetCoreType() => this.Type?.CoreType ?? CoreType.Null;
+
+        /* Unmerged change from project 'Penguin.Reflection.Serialization.Local (netstandard2.1)'
+        Before:
+                public CoreType GetCoreType() => this.Type?.CoreType ?? CoreType.Null;
+        After:
+                public CoreType GetCoreType()
+                {
+                    return this.Type?.CoreType ?? CoreType.Null;
+        */
+        public CoreType GetCoreType()
+        {
+            return this.Type?.CoreType ?? CoreType.Null;
+        }
 
         /// <summary>
         /// Returns the Parent of this object (property holder) or null if empty.
@@ -556,7 +571,19 @@ namespace Penguin.Reflection.Serialization.Objects
         /// since Dehydration can cause objects to dereference parents.
         /// </summary>
         /// <returns>The parent of the object or null if no parent</returns>
-        public IMetaObject GetParent() => this.Parent;
+
+        /* Unmerged change from project 'Penguin.Reflection.Serialization.Local (netstandard2.1)'
+        Before:
+                public IMetaObject GetParent() => this.Parent;
+        After:
+                public IMetaObject GetParent()
+                {
+                    return this.Parent;
+        */
+        public IMetaObject GetParent()
+        {
+            return this.Parent;
+        }
 
         /// <summary>
         /// Checks to see if this objects declared type contains a property
@@ -564,7 +591,9 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="PropertyName">The property name to check for</param>
         /// <returns>Whether or not the objects declared type contains a property</returns>
         public bool HasProperty(string PropertyName)    // Indexer declaration
-=> this.Type.Properties.Any(p => p.Name == PropertyName);
+        {
+            return this.Type.Properties.Any(p => p.Name == PropertyName);
+        }
 
         /// <summary>
         /// Hydrates this object instance. Should be called once the serialized object is ready for use
@@ -579,7 +608,7 @@ namespace Penguin.Reflection.Serialization.Objects
                 this.Meta[0] = this;
             }
 
-            meta = meta ?? this.Meta ?? this.Constructor.Meta.Select(v => v.Value).ToDictionary(k => k.I, v => v);            
+            meta = meta ?? this.Meta ?? this.Constructor.Meta.Select(v => v.Value).ToDictionary(k => k.I, v => v);
 
             this.Property = HydrateChild(this.Property, meta);
             this.Type = HydrateChild(this.Type, meta);
@@ -677,18 +706,27 @@ namespace Penguin.Reflection.Serialization.Objects
         /// Call this while recursing through the object structure to ensure that the parent on each object is set correctly
         /// </summary>
         /// <param name="parent">The parent of this object</param>
-        public void SetParent(MetaObject parent) => this.Parent = parent;
+        public void SetParent(MetaObject parent)
+        {
+            this.Parent = parent;
+        }
 
         /// <summary>
         /// Returns the Property.Name ?? Type.Name ?? Empty in that order
         /// </summary>
         /// <returns></returns>
-        public override string ToString() => $"{this.Property?.Name ?? this.Type?.Name ?? string.Empty}";
+        public override string ToString()
+        {
+            return $"{this.Property?.Name ?? this.Type?.Name ?? string.Empty}";
+        }
 
         /// <summary>
         /// The Property.Name ?? Type.Name ?? Empty in that order
         /// </summary>
         /// <returns></returns>
-        public IMetaType TypeOf() => this.Type;
+        public IMetaType TypeOf()
+        {
+            return this.Type;
+        }
     }
 }
