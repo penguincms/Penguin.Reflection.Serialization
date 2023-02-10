@@ -157,9 +157,11 @@ namespace Penguin.Reflection.Serialization.Constructors
 
         private List<RType> _AttributeBlacklist;
         private List<RType> _AttributeWhitelist;
+
         internal Dictionary<string, Func<object, object>> PropertyGetterOverride { get; set; }
 
         internal List<Func<RType, RType>> TypeGetterOverride { get; set; }
+
         private object Owner { get; set; }
 
         /// <summary>
