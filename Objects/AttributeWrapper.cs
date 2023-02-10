@@ -23,29 +23,29 @@ namespace Penguin.Reflection.Serialization.Objects
 
         public AttributeWrapper(AttributeInstance a, PropertyInfo p, MetaConstructor c)
         {
-            this.PropertyInfo = p;
-            this.Attribute = a;
-            this.Type = p.DeclaringType;
+            PropertyInfo = p;
+            Attribute = a;
+            Type = p.DeclaringType;
 
             if (!c.Cache.Attributes.ContainsKey(a.Instance))
             {
                 c.Cache.Attributes.Add(a.Instance, c.Cache.Attributes.Count);
             }
 
-            this.Key = $"@{c.Cache.Attributes[a.Instance]}|{a.IsInherited}";
+            Key = $"@{c.Cache.Attributes[a.Instance]}|{a.IsInherited}";
         }
 
         public AttributeWrapper(AttributeInstance a, RType t, MetaConstructor c)
         {
-            this.Attribute = a;
-            this.Type = t;
+            Attribute = a;
+            Type = t;
 
             if (!c.Cache.Attributes.ContainsKey(a.Instance))
             {
                 c.Cache.Attributes.Add(a.Instance, c.Cache.Attributes.Count);
             }
 
-            this.Key = $"@{c.Cache.Attributes[a.Instance]}|{a.IsInherited}";
+            Key = $"@{c.Cache.Attributes[a.Instance]}|{a.IsInherited}";
         }
 
         #endregion Constructors
@@ -54,7 +54,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
         public override string GetKey()
         {
-            return this.Key;
+            return Key;
         }
 
         #endregion Methods

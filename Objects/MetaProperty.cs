@@ -13,14 +13,14 @@ namespace Penguin.Reflection.Serialization.Objects
     {
         #region Properties
 
-        IEnumerable<IMetaAttribute> IHasAttributes.Attributes => this.Attributes;
+        IEnumerable<IMetaAttribute> IHasAttributes.Attributes => Attributes;
 
         /// <summary>
         /// A list of attributes declared on this property
         /// </summary>
         public IEnumerable<MetaAttribute> Attributes { get; set; }
 
-        IMetaType IMetaProperty.DeclaringType => this.Type;
+        IMetaType IMetaProperty.DeclaringType => Type;
 
         /// <summary>
         /// The DeclaringType of this property
@@ -32,7 +32,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public string Name { get; set; }
 
-        IMetaType IMetaProperty.Type => this.Type;
+        IMetaType IMetaProperty.Type => Type;
 
         /// <summary>
         /// The Type of this property
@@ -56,7 +56,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public MetaProperty()
         {
-            this.Attributes = new List<MetaAttribute>();
+            Attributes = new List<MetaAttribute>();
         }
 
         /// <summary>
@@ -70,8 +70,8 @@ namespace Penguin.Reflection.Serialization.Objects
                 throw new System.ArgumentNullException(nameof(p));
             }
 
-            this.Name = p.Name;
-            this.Type = p.Type;
+            Name = p.Name;
+            Type = p.Type;
         }
 
         #endregion Constructors
@@ -87,10 +87,10 @@ namespace Penguin.Reflection.Serialization.Objects
             //This should be done through an accessor because right now we're relying on
             //The fact that the constructor sets it to a list, which is not the correct way
             //to do this.
-            this.HydrateList(this.Attributes as IList<MetaAttribute>, meta);
+            HydrateList(Attributes as IList<MetaAttribute>, meta);
 
-            this.Type = HydrateChild(this.Type, meta);
-            this.DeclaringType = HydrateChild(this.DeclaringType, meta);
+            Type = HydrateChild(Type, meta);
+            DeclaringType = HydrateChild(DeclaringType, meta);
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns>The fully qualified name of this property</returns>
         public override string ToString()
         {
-            return $"{this.Type.Name} {this.Name}";
+            return $"{Type.Name} {Name}";
         }
 
         /// <summary>
@@ -108,19 +108,19 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns>The fully qualified name of this property</returns>
         public IMetaType TypeOf()
         {
-            return this.Type;
+            return Type;
         }
 
         #endregion Methods
 
         internal MetaProperty(MetaConstructor c) : base()
         {
-            this.Name = c.PropertyInfo.Name;
-            this.Type = MetaType.FromConstructor(c, c.PropertyInfo.PropertyType);
-            this.DeclaringType = MetaType.FromConstructor(c, c.PropertyInfo.DeclaringType);
+            Name = c.PropertyInfo.Name;
+            Type = MetaType.FromConstructor(c, c.PropertyInfo.PropertyType);
+            DeclaringType = MetaType.FromConstructor(c, c.PropertyInfo.DeclaringType);
 
-            List<MetaAttribute> attributes = new List<MetaAttribute>();
-            this.Attributes = attributes;
+            List<MetaAttribute> attributes = new();
+            Attributes = attributes;
 
             if (c.Settings.AttributeIncludeSettings != AttributeIncludeSetting.None)
             {

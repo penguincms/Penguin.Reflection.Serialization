@@ -4,17 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-/* Unmerged change from project 'Penguin.Reflection.Serialization.Local (netstandard2.1)'
-Before:
-namespace Penguin.Reflection.Serialization.Templating
-After:
-using System.Text;
-
-
-namespace Penguin.Reflection.Serialization.Templating
-*/
-
-
 
 namespace Penguin.Reflection.Serialization.Templating
 {

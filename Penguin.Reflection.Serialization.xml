@@ -210,13 +210,13 @@
         </member>
         <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.ForceSkipNameSpaces">
             <summary>
-            A list of attribute types to skip based on namespace, since 
+            A list of attribute types to skip based on namespace, since
             not all compiler generated attributes are accessible using type
             </summary>
         </member>
         <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings.ForceSkip">
             <summary>
-            A list of attribute types to skip based on name, since 
+            A list of attribute types to skip based on name, since
             not all compiler generated attributes are accessible using type
             </summary>
         </member>
@@ -542,7 +542,7 @@
             <summary>
             Checks to see if this objects declared type contains a property
             </summary>
-            <param name="PropertyName">The property name to check for</param>
+            <param name="propertyName">The property name to check for</param>
             <returns>Whether or not the objects declared type contains a property</returns>
         </member>
         <member name="M:Penguin.Reflection.Serialization.Objects.MetaObject.Hydrate(System.Collections.Generic.IDictionary{System.Int32,Penguin.Reflection.Serialization.Abstractions.Interfaces.IHydratable})">

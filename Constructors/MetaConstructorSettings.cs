@@ -25,13 +25,13 @@ namespace Penguin.Reflection.Serialization.Constructors
 
         public List<RType> AttributeBlacklist
         {
-            get => this._AttributeBlacklist;
+            get => _AttributeBlacklist;
             set
             {
-                if (this._AttributeWhitelist is null)
+                if (_AttributeWhitelist is null)
                 {
-                    this.AttributeIncludeSettings = AttributeIncludeSetting.BlackList;
-                    this._AttributeBlacklist = value;
+                    AttributeIncludeSettings = AttributeIncludeSetting.BlackList;
+                    _AttributeBlacklist = value;
                 }
                 else
                 {
@@ -56,13 +56,13 @@ namespace Penguin.Reflection.Serialization.Constructors
 
         public List<RType> AttributeWhitelist
         {
-            get => this._AttributeWhitelist;
+            get => _AttributeWhitelist;
             set
             {
-                if (this._AttributeBlacklist is null)
+                if (_AttributeBlacklist is null)
                 {
-                    this.AttributeIncludeSettings = AttributeIncludeSetting.WhiteList;
-                    this._AttributeWhitelist = value;
+                    AttributeIncludeSettings = AttributeIncludeSetting.WhiteList;
+                    _AttributeWhitelist = value;
                 }
                 else
                 {
@@ -111,17 +111,17 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// </summary>
         public MetaConstructorSettings()
         {
-            this.IgnoreHiddenForeignTypes = true;
-            this.IgnoreNullDeclaringType = true;
-            this.IgnoreInheritedProperties = false;
-            this.AttributeMatchSettings = AttributeMatchSetting.Equality;
-            this.IgnoreTypes = new List<RType>
+            IgnoreHiddenForeignTypes = true;
+            IgnoreNullDeclaringType = true;
+            IgnoreInheritedProperties = false;
+            AttributeMatchSettings = AttributeMatchSetting.Equality;
+            IgnoreTypes = new List<RType>
                 {
                     typeof(System.Type),
                     typeof(System.Reflection.MemberInfo)
                 };
-            this.PropertyGetterOverride = new Dictionary<string, Func<object, object>>();
-            this.TypeGetterOverride = new List<Func<RType, RType>>();
+            PropertyGetterOverride = new Dictionary<string, Func<object, object>>();
+            TypeGetterOverride = new List<Func<RType, RType>>();
         }
 
         #endregion Constructors
@@ -135,7 +135,7 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// <param name="func">The function that the type passes through</param>
         public void AddTypeGetterOverride(Func<RType, RType> func)
         {
-            this.TypeGetterOverride.Add(func);
+            TypeGetterOverride.Add(func);
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace Penguin.Reflection.Serialization.Constructors
                 throw new ArgumentNullException(nameof(pi));
             }
 
-            this.PropertyGetterOverride.Add(pi.GetUniquePropertyId(), func);
+            PropertyGetterOverride.Add(pi.GetUniquePropertyId(), func);
         }
 
         #endregion Methods
@@ -163,7 +163,7 @@ namespace Penguin.Reflection.Serialization.Constructors
         private object Owner { get; set; }
 
         /// <summary>
-        /// A list of attribute types to skip based on namespace, since 
+        /// A list of attribute types to skip based on namespace, since
         /// not all compiler generated attributes are accessible using type
         /// </summary>
         public HashSet<string> ForceSkipNameSpaces { get; internal set; } = new HashSet<string>()
@@ -172,7 +172,7 @@ namespace Penguin.Reflection.Serialization.Constructors
         };
 
         /// <summary>
-        /// A list of attribute types to skip based on name, since 
+        /// A list of attribute types to skip based on name, since
         /// not all compiler generated attributes are accessible using type
         /// </summary>
         public HashSet<string> ForceSkip { get; internal set; } = new HashSet<string>()
@@ -183,70 +183,48 @@ namespace Penguin.Reflection.Serialization.Constructors
 
         internal object GetOwner()
         {
-            return this.Owner;
+            return Owner;
         }
 
         internal bool IsAttributeMatch(Type typeA, Type typeB)
         {
-            switch (this.AttributeMatchSettings)
+            return AttributeMatchSettings switch
             {
-                case AttributeMatchSetting.Equality:
-                    return typeA == typeB;
-
-                case AttributeMatchSetting.AssemblyQualifiedName:
-                    return typeA.AssemblyQualifiedName == typeB.AssemblyQualifiedName;
-
-                case AttributeMatchSetting.Name:
-                    return typeA.Name == typeB.Name;
-
-                case AttributeMatchSetting.FullName:
-                    return typeA.FullName == typeB.FullName;
-
-                default:
-                    throw new Exception(UNDEFINED_MATCH_TYPE_MESSAGE);
-            }
+                AttributeMatchSetting.Equality => typeA == typeB,
+                AttributeMatchSetting.AssemblyQualifiedName => typeA.AssemblyQualifiedName == typeB.AssemblyQualifiedName,
+                AttributeMatchSetting.Name => typeA.Name == typeB.Name,
+                AttributeMatchSetting.FullName => typeA.FullName == typeB.FullName,
+                _ => throw new Exception(UNDEFINED_MATCH_TYPE_MESSAGE),
+            };
         }
 
         internal bool IsOwner(object o)
         {
-            return this.Owner == o;
+            return Owner == o;
         }
 
         internal bool ShouldAddAttribute(RType attributeType)
         {
-            if (this.ForceSkipNameSpaces.Any(f => attributeType.FullName.IndexOf(f + ".") == 0))
+            if (ForceSkipNameSpaces.Any(f => attributeType.FullName.IndexOf(f + ".") == 0))
             {
                 //Debug.WriteLine("Force skipping attribute: " + attributeType.Name);
                 return false;
             }
 
-            if (this.ForceSkip.Contains(attributeType.FullName))
-            {
-                return false;
-            }
-
-            switch (this.AttributeIncludeSettings)
-            {
-                case AttributeIncludeSetting.All:
-                    return true;
-
-                case AttributeIncludeSetting.WhiteList:
-                    return this.AttributeWhitelist != null && this.AttributeWhitelist.Any(t => this.IsAttributeMatch(t, attributeType));
-
-                case AttributeIncludeSetting.BlackList:
-                    return this.AttributeBlacklist is null || !this.AttributeWhitelist.Any(t => this.IsAttributeMatch(t, attributeType));
-
-                case AttributeIncludeSetting.None:
-                    return false;
-
-                default:
-                    throw new ArgumentException(UNDEFINED_ATTRIBUTE_SERIALIZATION_SETTINGS_MESSAGE);
-            }
+            return !ForceSkip.Contains(attributeType.FullName)
+&& AttributeIncludeSettings switch
+{
+    AttributeIncludeSetting.All => true,
+    AttributeIncludeSetting.WhiteList => AttributeWhitelist != null && AttributeWhitelist.Any(t => IsAttributeMatch(t, attributeType)),
+    AttributeIncludeSetting.BlackList => AttributeBlacklist is null || !AttributeWhitelist.Any(t => IsAttributeMatch(t, attributeType)),
+    AttributeIncludeSetting.None => false,
+    _ => throw new ArgumentException(UNDEFINED_ATTRIBUTE_SERIALIZATION_SETTINGS_MESSAGE),
+};
         }
 
         internal void TrySetOwner(object o)
         {
-            this.Owner = this.Owner ?? o;
+            Owner ??= o;
         }
     }
 }

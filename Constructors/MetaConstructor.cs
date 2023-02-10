@@ -48,9 +48,9 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// </summary>
         public MetaConstructor()
         {
-            this.Settings = this.Settings ?? new MetaConstructorSettings();
-            this.Cache = new CacheContainer();
-            this.TypeProperties = new Dictionary<RType, IList<PropertyInfo>>();
+            Settings ??= new MetaConstructorSettings();
+            Cache = new CacheContainer();
+            TypeProperties = new Dictionary<RType, IList<PropertyInfo>>();
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// <param name="o">The object to serialize</param>
         public MetaConstructor(string PropertyName, object o = null) : this(o)
         {
-            this.Property = new MetaProperty()
+            Property = new MetaProperty()
             {
                 Name = PropertyName
             };
@@ -84,7 +84,7 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// <param name="o">The object to set</param>
         public void ClaimOwnership(object o)
         {
-            this.Settings.TrySetOwner(o);
+            Settings.TrySetOwner(o);
         }
 
         /// <summary>
@@ -93,17 +93,9 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// <param name="o">The object to use as the basis for serialization</param>
         /// <returns>A new instance of a MetaConstructor</returns>
 
-        /* Unmerged change from project 'Penguin.Reflection.Serialization.Local (netstandard2.1)'
-        Before:
-                public MetaConstructor Clone(object o) => this.Clone(new ObjectConstructor(null, null, o));
-        After:
-                public MetaConstructor Clone(object o)
-                {
-                    return this.Clone(new ObjectConstructor(null, null, o));
-        */
         public MetaConstructor Clone(object o)
         {
-            return this.Clone(new ObjectConstructor(null, null, o));
+            return Clone(new ObjectConstructor(null, null, o));
         }
 
         /// <summary>
@@ -112,17 +104,9 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// <param name="p">The property info to use as the basis for serialization</param>
         /// <returns>A new instance of a MetaConstructor</returns>
 
-        /* Unmerged change from project 'Penguin.Reflection.Serialization.Local (netstandard2.1)'
-        Before:
-                public MetaConstructor Clone(PropertyInfo p) => this.Clone(new ObjectConstructor(p, null, null));
-        After:
-                public MetaConstructor Clone(PropertyInfo p)
-                {
-                    return this.Clone(new ObjectConstructor(p, null, null));
-        */
         public MetaConstructor Clone(PropertyInfo p)
         {
-            return this.Clone(new ObjectConstructor(p, null, null));
+            return Clone(new ObjectConstructor(p, null, null));
         }
 
         /// <summary>
@@ -131,17 +115,9 @@ namespace Penguin.Reflection.Serialization.Constructors
         /// <param name="t">The Type to use as the basis for serialization</param>
         /// <returns>A new instance of a MetaConstructor</returns>
 
-        /* Unmerged change from project 'Penguin.Reflection.Serialization.Local (netstandard2.1)'
-        Before:
-                public MetaConstructor Clone(RType t) => this.Clone(new ObjectConstructor(null, t, null));
-        After:
-                public MetaConstructor Clone(RType t)
-                {
-                    return this.Clone(new ObjectConstructor(null, t, null));
-        */
         public MetaConstructor Clone(RType t)
         {
-            return this.Clone(new ObjectConstructor(null, t, null));
+            return Clone(new ObjectConstructor(null, t, null));
         }
 
         /// <summary>
@@ -156,12 +132,12 @@ namespace Penguin.Reflection.Serialization.Constructors
                 throw new ArgumentNullException(nameof(oc));
             }
 
-            MetaConstructor clone = new MetaConstructor(oc)
+            MetaConstructor clone = new(oc)
             {
                 Settings = Settings,
                 Cache = Cache,
-                Meta = this.Meta,
-                Exceptions = this.Exceptions
+                Meta = Meta,
+                Exceptions = Exceptions
             };
 
             return clone;
@@ -193,12 +169,9 @@ namespace Penguin.Reflection.Serialization.Constructors
             {
                 get
                 {
-                    if (this.callingAssembly is null)
-                    {
-                        this.callingAssembly = Assembly.GetCallingAssembly();
-                    }
+                    callingAssembly ??= Assembly.GetCallingAssembly();
 
-                    return this.callingAssembly;
+                    return callingAssembly;
                 }
             }
 
@@ -208,7 +181,7 @@ namespace Penguin.Reflection.Serialization.Constructors
 
             public CacheContainer()
             {
-                this.Attributes = new Dictionary<System.Attribute, int>();
+                Attributes = new Dictionary<System.Attribute, int>();
             }
 
             #endregion Constructors
@@ -218,63 +191,55 @@ namespace Penguin.Reflection.Serialization.Constructors
 
         internal MetaConstructor(ObjectConstructor oc) : this()
         {
-            this.Type = oc.Type;
-            this.PropertyInfo = oc.PropertyInfo;
-            this.Object = oc.Object;
+            Type = oc.Type;
+            PropertyInfo = oc.PropertyInfo;
+            Object = oc.Object;
         }
 
         internal static object GetKey(object o)
         {
-            if (o is PropertyInfo || o is RType || o is System.Attribute || o is KeyGroup || o is string)
-            {
-                return o;
-            }
-
-            if (o is MetaWrapper)
-            {
-                return (o as MetaWrapper).GetKey();
-            }
-
-            throw new Exception(UNSUPPORTED_OBJECT_KEY_GET_MESSAGE);
+            return o is PropertyInfo || o is RType || o is System.Attribute || o is KeyGroup || o is string
+                ? o
+                : o is MetaWrapper ? (object)(o as MetaWrapper).GetKey() : throw new Exception(UNSUPPORTED_OBJECT_KEY_GET_MESSAGE);
         }
 
         internal int AddException(string Message)
         {
-            if (!this.Exceptions.ContainsKey(Message))
+            if (!Exceptions.ContainsKey(Message))
             {
-                this.Exceptions.Add(Message, this.Exceptions.Count);
+                Exceptions.Add(Message, Exceptions.Count);
             }
 
-            return this.Exceptions[Message];
+            return Exceptions[Message];
         }
 
         internal int Claim(string s)
         {
-            if (!this.Meta.ContainsKey(s))
+            if (!Meta.ContainsKey(s))
             {
-                int Index = this.Meta.Count;
+                int Index = Meta.Count;
 
-                this.Meta.Add(s, new StringHolder() { V = s, I = Index });
+                Meta.Add(s, new StringHolder() { V = s, I = Index });
             }
 
-            return this.Meta[s].I;
+            return Meta[s].I;
         }
 
         internal AbstractMeta Claim(object o)
         {
-            AbstractMeta placeHolder = new AbstractMeta()
+            AbstractMeta placeHolder = new()
             {
-                I = this.Meta.Count
+                I = Meta.Count
             };
 
-            this.Meta.Add(GetKey(o), placeHolder);
+            Meta.Add(GetKey(o), placeHolder);
 
             return placeHolder;
         }
 
         internal bool Contains(object o)
         {
-            return this.Meta.ContainsKey(GetKey(o));
+            return Meta.ContainsKey(GetKey(o));
         }
 
         internal int GetId(object o)
@@ -285,7 +250,7 @@ namespace Penguin.Reflection.Serialization.Constructors
             }
             else
             {
-                int ToReturn = this.Meta[GetKey(o)].I;
+                int ToReturn = Meta[GetKey(o)].I;
 
                 return ToReturn;
             }
@@ -293,31 +258,25 @@ namespace Penguin.Reflection.Serialization.Constructors
 
         internal IList<PropertyInfo> GetProperties(RType t = null)
         {
-            RType type = t ?? this.Type ?? this.Object.GetType();
+            RType type = t ?? Type ?? Object.GetType();
 
-            if (!this.TypeProperties.ContainsKey(type))
+            if (!TypeProperties.ContainsKey(type))
             {
-                this.TypeProperties.Add(type, Penguin.Reflection.TypeCache.GetProperties(type).Where(this.Validate).ToList());
+                TypeProperties.Add(type, Penguin.Reflection.TypeCache.GetProperties(type).Where(Validate).ToList());
             }
 
-            return this.TypeProperties[type];
+            return TypeProperties[type];
         }
 
         internal object GetValue(PropertyInfo pi)
         {
-            if (this.Settings.PropertyGetterOverride.ContainsKey(pi.GetUniquePropertyId()))
-            {
-                return this.Settings.PropertyGetterOverride[pi.GetUniquePropertyId()].Invoke(this.Object);
-            }
-            else
-            {
-                return pi.GetValue(this.Object);
-            }
+            return Settings.PropertyGetterOverride.TryGetValue(pi.GetUniquePropertyId(), out Func<object, object> value) ? value.Invoke(Object)
+                : pi.GetValue(Object);
         }
 
         internal bool IsOwner(object o)
         {
-            return this.Settings.IsOwner(o);
+            return Settings.IsOwner(o);
         }
 
         internal void UpdateClaim(AbstractMeta a, object o)
@@ -327,21 +286,21 @@ namespace Penguin.Reflection.Serialization.Constructors
                 throw new Exception(ID_LESS_0_SERIALIZATION_EXCEPTION_MESSAGE);
             }
 
-            this.Meta[GetKey(o)] = a;
+            Meta[GetKey(o)] = a;
         }
 
         internal bool Validate(PropertyInfo thisProperty)
         {
-            bool HiddenType = !thisProperty.ReflectedType.IsVisible && thisProperty.ReflectedType.Assembly != this.Cache.CallingAssembly;
+            bool HiddenType = !thisProperty.ReflectedType.IsVisible && thisProperty.ReflectedType.Assembly != Cache.CallingAssembly;
 
             bool skip = false;
 
             skip = skip || thisProperty.GetGetMethod() == null;
-            skip = skip || (thisProperty.DeclaringType is null && this.Settings.IgnoreNullDeclaringType);
-            skip = skip || this.Settings.IgnoreTypes.Contains(thisProperty.DeclaringType);
-            skip = skip || (HiddenType && this.Settings.IgnoreHiddenForeignTypes);
+            skip = skip || (thisProperty.DeclaringType is null && Settings.IgnoreNullDeclaringType);
+            skip = skip || Settings.IgnoreTypes.Contains(thisProperty.DeclaringType);
+            skip = skip || (HiddenType && Settings.IgnoreHiddenForeignTypes);
             skip = skip || thisProperty.GetIndexParameters().Any();
-            skip = skip || (this.Settings.IgnoreObjectProperties && thisProperty.PropertyType == typeof(object));
+            skip = skip || (Settings.IgnoreObjectProperties && thisProperty.PropertyType == typeof(object));
 
             return !skip;
         }

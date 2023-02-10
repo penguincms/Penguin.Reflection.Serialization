@@ -27,9 +27,9 @@ namespace Penguin.Reflection.Serialization
                 return null;
             }
 
-            c = c ?? new MetaConstructor();
+            c ??= new MetaConstructor();
 
-            StringBuilder target = new StringBuilder();
+            StringBuilder target = new();
 
             new MetaObject(o, c).Serialize(target);
 
@@ -48,19 +48,15 @@ namespace Penguin.Reflection.Serialization
                 return null;
             }
 
-            using (MemoryStream msi = new MemoryStream(bytes))
+            using MemoryStream msi = new(bytes);
+            using MemoryStream mso = new();
+            using (GZipStream gs = new(msi, CompressionMode.Decompress))
             {
-                using (MemoryStream mso = new MemoryStream())
-                {
-                    using (GZipStream gs = new GZipStream(msi, CompressionMode.Decompress))
-                    {
-                        //gs.CopyTo(mso);
-                        CopyTo(gs, mso);
-                    }
-
-                    return Encoding.UTF8.GetString(mso.ToArray());
-                }
+                //gs.CopyTo(mso);
+                CopyTo(gs, mso);
             }
+
+            return Encoding.UTF8.GetString(mso.ToArray());
         }
 
         internal static void CopyTo(Stream src, Stream dest)
@@ -84,19 +80,15 @@ namespace Penguin.Reflection.Serialization
 
             byte[] bytes = Encoding.UTF8.GetBytes(str);
 
-            using (MemoryStream msi = new MemoryStream(bytes))
+            using MemoryStream msi = new(bytes);
+            using MemoryStream mso = new();
+            using (GZipStream gs = new(mso, CompressionMode.Compress))
             {
-                using (MemoryStream mso = new MemoryStream())
-                {
-                    using (GZipStream gs = new GZipStream(mso, CompressionMode.Compress))
-                    {
-                        //msi.CopyTo(gs);
-                        CopyTo(msi, gs);
-                    }
-
-                    return mso.ToArray();
-                }
+                //msi.CopyTo(gs);
+                CopyTo(msi, gs);
             }
+
+            return mso.ToArray();
         }
 
         #endregion Methods

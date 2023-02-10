@@ -51,24 +51,11 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="metaProperty">The property to search for</param>
         /// <returns>The property if exists, or Error if not</returns>
         public IMetaObject this[IMetaProperty metaProperty]    // Indexer declaration
-        {
-            get
-            {
-                if (metaProperty is null)
-                {
-                    throw new ArgumentNullException(nameof(metaProperty));
-                }
-
-                if (metaProperty.Type.IsNullable || metaProperty.Type.CoreType == CoreType.Reference)
-                {
-                    return this.Properties.FirstOrDefault(p => p.Property.Name == metaProperty.Name);
-                }
-                else
-                {
-                    return this.Properties.First(p => p.Property.Name == metaProperty.Name);
-                }
-            }
-        }
+=> metaProperty is null
+                    ? throw new ArgumentNullException(nameof(metaProperty))
+                    : metaProperty.Type.IsNullable || metaProperty.Type.CoreType == CoreType.Reference
+                    ? Properties.FirstOrDefault(p => p.Property.Name == metaProperty.Name)
+                    : (IMetaObject)Properties.First(p => p.Property.Name == metaProperty.Name);
 
         /// <summary>
         /// Top level exception cache for referencing exception messages. Used because recursive serialization has the potential to generate a LOT
@@ -76,7 +63,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public IDictionary<int, string> BuildExceptions { get; set; }
 
-        IReadOnlyList<IMetaObject> IMetaObject.CollectionItems => this.CollectionItems;
+        IReadOnlyList<IMetaObject> IMetaObject.CollectionItems => CollectionItems;
 
         /// <summary>
         /// If this object is a collection, this list contains the contents
@@ -103,30 +90,30 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public bool Null { get; set; }
 
-        IMetaObject IMetaObject.Parent { get => this.Parent; set => this.Parent = (MetaObject)value; }
+        IMetaObject IMetaObject.Parent { get => Parent; set => Parent = (MetaObject)value; }
         public MetaObject Parent { get; set; }
-        IReadOnlyList<IMetaObject> IMetaObject.Properties => this.Properties;
+        IReadOnlyList<IMetaObject> IMetaObject.Properties => Properties;
 
         /// <summary>
         /// A list of the accessible (child) properties for this object
         /// </summary>
         public List<MetaObject> Properties { get; set; }
 
-        IMetaProperty IMetaObject.Property => this.Property;
+        IMetaProperty IMetaObject.Property => Property;
 
         /// <summary>
         /// The parent property referencing this object. Unreliable in local types
         /// </summary>
         public MetaProperty Property { get; set; }
 
-        IMetaObject IMetaObject.Template => this.Template;
+        IMetaObject IMetaObject.Template => Template;
 
         /// <summary>
         /// If this is a collection, this contains an empty instance of the collection unit type (for creating new children)
         /// </summary>
         public MetaObject Template { get; set; }
 
-        IMetaType IMetaObject.Type => this.Type;
+        IMetaType IMetaObject.Type => Type;
 
         /// <summary>
         /// The type information for this Meta instance
@@ -151,8 +138,8 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public MetaObject()
         {
-            this.Properties = new List<MetaObject>();
-            this.CollectionItems = new List<MetaObject>();
+            Properties = new List<MetaObject>();
+            CollectionItems = new List<MetaObject>();
         }
 
         /// <summary>
@@ -177,20 +164,20 @@ namespace Penguin.Reflection.Serialization.Objects
                 throw new ArgumentNullException(nameof(Values));
             }
 
-            this.Properties = new List<MetaObject>();
-            this.CollectionItems = new List<MetaObject>();
+            Properties = new List<MetaObject>();
+            CollectionItems = new List<MetaObject>();
 
             foreach (object o in Values)
             {
                 if (o != null)
                 {
-                    this.AddItem(FromConstructor(c, new ObjectConstructor(null, null, o)));
+                    AddItem(FromConstructor(c, new ObjectConstructor(null, null, o)));
                 }
             }
 
-            this.Type = MetaType.FromConstructor(c, Values.GetType());
+            Type = MetaType.FromConstructor(c, Values.GetType());
 
-            this.Property = new MetaProperty()
+            Property = new MetaProperty()
             {
                 Name = PropertyName,
                 Type = Type
@@ -230,26 +217,26 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="c">The constructor to use</param>
         public MetaObject(MetaConstructor c) : base()
         {
-            this.Constructor = c ?? throw new ArgumentNullException(nameof(c));
+            Constructor = c ?? throw new ArgumentNullException(nameof(c));
 
             c.ClaimOwnership(this);
 
             //Check for an existing MetaProperty, in case we need a top level Name
-            this.Property = c.Property;
+            Property = c.Property;
             if (c.PropertyInfo != null)
             {
-                this.Property = Penguin.Reflection.Serialization.Objects.MetaProperty.FromConstructor(c, c.PropertyInfo);
+                Property = Penguin.Reflection.Serialization.Objects.MetaProperty.FromConstructor(c, c.PropertyInfo);
             }
 
-            this.Null = c.Object is null;
+            Null = c.Object is null;
 
-            this.Type = Penguin.Reflection.Serialization.Objects.MetaType.FromConstructor(c, c.Type);
+            Type = Penguin.Reflection.Serialization.Objects.MetaType.FromConstructor(c, c.Type);
 
             CoreType thisCoreType = c.Type.GetCoreType();
 
             if (c.Object is MetaObject mo)
             {
-                this.Properties = new List<MetaObject>
+                Properties = new List<MetaObject>
                 {
                     mo
                 };
@@ -258,12 +245,12 @@ namespace Penguin.Reflection.Serialization.Objects
             {
                 if (c.Object is null)
                 {
-                    this.V = c.Claim("0");
+                    V = c.Claim("0");
                 }
                 else
                 {
                     RType thisType = c.Type;
-                    this.V = c.Claim(Convert.ChangeType(c.Object, Enum.GetUnderlyingType(thisType)).ToString());
+                    V = c.Claim(Convert.ChangeType(c.Object, Enum.GetUnderlyingType(thisType)).ToString());
                 }
             }
             else if (thisCoreType == CoreType.Value)
@@ -272,25 +259,25 @@ namespace Penguin.Reflection.Serialization.Objects
 
                 if (Default != null)
                 {
-                    this.V = c.Claim(Default);
+                    V = c.Claim(Default);
                 }
             }
             else //Reference
             {
                 if (c.Object?.ToString() != null)
                 {
-                    this.V = c.Claim(c.Object.ToString());
+                    V = c.Claim(c.Object.ToString());
                 }
 
-                this.Properties = new List<MetaObject>();
+                Properties = new List<MetaObject>();
 
                 if (thisCoreType == CoreType.Collection)
                 {
-                    this.CollectionItems = new List<MetaObject>();
+                    CollectionItems = new List<MetaObject>();
 
-                    this.Template = MetaObject.FromConstructor(c, new ObjectConstructor(c.PropertyInfo, c.Type.GetCollectionType(), null));
+                    Template = MetaObject.FromConstructor(c, new ObjectConstructor(c.PropertyInfo, c.Type.GetCollectionType(), null));
 
-                    if (!(c.Object is null))
+                    if (c.Object is not null)
                     {
                         IList toGet = typeof(MetaObject).GetMethod(nameof(MetaObject.GetCollection)).MakeGenericMethod(c.Type.GetCollectionType()).Invoke(null, new object[] { c.Object }) as IList;
 
@@ -309,23 +296,23 @@ namespace Penguin.Reflection.Serialization.Objects
                             //Becomes  Bookshelf.Books => Book
                             MetaObject i = FromConstructor(c, new ObjectConstructor(c.PropertyInfo, c.Type.GetCollectionType(), o));
 
-                            i.Property = this.Property;
+                            i.Property = Property;
 
-                            this.AddItem(i);
+                            AddItem(i);
                         }
                     }
                 }
                 else if (thisCoreType == CoreType.Dictionary)
                 {
-                    this.CollectionItems = new List<MetaObject>();
+                    CollectionItems = new List<MetaObject>();
 
                     Type checkType = c.Object?.GetType() ?? c.PropertyInfo.PropertyType;
 
                     RType KVPType = typeof(KeyValuePair<,>).MakeGenericType(checkType.GetGenericArguments()[0], checkType.GetGenericArguments()[1]);
 
-                    this.Template = FromConstructor(c, new ObjectConstructor(c.PropertyInfo, KVPType, null));
+                    Template = FromConstructor(c, new ObjectConstructor(c.PropertyInfo, KVPType, null));
 
-                    if (!(c.Object is null))
+                    if (c.Object is not null)
                     {
                         IEnumerable toGet = c.Object as IEnumerable;
 
@@ -344,9 +331,9 @@ namespace Penguin.Reflection.Serialization.Objects
                             //Becomes  Bookshelf.Books => Book
                             MetaObject i = FromConstructor(c, new ObjectConstructor(c.PropertyInfo, o.GetType(), o));
 
-                            i.Property = this.Property;
+                            i.Property = Property;
 
-                            this.AddItem(i);
+                            AddItem(i);
                         }
                     }
                 }
@@ -364,7 +351,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
                     foreach (PropertyInfo thisProperty in c.GetProperties(t))
                     {
-                        if (c.Settings.IgnoreInheritedProperties && !this.Type.Is(thisProperty.DeclaringType.FullName))
+                        if (c.Settings.IgnoreInheritedProperties && !Type.Is(thisProperty.DeclaringType.FullName))
                         {
                             continue;
                         }
@@ -391,14 +378,7 @@ namespace Penguin.Reflection.Serialization.Objects
                                     continue;
                                 }
 
-                                if (Object is MetaObject)
-                                {
-                                    i = Object as MetaObject;
-                                }
-                                else
-                                {
-                                    i = FromConstructor(c, new ObjectConstructor(thisProperty, null, Object));
-                                }
+                                i = Object is MetaObject ? Object as MetaObject : FromConstructor(c, new ObjectConstructor(thisProperty, null, Object));
                             }
                             catch (Exception ex)
                             {
@@ -413,14 +393,14 @@ namespace Penguin.Reflection.Serialization.Objects
                             }
                         }
 
-                        this.AddProperty(i);
+                        AddProperty(i);
                     }
                 }
             }
 
             if (c.IsOwner(this))
             {
-                this.RegisterConstructor(c);
+                RegisterConstructor(c);
             }
         }
 
@@ -431,12 +411,9 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns>A newly serialized and DEHYDRATED object</returns>
         public static MetaObject FromConstructor(MetaConstructor c)
         {
-            if (c is null)
-            {
-                throw new ArgumentNullException(nameof(c));
-            }
-
-            return FromConstructor(c, new ObjectConstructor(c.PropertyInfo, c.Type, c.Object));
+            return c is null
+                ? throw new ArgumentNullException(nameof(c))
+                : FromConstructor(c, new ObjectConstructor(c.PropertyInfo, c.Type, c.Object));
         }
 
         /// <summary>
@@ -465,7 +442,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
             MetaObject i;
 
-            KeyGroup Wrapper = new KeyGroup(oc);
+            KeyGroup Wrapper = new(oc);
 
             if (!c.Contains(Wrapper))
             {
@@ -518,13 +495,10 @@ namespace Penguin.Reflection.Serialization.Objects
                 return;
             }
 
-            if (instance.Parent != null)
-            {
-                instance.Parent.RemoveItem(instance);
-            }
+            instance.Parent?.RemoveItem(instance);
 
             instance.SetParent(this);
-            this.CollectionItems.Add(instance);
+            CollectionItems.Add(instance);
         }
 
         /// <summary>
@@ -538,13 +512,10 @@ namespace Penguin.Reflection.Serialization.Objects
                 return;
             }
 
-            if (instance.Parent != null)
-            {
-                instance.Parent.RemoveProperty(instance);
-            }
+            instance.Parent?.RemoveProperty(instance);
 
             instance.Parent = this;
-            this.Properties.Add(instance);
+            Properties.Add(instance);
         }
 
         /// <summary>
@@ -552,17 +523,9 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         /// <returns>The CoreType of this instance</returns>
 
-        /* Unmerged change from project 'Penguin.Reflection.Serialization.Local (netstandard2.1)'
-        Before:
-                public CoreType GetCoreType() => this.Type?.CoreType ?? CoreType.Null;
-        After:
-                public CoreType GetCoreType()
-                {
-                    return this.Type?.CoreType ?? CoreType.Null;
-        */
         public CoreType GetCoreType()
         {
-            return this.Type?.CoreType ?? CoreType.Null;
+            return Type?.CoreType ?? CoreType.Null;
         }
 
         /// <summary>
@@ -571,28 +534,19 @@ namespace Penguin.Reflection.Serialization.Objects
         /// since Dehydration can cause objects to dereference parents.
         /// </summary>
         /// <returns>The parent of the object or null if no parent</returns>
-
-        /* Unmerged change from project 'Penguin.Reflection.Serialization.Local (netstandard2.1)'
-        Before:
-                public IMetaObject GetParent() => this.Parent;
-        After:
-                public IMetaObject GetParent()
-                {
-                    return this.Parent;
-        */
         public IMetaObject GetParent()
         {
-            return this.Parent;
+            return Parent;
         }
 
         /// <summary>
         /// Checks to see if this objects declared type contains a property
         /// </summary>
-        /// <param name="PropertyName">The property name to check for</param>
+        /// <param name="propertyName">The property name to check for</param>
         /// <returns>Whether or not the objects declared type contains a property</returns>
-        public bool HasProperty(string PropertyName)    // Indexer declaration
+        public bool HasProperty(string propertyName)    // Indexer declaration
         {
-            return this.Type.Properties.Any(p => p.Name == PropertyName);
+            return Type.Properties.Any(p => p.Name == propertyName);
         }
 
         /// <summary>
@@ -603,33 +557,33 @@ namespace Penguin.Reflection.Serialization.Objects
         {
             //If we never updated the root meta because it was called outside of the
             //recursive function
-            if (this.IsRoot && this.Meta.ContainsKey(0) && this.Meta[0].GetType() == typeof(AbstractMeta))
+            if (IsRoot && Meta.ContainsKey(0) && Meta[0].GetType() == typeof(AbstractMeta))
             {
-                this.Meta[0] = this;
+                Meta[0] = this;
             }
 
-            meta = meta ?? this.Meta ?? this.Constructor.Meta.Select(v => v.Value).ToDictionary(k => k.I, v => v);
+            meta ??= Meta ?? Constructor.Meta.Select(v => v.Value).ToDictionary(k => k.I, v => v);
 
-            this.Property = HydrateChild(this.Property, meta);
-            this.Type = HydrateChild(this.Type, meta);
-            this.Template = HydrateChild(this.Template, meta);
+            Property = HydrateChild(Property, meta);
+            Type = HydrateChild(Type, meta);
+            Template = HydrateChild(Template, meta);
 
-            if (this.GetCoreType() != CoreType.Value || (this.Properties != null && this.Properties.Any()))
+            if (GetCoreType() != CoreType.Value || (Properties != null && Properties.Any()))
             {
-                this.HydrateList(this.Properties, meta);
+                HydrateList(Properties, meta);
             }
 
-            if (this.GetCoreType() == CoreType.Collection || this.GetCoreType() == CoreType.Dictionary || (this.CollectionItems != null && this.CollectionItems.Any()))
+            if (GetCoreType() == CoreType.Collection || GetCoreType() == CoreType.Dictionary || (CollectionItems != null && CollectionItems.Any()))
             {
-                this.HydrateList(this.CollectionItems, meta);
+                HydrateList(CollectionItems, meta);
             }
 
-            if (this.V.HasValue)
+            if (V.HasValue)
             {
-                this.Value = (meta[this.V.Value] as StringHolder).V;
+                Value = (meta[V.Value] as StringHolder).V;
             }
 
-            this.IsHydrated = true;
+            IsHydrated = true;
         }
 
         /// <summary>
@@ -638,7 +592,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns></returns>
         public bool IsRecursive()
         {
-            IMetaObject parent = this.Parent;
+            IMetaObject parent = Parent;
 
             while (parent != null)
             {
@@ -665,9 +619,9 @@ namespace Penguin.Reflection.Serialization.Objects
                 throw new ArgumentNullException(nameof(c));
             }
 
-            this.Meta = c.Meta.Select(v => v.Value).ToDictionary(k => k.I, v => v);
-            this.BuildExceptions = c.Exceptions.ToDictionary(k => k.Value, v => v.Key);
-            this.IsRoot = true;
+            Meta = c.Meta.Select(v => v.Value).ToDictionary(k => k.I, v => v);
+            BuildExceptions = c.Exceptions.ToDictionary(k => k.Value, v => v.Key);
+            IsRoot = true;
         }
 
         /// <summary>
@@ -683,7 +637,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
             instance.Parent = null;
 
-            _ = this.CollectionItems.Remove(instance);
+            _ = CollectionItems.Remove(instance);
         }
 
         /// <summary>
@@ -699,7 +653,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
             instance.Parent = null;
 
-            _ = _ = this.Properties.Remove(instance);
+            _ = _ = Properties.Remove(instance);
         }
 
         /// <summary>
@@ -708,7 +662,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="parent">The parent of this object</param>
         public void SetParent(MetaObject parent)
         {
-            this.Parent = parent;
+            Parent = parent;
         }
 
         /// <summary>
@@ -717,7 +671,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{this.Property?.Name ?? this.Type?.Name ?? string.Empty}";
+            return $"{Property?.Name ?? Type?.Name ?? string.Empty}";
         }
 
         /// <summary>
@@ -726,7 +680,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns></returns>
         public IMetaType TypeOf()
         {
-            return this.Type;
+            return Type;
         }
     }
 }

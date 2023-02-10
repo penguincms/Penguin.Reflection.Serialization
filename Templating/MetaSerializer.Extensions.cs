@@ -4,7 +4,6 @@ using System.Text;
 
 namespace Penguin.Reflection.Serialization.Templating
 {
-
     public static partial class MetaSerializer
     {
         #region Methods
@@ -23,34 +22,30 @@ namespace Penguin.Reflection.Serialization.Templating
 
         internal static string Unzip(byte[] bytes)
         {
-            using (MemoryStream msi = new MemoryStream(bytes))
-            using (MemoryStream mso = new MemoryStream())
+            using MemoryStream msi = new(bytes);
+            using MemoryStream mso = new();
+            using (GZipStream gs = new(msi, CompressionMode.Decompress))
             {
-                using (GZipStream gs = new GZipStream(msi, CompressionMode.Decompress))
-                {
-                    //gs.CopyTo(mso);
-                    CopyTo(gs, mso);
-                }
-
-                return Encoding.UTF8.GetString(mso.ToArray());
+                //gs.CopyTo(mso);
+                CopyTo(gs, mso);
             }
+
+            return Encoding.UTF8.GetString(mso.ToArray());
         }
 
         internal static byte[] Zip(string str)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(str);
 
-            using (MemoryStream msi = new MemoryStream(bytes))
-            using (MemoryStream mso = new MemoryStream())
+            using MemoryStream msi = new(bytes);
+            using MemoryStream mso = new();
+            using (GZipStream gs = new(mso, CompressionMode.Compress))
             {
-                using (GZipStream gs = new GZipStream(mso, CompressionMode.Compress))
-                {
-                    //msi.CopyTo(gs);
-                    CopyTo(msi, gs);
-                }
-
-                return mso.ToArray();
+                //msi.CopyTo(gs);
+                CopyTo(msi, gs);
             }
+
+            return mso.ToArray();
         }
 
         #endregion Methods

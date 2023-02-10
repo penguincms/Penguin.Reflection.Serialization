@@ -33,12 +33,12 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="id">An ID associated with an index in the MetaConstructor list</param>
         public AbstractMeta(int id)
         {
-            if (this.GetType() == typeof(AbstractMeta))
+            if (GetType() == typeof(AbstractMeta))
             {
                 throw new Exception(CANT_CREATE_MESSAGE);
             }
 
-            this.I = id;
+            I = id;
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public AbstractMeta()
         {
-            this.I = -1;
+            I = -1;
         }
 
         #endregion Constructors

@@ -15,7 +15,7 @@ namespace Penguin.Reflection.Serialization.Objects
     {
         #region Properties
 
-        IMetaObject IMetaAttribute.Instance => this.Instance;
+        IMetaObject IMetaAttribute.Instance => Instance;
 
         /// <summary>
         /// An instance representing the retrieved attribute
@@ -27,7 +27,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public bool IsInherited { get; set; }
 
-        IMetaType IMetaAttribute.Type => this.Type;
+        IMetaType IMetaAttribute.Type => Type;
 
         /// <summary>
         /// The Type of the attribute
@@ -64,11 +64,11 @@ namespace Penguin.Reflection.Serialization.Objects
                 throw new System.ArgumentNullException(nameof(c));
             }
 
-            this.Instance = MetaObject.FromConstructor(c, new ObjectConstructor(c.PropertyInfo, c.Type, (c.Object as AttributeInstance).Instance));
+            Instance = MetaObject.FromConstructor(c, new ObjectConstructor(c.PropertyInfo, c.Type, (c.Object as AttributeInstance).Instance));
 
-            this.Type = MetaType.FromConstructor(c, (c.Object as AttributeInstance).Instance);
+            Type = MetaType.FromConstructor(c, (c.Object as AttributeInstance).Instance);
 
-            this.IsInherited = (c.Object as AttributeInstance).IsInherited;
+            IsInherited = (c.Object as AttributeInstance).IsInherited;
         }
 
         #endregion Constructors
@@ -80,7 +80,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         /// <param name="PropertyName">The name of the property to search for</param>
         /// <returns>The property, if it exists</returns>
-        public IMetaObject this[string PropertyName] => this.Instance[PropertyName];
+        public IMetaObject this[string PropertyName] => Instance[PropertyName];
 
         #endregion Indexers
 
@@ -92,8 +92,8 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="meta">The dictionary of MetaData generated during construction</param>
         public override void Hydrate(IDictionary<int, IHydratable> meta = null)
         {
-            this.Type = HydrateChild(this.Type, meta);
-            this.Instance = HydrateChild(this.Instance, meta);
+            Type = HydrateChild(Type, meta);
+            Instance = HydrateChild(Instance, meta);
         }
 
         /// <summary>
@@ -102,18 +102,8 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns>The Type Name</returns>
         public override string ToString()
         {
-            return this.Type.Name;
+            return Type.Name;
         }
-
-
-        /* Unmerged change from project 'Penguin.Reflection.Serialization.Local (netstandard2.1)'
-        Before:
-                internal static MetaAttribute FromConstructor(MetaConstructor c, AttributeInstance o, PropertyInfo p) => FromConstructor(c, new AttributeWrapper(o, p, c));
-        After:
-                internal static MetaAttribute FromConstructor(MetaConstructor c, AttributeInstance o, PropertyInfo p)
-                {
-                    return FromConstructor(c, new AttributeWrapper(o, p, c));
-        */
         internal static MetaAttribute FromConstructor(MetaConstructor c, AttributeInstance o, PropertyInfo p)
         {
             return FromConstructor(c, new AttributeWrapper(o, p, c));

@@ -25,7 +25,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public string AssemblyQualifiedName { get; set; }
 
-        IEnumerable<IMetaAttribute> IHasAttributes.Attributes => this.Attributes;
+        IEnumerable<IMetaAttribute> IHasAttributes.Attributes => Attributes;
 
         /// <summary>
         /// The attributes declared on the underlying type, along with instances
@@ -65,7 +65,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <summary>
         /// True if type is an enumeration
         /// </summary>
-        public bool IsEnum => this.CoreType == CoreType.Enum;
+        public bool IsEnum => CoreType == CoreType.Enum;
 
         /// <summary>
         /// True if type is a Nullable?
@@ -87,14 +87,14 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public string Namespace { get; set; }
 
-        IReadOnlyList<IMetaType> IMetaType.Parameters => this.Parameters;
+        IReadOnlyList<IMetaType> IMetaType.Parameters => Parameters;
 
         /// <summary>
         /// Generic parameters used for constructing the type
         /// </summary>
         public List<MetaType> Parameters { get; set; }
 
-        IReadOnlyList<IMetaProperty> IHasProperties.Properties => this.Properties;
+        IReadOnlyList<IMetaProperty> IHasProperties.Properties => Properties;
 
         /// <summary>
         /// A list of all the properties found on the type
@@ -106,7 +106,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// </summary>
         public string StringValue { get; set; }
 
-        IReadOnlyList<IEnumValue> IMetaType.Values => this.Values;
+        IReadOnlyList<IEnumValue> IMetaType.Values => Values;
 
         /// <summary>
         /// If the type is an enum, this contains all of the possible values
@@ -150,24 +150,24 @@ namespace Penguin.Reflection.Serialization.Objects
 
                 Contract.Assert(type != null);
 
-                this.IsNullable = true;
+                IsNullable = true;
             }
 
-            this.Name = type.Name;
-            this.FullName = type.FullName;
-            this.Namespace = type.Namespace;
-            this.AssemblyQualifiedName = type.AssemblyQualifiedName;
-            this.StringValue = type.ToString();
-            this.CoreType = type.GetCoreType();
-            this.IsArray = type.IsArray;
+            Name = type.Name;
+            FullName = type.FullName;
+            Namespace = type.Namespace;
+            AssemblyQualifiedName = type.AssemblyQualifiedName;
+            StringValue = type.ToString();
+            CoreType = type.GetCoreType();
+            IsArray = type.IsArray;
 
-            this.IsNumeric = type.IsNumericType();
-            this.Default = type.GetDefaultValue()?.ToString();
-            this.Values = GetEnumValues(type);
+            IsNumeric = type.IsNumericType();
+            Default = type.GetDefaultValue()?.ToString();
+            Values = GetEnumValues(type);
 
             if (properties != null)
             {
-                this.Properties = properties.Select(p => p.Property).ToList();
+                Properties = properties.Select(p => p.Property).ToList();
             }
         }
 
@@ -178,10 +178,10 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <param name="properties">Properties to set for the type</param>
         public MetaType(string s, IEnumerable<MetaObject> properties)
         {
-            this.Name = this.AssemblyQualifiedName = s;
-            this.Namespace = "Dynamic";
+            Name = AssemblyQualifiedName = s;
+            Namespace = "Dynamic";
 
-            this.Properties = properties.Select(p => p.Property).ToList();
+            Properties = properties.Select(p => p.Property).ToList();
         }
 
         public static List<IEnumValue> GetEnumValues(Type type)
@@ -193,7 +193,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
             if (type.IsEnum)
             {
-                List<IEnumValue> Values = new List<IEnumValue>();
+                List<IEnumValue> Values = new();
 
                 foreach (string Name in Enum.GetNames(type))
                 {
@@ -228,17 +228,9 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns>A new instance of MetaType</returns>
         public static MetaType FromConstructor(MetaConstructor c, object o)
         {
-            if (c is null)
-            {
-                throw new ArgumentNullException(nameof(c));
-            }
-
-            if (o is null)
-            {
-                throw new ArgumentNullException(nameof(o));
-            }
-
-            return FromConstructor(c, o.GetType());
+            return c is null
+                ? throw new ArgumentNullException(nameof(c))
+                : o is null ? throw new ArgumentNullException(nameof(o)) : FromConstructor(c, o.GetType());
         }
 
         /// <summary>
@@ -282,17 +274,8 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns></returns>
         public static bool operator ==(MetaType obj1, IMetaType obj2)
         {
-            if (ReferenceEquals(obj1, obj2))
-            {
-                return true;
-            }
-
-            if (obj1 is null || obj2 is null)
-            {
-                return false;
-            }
-
-            return obj1.AssemblyQualifiedName == obj2.AssemblyQualifiedName;
+            return ReferenceEquals(obj1, obj2)
+|| obj1 is not null && obj2 is not null && obj1.AssemblyQualifiedName == obj2.AssemblyQualifiedName;
         }
 
         /// <summary>
@@ -303,12 +286,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns></returns>
         public static bool operator ==(System.Type obj1, MetaType obj2)
         {
-            if (obj1 is null || obj2 is null)
-            {
-                return false;
-            }
-
-            return obj1.ToString() == obj2.ToString();
+            return obj1 is not null && obj2 is not null && obj1.ToString() == obj2.ToString();
         }
 
         /// <summary>
@@ -319,12 +297,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns></returns>
         public static bool operator ==(MetaType obj1, System.Type obj2)
         {
-            if (obj1 is null || obj2 is null)
-            {
-                return false;
-            }
-
-            return obj1.ToString() == obj2.ToString();
+            return obj1 is not null && obj2 is not null && obj1.ToString() == obj2.ToString();
         }
 
         /// <summary>
@@ -334,17 +307,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns>Whether or not they share an Assembly Qualified Name</returns>
         public bool Equals(IMetaType other)
         {
-            if (other is null)
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            return this.AssemblyQualifiedName == other.AssemblyQualifiedName;
+            return other is not null && (ReferenceEquals(this, other) || AssemblyQualifiedName == other.AssemblyQualifiedName);
         }
 
         /// <summary>
@@ -354,17 +317,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns>Whether or not the two objects have the same IMetaType</returns>
         public override bool Equals(object obj)
         {
-            if (obj is null)
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            return obj.GetType() == this.GetType() && this.Equals((MetaType)obj);
+            return obj is not null && (ReferenceEquals(this, obj) || (obj.GetType() == GetType() && Equals((MetaType)obj)));
         }
 
         /// <summary>
@@ -375,7 +328,7 @@ namespace Penguin.Reflection.Serialization.Objects
         {
             unchecked
             {
-                return this.AssemblyQualifiedName.GetHashCode();
+                return AssemblyQualifiedName.GetHashCode();
             }
         }
 
@@ -388,20 +341,20 @@ namespace Penguin.Reflection.Serialization.Objects
             //This should be done through an accessor because right now we're relying on
             //The fact that the constructor sets it to a list, which is not the correct way
             //to do this.
-            this.HydrateList(this.Attributes, meta);
+            HydrateList(Attributes, meta);
 
-            this.HydrateList(this.Parameters, meta);
+            HydrateList(Parameters, meta);
 
-            this.HydrateList(this.Properties, meta);
+            HydrateList(Properties, meta);
 
-            if (this.BaseType is MetaType bt)
+            if (BaseType is MetaType bt)
             {
-                this.BaseType = HydrateChild(bt, meta);
+                BaseType = HydrateChild(bt, meta);
             }
 
-            if (this.CollectionType is MetaType ct)
+            if (CollectionType is MetaType ct)
             {
-                this.CollectionType = HydrateChild(ct, meta);
+                CollectionType = HydrateChild(ct, meta);
             }
         }
 
@@ -411,7 +364,7 @@ namespace Penguin.Reflection.Serialization.Objects
         /// <returns>The Name of the type this MetaObject represents</returns>
         public override string ToString()
         {
-            return this.StringValue;
+            return StringValue;
         }
 
         /// <summary>
@@ -432,27 +385,27 @@ namespace Penguin.Reflection.Serialization.Objects
             if (Nullable.GetUnderlyingType(type) != null)
             {
                 type = Nullable.GetUnderlyingType(type);
-                this.IsNullable = true;
+                IsNullable = true;
             }
 
-            this.Parameters = new List<MetaType>();
+            Parameters = new List<MetaType>();
 
-            List<MetaAttribute> attributes = new List<MetaAttribute>();
-            this.Attributes = attributes;
+            List<MetaAttribute> attributes = new();
+            Attributes = attributes;
 
             if (type.BaseType != null)
             {
-                this.BaseType = MetaType.FromConstructor(c, type.BaseType);
+                BaseType = MetaType.FromConstructor(c, type.BaseType);
             }
 
-            if (this.CoreType == CoreType.Collection)
+            if (CoreType == CoreType.Collection)
             {
-                this.CollectionType = MetaType.FromConstructor(c, type.GetCollectionType());
+                CollectionType = MetaType.FromConstructor(c, type.GetCollectionType());
             }
 
             foreach (Type g in type.GetGenericArguments())
             {
-                this.Parameters.Add(MetaType.FromConstructor(c, g));
+                Parameters.Add(MetaType.FromConstructor(c, g));
             }
 
             if (c.Settings.AttributeIncludeSettings != AttributeIncludeSetting.None)
@@ -468,15 +421,15 @@ namespace Penguin.Reflection.Serialization.Objects
                 }
             }
 
-            this.Properties = new List<MetaProperty>();
+            Properties = new List<MetaProperty>();
 
-            if (this.CoreType != CoreType.Value)
+            if (CoreType != CoreType.Value)
             {
                 foreach (PropertyInfo thisProperty in c.GetProperties())
                 {
                     if (c.Validate(thisProperty))
                     {
-                        this.Properties.Add(MetaProperty.FromConstructor(c, thisProperty));
+                        Properties.Add(MetaProperty.FromConstructor(c, thisProperty));
                     }
                 }
             }
