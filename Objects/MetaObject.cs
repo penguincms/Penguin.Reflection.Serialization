@@ -91,7 +91,9 @@ namespace Penguin.Reflection.Serialization.Objects
         public bool Null { get; set; }
 
         IMetaObject IMetaObject.Parent { get => Parent; set => Parent = (MetaObject)value; }
+
         public MetaObject Parent { get; set; }
+
         IReadOnlyList<IMetaObject> IMetaObject.Properties => Properties;
 
         /// <summary>

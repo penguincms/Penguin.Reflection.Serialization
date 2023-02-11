@@ -146,6 +146,7 @@ namespace Penguin.Reflection.Serialization.Constructors
         #endregion Methods
 
         internal CacheContainer Cache { get; set; }
+
         internal object Object { get; set; }
 
         internal MetaProperty Property { get; set; }

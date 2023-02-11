@@ -104,6 +104,7 @@ namespace Penguin.Reflection.Serialization.Objects
         {
             return Type.Name;
         }
+
         internal static MetaAttribute FromConstructor(MetaConstructor c, AttributeInstance o, PropertyInfo p)
         {
             return FromConstructor(c, new AttributeWrapper(o, p, c));
