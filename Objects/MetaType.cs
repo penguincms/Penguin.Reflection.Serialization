@@ -1,4 +1,5 @@
-﻿using Penguin.Reflection.Abstractions;
+﻿using Loxifi;
+using Penguin.Reflection.Abstractions;
 using Penguin.Reflection.Extensions;
 using Penguin.Reflection.Serialization.Abstractions.Interfaces;
 using Penguin.Reflection.Serialization.Abstractions.Objects;
@@ -410,7 +411,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
             if (c.Settings.AttributeIncludeSettings != AttributeIncludeSetting.None)
             {
-                foreach (AttributeInstance a in TypeCache.GetCustomAttributes(type))
+                foreach (AttributeInstance a in TypeFactory.GetCustomAttributes(type))
                 {
                     Type at = a.Instance.GetType();
 
@@ -434,7 +435,7 @@ namespace Penguin.Reflection.Serialization.Objects
                 }
             }
         }
-
+        private TypeFactory TypeFactory { get; set; } = new TypeFactory(new TypeFactorySettings());
         /// <summary>
         /// Creates a new MetaType from a given type
         /// </summary>

@@ -1,4 +1,5 @@
-﻿using Penguin.Extensions.Collections;
+﻿using Loxifi;
+using Penguin.Extensions.Collections;
 using Penguin.Reflection.Serialization.Abstractions.Interfaces;
 using Penguin.Reflection.Serialization.Abstractions.Objects;
 using Penguin.Reflection.Serialization.Abstractions.Wrappers;
@@ -263,7 +264,7 @@ namespace Penguin.Reflection.Serialization.Constructors
 
             if (!TypeProperties.ContainsKey(type))
             {
-                TypeProperties.Add(type, Penguin.Reflection.TypeCache.GetProperties(type).Where(Validate).ToList());
+                TypeProperties.Add(type, TypeFactory.GetProperties(type).Where(Validate).ToList());
             }
 
             return TypeProperties[type];

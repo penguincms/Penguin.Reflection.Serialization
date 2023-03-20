@@ -130,6 +130,7 @@
         </member>
         <member name="P:Penguin.Reflection.Serialization.Constructors.MetaConstructor.Type">
              <summary>
+            
              </summary>
         </member>
         <member name="T:Penguin.Reflection.Serialization.Constructors.MetaConstructorSettings">
