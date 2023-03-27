@@ -1,7 +1,9 @@
 ﻿using Loxifi;
+using Loxifi.Interfaces;
 using Penguin.Reflection.Abstractions;
 using Penguin.Reflection.Serialization.Abstractions.Interfaces;
 using Penguin.Reflection.Serialization.Constructors;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -125,7 +127,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
             if (c.Settings.AttributeIncludeSettings != AttributeIncludeSetting.None)
             {
-                foreach (AttributeInstance a in TypeFactory.GetCustomAttributes(c.PropertyInfo))
+                foreach (IAttributeInstance<Attribute> a in TypeFactory.Default.GetCustomAttributes(c.PropertyInfo))
                 {
                     if (c.Settings.ShouldAddAttribute(a.Instance.GetType()))
                     {
@@ -134,7 +136,6 @@ namespace Penguin.Reflection.Serialization.Objects
                 }
             }
         }
-        private TypeFactory TypeFactory { get; set; } = new TypeFactory(new TypeFactorySettings());
         internal static MetaProperty FromConstructor(MetaConstructor c, PropertyInfo propertyInfo)
         {
             MetaProperty p;

@@ -1,4 +1,5 @@
 ﻿using Loxifi;
+using Loxifi.Interfaces;
 using Penguin.Reflection.Abstractions;
 using Penguin.Reflection.Extensions;
 using Penguin.Reflection.Serialization.Abstractions.Interfaces;
@@ -276,7 +277,7 @@ namespace Penguin.Reflection.Serialization.Objects
         public static bool operator ==(MetaType obj1, IMetaType obj2)
         {
             return ReferenceEquals(obj1, obj2)
-|| obj1 is not null && obj2 is not null && obj1.AssemblyQualifiedName == obj2.AssemblyQualifiedName;
+|| (obj1 is not null && obj2 is not null && obj1.AssemblyQualifiedName == obj2.AssemblyQualifiedName);
         }
 
         /// <summary>
@@ -411,7 +412,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
             if (c.Settings.AttributeIncludeSettings != AttributeIncludeSetting.None)
             {
-                foreach (AttributeInstance a in TypeFactory.GetCustomAttributes(type))
+                foreach (IAttributeInstance<Attribute> a in TypeFactory.Default.GetCustomAttributes(type))
                 {
                     Type at = a.Instance.GetType();
 
@@ -435,7 +436,7 @@ namespace Penguin.Reflection.Serialization.Objects
                 }
             }
         }
-        private TypeFactory TypeFactory { get; set; } = new TypeFactory(new TypeFactorySettings());
+
         /// <summary>
         /// Creates a new MetaType from a given type
         /// </summary>

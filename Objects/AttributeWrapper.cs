@@ -1,6 +1,8 @@
 ﻿using Loxifi;
+using Loxifi.Interfaces;
 using Penguin.Reflection.Abstractions;
 using Penguin.Reflection.Serialization.Constructors;
+using System;
 using System.Reflection;
 using RType = System.Type;
 
@@ -10,7 +12,7 @@ namespace Penguin.Reflection.Serialization.Objects
     {
         #region Properties
 
-        public AttributeInstance Attribute { get; set; }
+        public IAttributeInstance<Attribute> Attribute { get; set; }
 
         public string Key { get; set; }
 
@@ -22,7 +24,7 @@ namespace Penguin.Reflection.Serialization.Objects
 
         #region Constructors
 
-        public AttributeWrapper(AttributeInstance a, PropertyInfo p, MetaConstructor c)
+        public AttributeWrapper(IAttributeInstance<Attribute> a, PropertyInfo p, MetaConstructor c)
         {
             PropertyInfo = p;
             Attribute = a;
@@ -36,7 +38,7 @@ namespace Penguin.Reflection.Serialization.Objects
             Key = $"@{c.Cache.Attributes[a.Instance]}|{a.IsInherited}";
         }
 
-        public AttributeWrapper(AttributeInstance a, RType t, MetaConstructor c)
+        public AttributeWrapper(IAttributeInstance<Attribute> a, RType t, MetaConstructor c)
         {
             Attribute = a;
             Type = t;

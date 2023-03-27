@@ -264,7 +264,7 @@ namespace Penguin.Reflection.Serialization.Constructors
 
             if (!TypeProperties.ContainsKey(type))
             {
-                TypeProperties.Add(type, TypeFactory.GetProperties(type).Where(Validate).ToList());
+                TypeProperties.Add(type, TypeFactory.Default.GetProperties(type).Where(Validate).ToList());
             }
 
             return TypeProperties[type];

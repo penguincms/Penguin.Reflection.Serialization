@@ -1,8 +1,10 @@
 ﻿using Loxifi;
+using Loxifi.Interfaces;
 using Penguin.Reflection.Abstractions;
 using Penguin.Reflection.Serialization.Abstractions.Interfaces;
 using Penguin.Reflection.Serialization.Abstractions.Objects;
 using Penguin.Reflection.Serialization.Constructors;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using RType = System.Type;
@@ -65,11 +67,11 @@ namespace Penguin.Reflection.Serialization.Objects
                 throw new System.ArgumentNullException(nameof(c));
             }
 
-            Instance = MetaObject.FromConstructor(c, new ObjectConstructor(c.PropertyInfo, c.Type, (c.Object as AttributeInstance).Instance));
+            Instance = MetaObject.FromConstructor(c, new ObjectConstructor(c.PropertyInfo, c.Type, (c.Object as IAttributeInstance<Attribute>).Instance));
 
-            Type = MetaType.FromConstructor(c, (c.Object as AttributeInstance).Instance);
+            Type = MetaType.FromConstructor(c, (c.Object as IAttributeInstance<Attribute>).Instance);
 
-            IsInherited = (c.Object as AttributeInstance).IsInherited;
+            IsInherited = (c.Object as IAttributeInstance<Attribute>).IsInherited;
         }
 
         #endregion Constructors
@@ -106,12 +108,12 @@ namespace Penguin.Reflection.Serialization.Objects
             return Type.Name;
         }
 
-        internal static MetaAttribute FromConstructor(MetaConstructor c, AttributeInstance o, PropertyInfo p)
+        internal static MetaAttribute FromConstructor(MetaConstructor c, IAttributeInstance<Attribute> o, PropertyInfo p)
         {
             return FromConstructor(c, new AttributeWrapper(o, p, c));
         }
 
-        internal static MetaAttribute FromConstructor(MetaConstructor c, AttributeInstance o, RType t)
+        internal static MetaAttribute FromConstructor(MetaConstructor c, IAttributeInstance<Attribute> o, RType t)
         {
             return FromConstructor(c, new AttributeWrapper(o, t, c));
         }
